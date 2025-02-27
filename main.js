@@ -18,8 +18,15 @@ document.addEventListener('DOMContentLoaded', function(){
 }, false);
 
 async function drawChart() {
-    const response = await fetch('/data/familydata.csv');
+    let fName = "/data/familytreedata.csv";
+    const response = await fetch(fName);
     const data = await response.text();
+
+    if (response.status > 200)
+    {
+        document.getElementById("err_msg").innerHTML = data;
+        //alert ("failed to load tree data from " + fName);
+    }
 
     var renderedTable = prepChartTable(data, new google.visualization.DataTable())
 

@@ -19,7 +19,12 @@ function prepChartTable(data, newTable) {
 
     // compose source data into appropriate table values
     const sourceData = processData(data);
-    renderedTable.addRows(removeRemainingColumns(sourceData, 1));
+    try {
+        renderedTable.addRows(removeRemainingColumns(sourceData, 1));
+    } catch (error) {
+        document.getElementById("err_msg").innerHTML = "Error loading tree data (row number does't count comment rows) " + error;
+        console.log(error);
+    }
     fullTable.addRows(sourceData);
 
     localStorage.setItem('chartFullTable', sourceData);
