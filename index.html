@@ -1,49 +1,24 @@
-.imageContainer {
-  display:inline-block;
-  position: relative;
-  left: 50%;
-  top: 50%;
-  transform: translateX(-50%) translateY(-50%);
-  background-color: #808080;
-  max-width: 100%;
-  overflow: hidden;
-}
+<!doctype html>
+<html lang="en-US">
 
-body {
-  background-color: lightgrey;
-  overflow:hidden;
-  min-height: 100% 
-}
+<head>
+  <title>Trabin Family History</title>
+  <link rel="stylesheet" type="text/css" href="index.css">
+</head>
 
-html, body {
-  margin: 0;
-  height: 100%;
-}
+<body>
+  <div id = "mainContainer" style="border: 1px solid black; background-color: white;">
+    <div  class="panzoom">
+      <div id="chart_container"></div>
+      <!-- <script>
+          console.log("iframe script log");
+        </script> -->
+    </div>
+  </div>
+  <script src="panzoom.js"></script>
+  <script src="https://www.gstatic.com/charts/loader.js"></script>
+  <script src="main.js"></script>
+  <script src="treechart.js"></script>
+</body>
 
-.tl-link-btn {
-  height: 24px;
-  background: url(/img/open_story.png) no-repeat 27px center;
-  display: block;
-}
-
-.oc-wid-node {
-  min-width: 92px;
-}
-
-.oc-med-node {
-  min-width: 75px;
-}
-
-.oc-nar-node {
-  min-width: 66px;
-}
-
-.tl-button {
-  height: 30px;
-  width: 40px;
-}
-
-.tl-button img {
-  width: 42px;
-  height: 30px;
-}
+</html>
