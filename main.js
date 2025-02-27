@@ -6,6 +6,7 @@ window.onload = function(){
   // Here is how you would call the libary
   PanZoom(".panzoom");
 }
+
 localStorage.setItem('selectedOrgItem', null);
 google.charts.load('current', { packages: ["orgchart"] });
 google.charts.setOnLoadCallback(drawChart);
@@ -92,15 +93,16 @@ if (window.postMessage) {
 
   function redirectiFrames(timeframeUrl, orgChartElId) {
     redirectTimelineiFrame(timeframeUrl);
-    redirectOrgchartiFrame(orgChartElId);
+    redirectTreeNode(orgChartElId);
   }
   function redirectTimelineiFrame(newUrl) {
     // set timeline target
     document.getElementById('tl-timeline-iframe').src = newUrl;
   }
 
-  function redirectOrgchartiFrame(orgChartNodeId) {
+  function redirectTreeNode(orgChartNodeId) {
     // set orgchart target
+    navigateToNode(orgChartNodeId);
     // try {
     //   let ocframe = document.getElementById('orgchart-iframe');
     //   if (ocframe.contentWindow && ocframe.contentWindow.postMessage) {
@@ -114,22 +116,22 @@ if (window.postMessage) {
 
   function toggleTimeline(primaryiFrameId) {
     let tlFrame = document.getElementById("tl-timeline-iframe");
-    let ocFrame = document.getElementById("orgchart-iframe");
+    let ocEle = document.getElementById("orgchart-container");
     if (primaryiFrameId == "tl-timeline-iframe") {
       if (tlFrame.classList.contains("fullScreen")) {
         tlFrame.classList.remove("fullScreen");
-        ocFrame.classList.remove("fullScreen");          }
+        ocEle.classList.remove("fullScreen");          }
       else {
         tlFrame.classList.add("fullScreen");
       }
     }
     else {
-      if (ocFrame.classList.contains("fullScreen")) {
+      if (ocEle.classList.contains("fullScreen")) {
         tlFrame.classList.remove("fullScreen");
-        ocFrame.classList.remove("fullScreen");
+        ocEle.classList.remove("fullScreen");
       }
       else {
-        ocFrame.classList.add("fullScreen");
+        ocEle.classList.add("fullScreen");
       }
     }
   }
