@@ -123,11 +123,12 @@ function timelineLink(el) {
     var storedSelection = JSON.parse(localStorage.getItem('selectedOrgItem'));
     if (storedSelection) {
         console.log("timelineLink clicked for row(cell) " + storedSelection.row + " with url " + storedSelection.url);
-        // Just fire the message through parent object
+        // Just fire the message through parent object (this is still used even though it was coded when this was in iFrame)
         if (window.parent) {
             window.parent.postMessage({ from: 'org-chart', node: storedSelection.row, url: storedSelection.url }, '*');
         }
         showNode(el, true);
+        handleViewChoiceClick("view-timeline", true)
     }
 };
 

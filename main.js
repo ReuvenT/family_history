@@ -52,7 +52,6 @@ document.addEventListener('DOMContentLoaded', function () {
     }, 250);
 }, false);
 
-
 async function drawChart() {
     let fName = "/data/familytreedata.csv";
     const response = await fetch(fName);
@@ -114,36 +113,23 @@ function redirectTreeNode(orgChartNodeId) {
     // }
 }
 
-function toggleTimeline(containerName) {
+function handleViewChoiceClick(viewChoice, setTimelineChecked) {
     let tlFrame = document.getElementById("tl-timeline-iframe");
     let ocEle = document.getElementById("orgchart-container");
     let tpEle = document.getElementById("tree-popup");
-    if (containerName == "tl-timeline-iframe") {
-        ocEle.classList.remove("fullScreen");
-        if (tlFrame.classList.contains("fullScreen")) {
-            tlFrame.classList.remove("fullScreen");
-        }
-        else {
-            tlFrame.classList.add("fullScreen");
-        }
-    }
-    else if (containerName == "orgchart-container") {
-        tpEle.classList.remove("hide-popup");
+    console.log('handleViewChoiceClick to viewChoice: ' + viewChoice)
+    if (viewChoice == "view-tree") {
         tlFrame.classList.remove("fullScreen");
-        if (ocEle.classList.contains("fullScreen")) {
-            ocEle.classList.remove("fullScreen");
-        }
-        else {
-            ocEle.classList.add("fullScreen");
-        }
-    } else {
-        if (tpEle.classList.contains("hide-popup")) {
-            tpEle.classList.remove("hide-popup");
-            ocEle.classList.remove("fullScreen");
-        }
-        else {
-            tpEle.classList.add("hide-popup");
-        }
+        tlFrame.style.display = "none";
+        ocEle.classList.add("fullScreen");
     }
+        else if (viewChoice == "view-timeline") {
+            ocEle.classList.remove("fullScreen");
+            tlFrame.classList.add("fullScreen");
+            tlFrame.style.display = "block";
+            if (setTimelineChecked) {
+                radiobtn = document.getElementById("view-timeline");
+                radiobtn.checked = true;
+            }
+        }
 }
-
