@@ -2,54 +2,55 @@ const baseTimelineUrl = 'https://www.tiki-toki.com/timeline/embed/';
 const rootTimeline = "2138285/2648138406/";
 
 
-window.onload = function(){
-  // Here is how you would call the libary
-  PanZoom(".panzoom");
+window.onload = function () {
+    // Here is how you would call the libary
+    PanZoom(".panzoom");
 }
 
 localStorage.setItem('selectedOrgItem', null);
 google.charts.load('current', { packages: ["orgchart"] });
 google.charts.setOnLoadCallback(drawChart);
 
+document.getElementById("tree-popup").classList.add("hide-popup")
 
 document.addEventListener('DOMContentLoaded', function () {
     console.log("parent document ready");
     window.addEventListener('message',
-      (event) => {
-        console.log("someone's calling the parent method with event data " + JSON.stringify(event.data));
-        if (event.data.from === 'org-chart' && event.data.url) {
-          redirectTimelineiFrame(event.data.url)
-        }
-      },
-      false
+        (event) => {
+            console.log("someone's calling the parent method with event data " + JSON.stringify(event.data));
+            if (event.data.from === 'org-chart' && event.data.url) {
+                redirectTimelineiFrame(event.data.url)
+            }
+        },
+        false
     );
 
     const iframe = document.getElementById('tl-timeline-iframe');
-    const iframeDocument = iframe.contentDocument || iframe.contentWindow.document;
+    //const iframeDocument = iframe.contentDocument || iframe.contentWindow.document;
 
     iframe.addEventListener('load', () => {
-      console.log('iFrame loaded');
+        console.log('iFrame loaded');
     });
 
     iframe.onload = function () {
-      console.log('Iframe content loaded or reloaded');
+        console.log('Iframe content loaded or reloaded');
     };
 
 
     setTimeout(() => {
-      const urlParams = new URLSearchParams(window.location.search);
-      const redirectedTimeline = decodeURI(urlParams.get('newtimeline'));
-      //const redirectedTimeline = HttpContext.Current.Request.QueryString("newtimeline")
-      if (redirectedTimeline && redirectedTimeline !="null") {
-        urlParams.delete("redirectedTimeline");
-        console.log('redirectedTimeline: ' + decodeURI(redirectedTimeline));
-        redirectiFrames(baseTimelineUrl + redirectedTimeline, redirectedTimeline);
-      }
-      else{
-        redirectiFrames(baseTimelineUrl + rootTimeline, rootTimeline);
-      }
+        const urlParams = new URLSearchParams(window.location.search);
+        const redirectedTimeline = decodeURI(urlParams.get('newtimeline'));
+        //const redirectedTimeline = HttpContext.Current.Request.QueryString("newtimeline")
+        if (redirectedTimeline && redirectedTimeline != "null") {
+            urlParams.delete("redirectedTimeline");
+            console.log('redirectedTimeline: ' + decodeURI(redirectedTimeline));
+            redirectiFrames(baseTimelineUrl + redirectedTimeline, redirectedTimeline);
+        }
+        else {
+            redirectiFrames(baseTimelineUrl + rootTimeline, rootTimeline);
+        }
     }, 250);
-  }, false);
+}, false);
 
 
 async function drawChart() {
@@ -57,8 +58,7 @@ async function drawChart() {
     const response = await fetch(fName);
     const data = await response.text();
 
-    if (response.status > 200)
-    {
+    if (response.status > 200) {
         document.getElementById("err_msg").innerHTML = data;
         //alert ("failed to load tree data from " + fName);
     }
@@ -78,31 +78,31 @@ async function drawChart() {
 
 if (window.postMessage) {
     var tlMouseupFunc = function () {
-      var tlFrame = document.getElementById("tl-timeline-iframe");
-      if (tlFrame.contentWindow && tlFrame.contentWindow.postMessage) {
-        tlFrame.contentWindow.postMessage("mouseup", "*");
-      }
+        var tlFrame = document.getElementById("tl-timeline-iframe");
+        if (tlFrame.contentWindow && tlFrame.contentWindow.postMessage) {
+            tlFrame.contentWindow.postMessage("mouseup", "*");
+        }
     }
     if (typeof window.addEventListener != "undefined") {
-      window.addEventListener("mouseup", tlMouseupFunc, false);
+        window.addEventListener("mouseup", tlMouseupFunc, false);
     }
     else if (typeof window.attachEvent != "undefined") {
-      window.attachEvent("onmouseup", tlMouseupFunc);
+        window.attachEvent("onmouseup", tlMouseupFunc);
     }
-  }
+}
 
-  function redirectiFrames(timeframeUrl, orgChartElId) {
+function redirectiFrames(timeframeUrl, orgChartElId) {
     redirectTimelineiFrame(timeframeUrl);
     redirectTreeNode(orgChartElId);
-  }
-  function redirectTimelineiFrame(newUrl) {
+}
+function redirectTimelineiFrame(newUrl) {
     // set timeline target
     document.getElementById('tl-timeline-iframe').src = newUrl;
-  }
+}
 
-  function redirectTreeNode(orgChartNodeId) {
+function redirectTreeNode(orgChartNodeId) {
     // set orgchart target
-    navigateToNode(orgChartNodeId);
+    navigateToNode(orgChartNodeId, false);
     // try {
     //   let ocframe = document.getElementById('orgchart-iframe');
     //   if (ocframe.contentWindow && ocframe.contentWindow.postMessage) {
@@ -112,27 +112,38 @@ if (window.postMessage) {
     // } catch (e) {
     //   window.console && window.console.log(e);
     // }
-  }
+}
 
-  function toggleTimeline(primaryiFrameId) {
+function toggleTimeline(containerName) {
     let tlFrame = document.getElementById("tl-timeline-iframe");
     let ocEle = document.getElementById("orgchart-container");
-    if (primaryiFrameId == "tl-timeline-iframe") {
-      if (tlFrame.classList.contains("fullScreen")) {
-        tlFrame.classList.remove("fullScreen");
-        ocEle.classList.remove("fullScreen");          }
-      else {
-        tlFrame.classList.add("fullScreen");
-      }
-    }
-    else {
-      if (ocEle.classList.contains("fullScreen")) {
-        tlFrame.classList.remove("fullScreen");
+    let tpEle = document.getElementById("tree-popup");
+    if (containerName == "tl-timeline-iframe") {
         ocEle.classList.remove("fullScreen");
-      }
-      else {
-        ocEle.classList.add("fullScreen");
-      }
+        if (tlFrame.classList.contains("fullScreen")) {
+            tlFrame.classList.remove("fullScreen");
+        }
+        else {
+            tlFrame.classList.add("fullScreen");
+        }
     }
-  }
+    else if (containerName == "orgchart-container") {
+        tpEle.classList.remove("hide-popup");
+        tlFrame.classList.remove("fullScreen");
+        if (ocEle.classList.contains("fullScreen")) {
+            ocEle.classList.remove("fullScreen");
+        }
+        else {
+            ocEle.classList.add("fullScreen");
+        }
+    } else {
+        if (tpEle.classList.contains("hide-popup")) {
+            tpEle.classList.remove("hide-popup");
+            ocEle.classList.remove("fullScreen");
+        }
+        else {
+            tpEle.classList.add("hide-popup");
+        }
+    }
+}
 

@@ -5,7 +5,7 @@ function prepChartTable(data, newTable) {
     var renderedTable = new google.visualization.DataTable();
     //const fullTable = new google.visualization.DataTable();
     fullTable = newTable;
-    
+
     renderedTable.addColumn('string', 'Key_Name');   // contains both the key and what's displayed in the box
     renderedTable.addColumn('string', 'Parent');    // links to the parent key (empty if root)
     // html for tool tip is not working, plain text populated in this (alwasy last) column
@@ -120,7 +120,6 @@ function removeTags(str) {
 }
 
 function timelineLink(el) {
-    const scrollOptions = { behavior: "smooth", block: "center", inline: "center" };
     var storedSelection = JSON.parse(localStorage.getItem('selectedOrgItem'));
     if (storedSelection) {
         console.log("timelineLink clicked for row(cell) " + storedSelection.row + " with url " + storedSelection.url);
@@ -128,9 +127,7 @@ function timelineLink(el) {
         if (window.parent) {
             window.parent.postMessage({ from: 'org-chart', node: storedSelection.row, url: storedSelection.url }, '*');
         }
-        if (el) {
-            el.scrollIntoView(scrollOptions);
-        }
+        showNode(el, true);
     }
 };
 
@@ -142,16 +139,78 @@ function removeRemainingColumns(data, fromIndex) {
 
 function selectChartItem(rowIndex) {
     var selectionArray = new Array(1).fill({ row: rowIndex, column: null });
-    console.log("selectChartItem row(cell) " + selectionArray);
+    console.log("selectChartItem row(cell) " + JSON.stringify(selectionArray));
     chart.setSelection(selectionArray);
 }
 
-function navigateToNode(elementId) {
+function navigateToNode(elementId, useScrollIntoView) {
     console.log('navigating to ' + elementId);
     const element = document.getElementById(elementId);
     if (element) {
         selectChartItem(element.dataset.row);
-        var scrollOptions = { behavior: "smooth", block: "center", inline: "center" };
-        element.scrollIntoView(scrollOptions);
     }
 }
+
+function showNode(nodeEl, useScrolIntoView) {
+    if (nodeEl) {
+        let elBounds = nodeEl.getBoundingClientRect();
+        let chartContainerBounds = document.getElementById("chart_container").getBoundingClientRect();
+        console.log(`cont bounds (top, right, bottom, and left) ${chartContainerBounds.top}px, ${chartContainerBounds.right}px, ${chartContainerBounds.bottom}px, ${chartContainerBounds.left}px`);
+        console.log(`item bounds (top, right, bottom, and left) ${elBounds.top}px, ${elBounds.right}px, ${elBounds.bottom}px, ${elBounds.left}px`);
+        let xTranslation = 0;
+        let xScale = 1;
+        let yTranslation = 0;
+        let yScale = 1;
+        // todo: figure out scale
+        if (elBounds.left < chartContainerBounds.left) {
+            if (elBounds.right > chartContainerBounds.right) {
+                // item is larger that container
+                //xScale = (chartContainerBounds.width / elBounds.width) * 95;
+                //xLeft += chartContainerBounds.width * .1;
+            }
+            else {
+                xTranslation = (chartContainerBounds.left - elBounds.left + (chartContainerBounds.width / 2));
+            }
+        }
+        else {
+            if (elBounds.right > chartContainerBounds.right) {
+                //xScale = (chartContainerBounds.width / elBounds.width) * 95;
+                xTranslation = - (elBounds.right - chartContainerBounds.right + (chartContainerBounds.width / 2));
+            }
+        }
+        if (elBounds.top < chartContainerBounds.top) {
+            if (elBounds.bottom > chartContainerBounds.bottom) {
+                // item is larger that container
+                //xScale = (chartContainerBounds.width / elBounds.width) * 95;
+                //xLeft += chartContainerBounds.width * .1;
+            }
+            else {
+                yTranslation = (chartContainerBounds.top - elBounds.top + (chartContainerBounds.height / 2));
+            }
+        }
+        else {
+            if (elBounds.bottom > chartContainerBounds.bottom) {
+                //xScale = (chartContainerBounds.width / elBounds.width) * 95;
+                yTranslation = - (elBounds.bottom - chartContainerBounds.bottom + (chartContainerBounds.height / 2));
+            }
+        }
+
+        if (xScale + yScale + xTranslation + yTranslation === 2)
+        {
+            if (useScrolIntoView){
+                var scrollOptions = { behavior: "smooth", block: "center", inline: "center" };
+                nodeEl.scrollIntoView(scrollOptions);
+            }
+            else{
+               // center manually 
+                xTranslation =  (chartContainerBounds.width * .5) - elBounds.left;
+                yTranslation = (chartContainerBounds.height * 1.5) - elBounds.bottom
+                }
+        }
+        let matrix = 'matrix(' + xScale + ', 0, 0, ' + yScale + ', ' + xTranslation + ', ' + yTranslation + ')';
+        console.log("transform matrix: " + matrix);
+        document.getElementById("panzoom_container").style.transform = matrix;
+
+    }
+}
+

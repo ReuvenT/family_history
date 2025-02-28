@@ -8,23 +8,42 @@
 
 <body>
   <div id="err_msg"></div>
-  <iframe onmousewheel="" frameborder="0" scrolling="no" style="border-width:0;" id="tl-timeline-iframe" width="1200"
-    height="800" id="tl-timeline-iframe"></iframe>
-  <div id="orgchart-container" style="border: 1px solid black; background-color: white;">
-    <!-- <iframe onmousewheel="" frameborder="0" scrolling="no" style="border-width:0;" id="tl-timeline-iframe" width="1200"
-    height="800" id="tl-timeline-iframe"></iframe> -->
-    <div class="panzoom">
-      <div id="chart_container"></div>
+  <div id="tree-popup">
+    <div id="tree-popup-header">Click here to move</div>
+    <div id="popup-content-target">
+      <!-- <div id="chart-content-target" style="overflow-x: clip; overflow-y: clip;">
+        <div id="orgchart-container" style="border: 1px solid black; background-color: white;">
+          <div class="panzoom">
+            <div id="chart_container" style="transition: transform 2s ease;"></div>
+          </div>
+        </div>
+      </div> -->
     </div>
   </div>
-  <div><button onclick="toggleTimeline('tl-timeline-iframe')"
-      style="position: absolute; left: 30px; top: 15px; z-index: 100;">Toggle timeline in full screen</button></div>
-  <div><button onclick="toggleTimeline('orgchart-iframe')"
-      style="position: absolute; left: 220px; top: 15px; z-index: 100;">Toggle family tree in full screen</button></div>
+
+
+
+  <iframe onmousewheel="" frameborder="0" scrolling="no" style="border-width:0;" id="tl-timeline-iframe" width="1200"
+    height="800" id="tl-timeline-iframe"></iframe>
+  <div id="chart-content-target" style="overflow-x: clip; overflow-y: clip;">
+    <div id="orgchart-container" style="border: 1px solid black; background-color: white;">
+      <div class="panzoom" id="panzoom_container" style="transition: transform 1s ease;">
+        <div id="chart_container" ></div>
+      </div>
+    </div>
+  </div>
+  <table style="position: absolute; left: 30px; top: 15px; z-index: 100; width: 600px; font-size: larger;">
+    <tr>
+      <td><button onclick="toggleTimeline('tl-timeline-iframe')">Toggle timeline in full screen</button></td>
+      <td><button onclick="toggleTimeline('orgchart-container')">Toggle family tree in full screen</button></td>
+      <td><button onclick="toggleTimeline('tree-popup')">Toggle tree navigation popup</button></td>
+    </tr>
+  </table>
   <script src="panzoom.js"></script>
   <script src="https://www.gstatic.com/charts/loader.js"></script>
   <script src="treechart.js"></script>
   <script src="main.js"></script>
+  <script src="treepopup.js"></script>
 </body>
 
 </html>

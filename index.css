@@ -37,14 +37,17 @@ html, body {
 
 .oc-wid-node {
   min-width: 92px;
+  font-size: large;
 }
 
 .oc-med-node {
   min-width: 75px;
+  font-size: large;
 }
 
 .oc-nar-node {
   min-width: 66px;
+  font-size: larger;
 }
 
 .tl-button {
@@ -55,4 +58,27 @@ html, body {
 .tl-button img {
   width: 42px;
   height: 30px;
+}
+
+.hide-popup {
+  display: none;
+}
+
+#tree-popup {
+  position: absolute;
+  top: 400px;
+  width: 720px;
+  height: 150px;
+  z-index: 9;
+  background-color: #f1f1f1;
+  text-align: center;
+  border: 1px solid #d3d3d3;
+}
+
+#tree-popup-header {
+  padding: 10px;
+  cursor: move;
+  z-index: 10;
+  background-color: #b5d9ea;
+  color: #fff;
 }
