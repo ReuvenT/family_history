@@ -8,6 +8,7 @@ window.onload = function () {
 }
 
 localStorage.setItem('selectedOrgItem', null);
+
 google.charts.load('current', { packages: ["orgchart"] });
 google.charts.setOnLoadCallback(drawChart);
 
@@ -92,44 +93,66 @@ if (window.postMessage) {
 
 function redirectiFrames(timeframeUrl, orgChartElId) {
     redirectTimelineiFrame(timeframeUrl);
-    redirectTreeNode(orgChartElId);
+    navigateToNode(orgChartNodeId, false);
 }
+
 function redirectTimelineiFrame(newUrl) {
     // set timeline target
     document.getElementById('tl-timeline-iframe').src = newUrl;
-}
-
-function redirectTreeNode(orgChartNodeId) {
-    // set orgchart target
-    navigateToNode(orgChartNodeId, false);
-    // try {
-    //   let ocframe = document.getElementById('orgchart-iframe');
-    //   if (ocframe.contentWindow && ocframe.contentWindow.postMessage) {
-    //     console.log('posting message to orgchart: ' + orgChartNodeId)
-    //     ocframe.contentWindow.postMessage(JSON.stringify({ nodeElId: orgChartNodeId, status: true }, "*"));
-    //   }
-    // } catch (e) {
-    //   window.console && window.console.log(e);
-    // }
 }
 
 function handleViewChoiceClick(viewChoice, setTimelineChecked) {
     let tlFrame = document.getElementById("tl-timeline-iframe");
     let ocEle = document.getElementById("orgchart-container");
     let tpEle = document.getElementById("tree-popup");
-    console.log('handleViewChoiceClick to viewChoice: ' + viewChoice)
+    let pu = document.getElementById("tree-popup-btn");
+    console.log('handleViewChoiceClick to viewChoice: ' + viewChoice + ', setTimelineChecked: ' + setTimelineChecked)
     if (viewChoice == "view-tree") {
         tlFrame.classList.remove("fullScreen");
         tlFrame.style.display = "none";
+        ocEle.style.display = "block"; //orgchart-container
         ocEle.classList.add("fullScreen");
+        pu.style.display = "none";
+        tpEle.style.display = "none";
+        // move chart back home if it was in the popup
+        let tpSource = document.getElementById("popup-content-target");
+        let ocTarget = document.getElementById("chart-content-target");
+        if (tpSource.innerHTML.length > 1000){
+            console.log('handleViewChoiceClick moving from popup back to chart container ');
+            ocTarget.appendChild(tpSource.firstElementChild);
+        }
     }
         else if (viewChoice == "view-timeline") {
             ocEle.classList.remove("fullScreen");
             tlFrame.classList.add("fullScreen");
             tlFrame.style.display = "block";
+            pu.style.display = "inline";
             if (setTimelineChecked) {
                 radiobtn = document.getElementById("view-timeline");
                 radiobtn.checked = true;
             }
+            // if popup was previously displayed, re-show it
+            if (Boolean(localStorage.getItem("treePopupUsed"))){
+                openOrgChartPopup()
+            }
         }
+}
+
+function openOrgChartPopup(){
+    radiobtn = document.getElementById("view-timeline");
+    let tpEle = document.getElementById("tree-popup");
+    let tpTarget = document.getElementById("popup-content-target");
+    let ocEle= document.getElementById("orgchart-container");
+    let ocSource = document.getElementById("chart-content-target");
+    if (radiobtn.checked){
+        console.log('openOrgChartPopup radiobtn.checked: ' + radiobtn.checked)
+        ocEle.style.display = "block";
+        tpEle.style.display = "block";
+        tpTarget.appendChild(ocSource.firstElementChild);
+        localStorage.setItem("treePopupUsed", 'true');
+    }
+}
+
+function orgChartPopupClosed(){
+    localStorage.setItem("treePopupUsed", 'false');
 }

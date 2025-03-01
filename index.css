@@ -20,7 +20,17 @@ html, body {
   height: 100%;
 }
 
-p,
+#tree-popup-btn{
+  /* font-size: larger; 
+  font-weight: bold;  
+  margin-left: 10px; */
+  width: 15px;
+  height: 11px;
+  border: 0 none transparent;
+  background: none;
+  display: inline;
+}
+
 label, legend {
   font:
     1rem "Fira Sans",
@@ -39,6 +49,7 @@ input {
   top: 0;
   left: 0;
   z-index: 50;
+  /* display: block; */
 }
 
 .base-container {
@@ -84,9 +95,9 @@ input {
 #tree-popup {
   position: absolute;
   top: 400px;
-  width: 720px;
-  height: 250px;
-  z-index: 9;
+  width: 480px;
+  height: 550px;
+  z-index: 189;
   background-color: #f1f1f1;
   text-align: center;
   border: 1px solid #d3d3d3;
