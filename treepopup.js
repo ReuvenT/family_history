@@ -5,7 +5,7 @@ r.addEventListener('mousedown', initDrag, false);
 
 
 // restore previous popup state
-function initChartPopup(callOpenPopup){
+function initChartPopup(callOpenPopup) {
   let popupStateItem = localStorage.getItem("treePopupState");
   if (popupStateItem != '[object Object]' && (typeof popupStateItem === 'string' || popupStateItem instanceof String)) {
     let popupState = JSON.parse(popupStateItem);
@@ -16,50 +16,94 @@ function initChartPopup(callOpenPopup){
       popup.style.width = (popupState.width) + "px";
       popup.style.height = (popupState.height) + "px";
       if (callOpenPopup && popupState && popupState.shown) {
+        let matrix = 'matrix(' + popup.style.scale + ', 0, 0, ' + popup.style.scale + ', 0, 0)';
+        //document.getElementById("panzoom_container").style.transform = matrix;
         openOrgChartPopup();
       }
     }
   }
 }
 
+function getPopupScale() {
+  let popupScale = 1;
+  try {
+    popupTransform = document.getElementById("panzoom_container").style.transform;
+    console.log("captureChartPopupState popupTransform: " + JSON.stringify(popupTransform));
+    let start = popupTransform.indexOf("(") + 1;
+    let end = popupTransform.indexOf(")");
+    let matrix = popupTransform.slice(start, end).split(",");
+    popupScale =  +matrix[0]; 
+  } catch (error) {
+    console.log("getPopupScale matrix error: " + error);
+  }
+  return popupScale;
+}
+
 // restore previous popup state
-function captureAndSaveChartPopupState(shownFlag){
+function captureAndSaveChartPopupState(shownFlag) {
+  var pState;
   let rect = popup.getBoundingClientRect();
-  let pState = {shown: shownFlag, left: rect.left, top: rect.top, height: rect.height, width: rect.width};
+  if (rect.width > 30 && rect.height > 50) {
+    pState = { shown: shownFlag, left: rect.left, top: rect.top, height: rect.height, width: rect.width, scale: getPopupScale() };
+  }
+  else{
+    // container is no longer available use values in localstorage
+    let popupStateItem = localStorage.getItem("treePopupState");
+    if (popupStateItem != '[object Object]' && (typeof popupStateItem === 'string' || popupStateItem instanceof String)) {
+      pState = JSON.parse(popupStateItem);
+      pState.scale = getPopupScale();
+      pState.shown = shownFlag;
+    }
+  }
+  // safeguards:
+  if (pState.left < 1) {
+    pState.left = 1;
+  }
+  if (pState.top < 1) {
+    pState.top = 1;
+  }
+  if (pState.width < 300) {
+    pState.width = 300;
+  }
+  if (pState.height < 150) {
+    pState.height = 150;
+  }
+
   console.log("captureChartPopupState popupState: " + JSON.stringify(pState));
   localStorage.setItem("treePopupState", JSON.stringify(pState));
 }
 
-function toggleOrgChartPopup(){
-  if (popup.style.display == "none"){
+function toggleOrgChartPopup() {
+  if (popup.style.display == "none") {
     openOrgChartPopup();
   }
-  else{
+  else {
     closeChartPopup();
   }
 }
 
-function closeChartPopup(){
+function closeChartPopup() {
   popup.style.display = "none";
+  console.log("closeChartPopup");
   captureAndSaveChartPopupState(false);
 }
 
-function openOrgChartPopup(){
+function openOrgChartPopup() {
   initChartPopup(false);
   radiobtn = document.getElementById("view-timeline");
   let tpTarget = document.getElementById("popup-content-target");
-  let ocEle= document.getElementById("orgchart-container");
-  let ocSource = document.getElementById("chart-content-target");
-  if (radiobtn.checked){
-      console.log('openOrgChartPopup radiobtn.checked: ' + radiobtn.checked)
-
-      ocEle.style.display = "block";
-      popup.style.display = "block";
-      try {
-          tpTarget.appendChild(ocSource.firstElementChild);
-      } catch (error) {
-          console.log(error);            
-      }
+  let ocEle = document.getElementById("orgchart-container");
+  let ocSource = document.getElementById("tree_container");
+  if (radiobtn.checked) {
+    console.log('openOrgChartPopup radiobtn.checked: ' + radiobtn.checked)
+    captureAndSaveChartPopupState(true);
+    ocEle.style.display = "block";
+    popup.style.display = "block";
+    try {
+      tpTarget.appendChild(ocSource.firstElementChild);
+    } catch (error) {
+      console.log(error);
+    }
   }
 }
 
@@ -131,6 +175,6 @@ function dragElement(elmnt) {
     document.onmousemove = null;
     captureAndSaveChartPopupState(true);
     console.log("closeDragElement");
-    
+
   }
 }

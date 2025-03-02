@@ -121,7 +121,7 @@ function handleViewChoiceClick(viewChoice, setChecked) {
         }
     // move chart back home if it was in the popup
         let tpSource = document.getElementById("popup-content-target");
-        let ocTarget = document.getElementById("chart-content-target");
+        let ocTarget = document.getElementById("tree_container");
         if (tpSource.innerHTML.length > 1000){
             console.log('handleViewChoiceClick moving from popup back to chart container ');
             ocTarget.appendChild(tpSource.firstElementChild);

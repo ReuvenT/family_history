@@ -156,8 +156,8 @@ function showNode(nodeEl, useScrolIntoView) {
     if (nodeEl) {
         let elBounds = nodeEl.getBoundingClientRect();
         let chartContainerBounds = document.getElementById("chart_container").getBoundingClientRect();
-        console.log(`cont bounds (top, right, bottom, and left) ${chartContainerBounds.top}px, ${chartContainerBounds.right}px, ${chartContainerBounds.bottom}px, ${chartContainerBounds.left}px`);
-        console.log(`item bounds (top, right, bottom, and left) ${elBounds.top}px, ${elBounds.right}px, ${elBounds.bottom}px, ${elBounds.left}px`);
+        console.log(`showNode: cont bounds (top, right, bottom, and left) ${chartContainerBounds.top}px, ${chartContainerBounds.right}px, ${chartContainerBounds.bottom}px, ${chartContainerBounds.left}px`);
+        console.log(`showNode: item bounds (top, right, bottom, and left) ${elBounds.top}px, ${elBounds.right}px, ${elBounds.bottom}px, ${elBounds.left}px`);
         let xTranslation = 0;
         let xScale = 1;
         let yTranslation = 0;
@@ -211,6 +211,12 @@ function showNode(nodeEl, useScrolIntoView) {
         let matrix = 'matrix(' + xScale + ', 0, 0, ' + yScale + ', ' + xTranslation + ', ' + yTranslation + ')';
         console.log("transform matrix: " + matrix);
         document.getElementById("panzoom_container").style.transform = matrix;
+
+        // log the "after"
+        elBounds = nodeEl.getBoundingClientRect();
+        console.log(`showNode (after): item bounds (top, right, bottom, and left) ${elBounds.top}px, ${elBounds.right}px, ${elBounds.bottom}px, ${elBounds.left}px`);
+
+
 
     }
 }
