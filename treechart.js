@@ -29,7 +29,7 @@ function prepChartTable(data, newTable) {
 
     localStorage.setItem('chartFullTable', sourceData);
     // Create the chart.
-    chart = new google.visualization.OrgChart(document.getElementById('chart_container'));
+    chart = new google.visualization.OrgChart(document.getElementById('chart_container'));  // popup test //
 
     return renderedTable;
 }

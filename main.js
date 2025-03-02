@@ -12,7 +12,7 @@ localStorage.setItem('selectedOrgItem', null);
 google.charts.load('current', { packages: ["orgchart"] });
 google.charts.setOnLoadCallback(drawChart);
 
-document.getElementById("tree-popup").classList.add("hide-popup")
+// popup test //document.getElementById("tree-popup").classList.add("hide-popup")
 
 document.addEventListener('DOMContentLoaded', function () {
     console.log("parent document ready");
@@ -93,7 +93,7 @@ if (window.postMessage) {
 
 function redirectiFrames(timeframeUrl, orgChartElId) {
     redirectTimelineiFrame(timeframeUrl);
-    navigateToNode(orgChartNodeId, false);
+    navigateToNode(orgChartElId, false);
 }
 
 function redirectTimelineiFrame(newUrl) {
@@ -101,12 +101,12 @@ function redirectTimelineiFrame(newUrl) {
     document.getElementById('tl-timeline-iframe').src = newUrl;
 }
 
-function handleViewChoiceClick(viewChoice, setTimelineChecked) {
+function handleViewChoiceClick(viewChoice, setChecked) {
     let tlFrame = document.getElementById("tl-timeline-iframe");
     let ocEle = document.getElementById("orgchart-container");
     let tpEle = document.getElementById("tree-popup");
     let pu = document.getElementById("tree-popup-btn");
-    console.log('handleViewChoiceClick to viewChoice: ' + viewChoice + ', setTimelineChecked: ' + setTimelineChecked)
+    console.log('handleViewChoiceClick to viewChoice: ' + viewChoice + ', setChecked: ' + setChecked)
     if (viewChoice == "view-tree") {
         tlFrame.classList.remove("fullScreen");
         tlFrame.style.display = "none";
@@ -114,7 +114,11 @@ function handleViewChoiceClick(viewChoice, setTimelineChecked) {
         ocEle.classList.add("fullScreen");
         pu.style.display = "none";
         tpEle.style.display = "none";
-        // move chart back home if it was in the popup
+        if (setChecked) {
+            radiobtn = document.getElementById("view-tree");
+            radiobtn.checked = true;
+        }
+    // move chart back home if it was in the popup
         let tpSource = document.getElementById("popup-content-target");
         let ocTarget = document.getElementById("chart-content-target");
         if (tpSource.innerHTML.length > 1000){
@@ -127,7 +131,7 @@ function handleViewChoiceClick(viewChoice, setTimelineChecked) {
             tlFrame.classList.add("fullScreen");
             tlFrame.style.display = "block";
             pu.style.display = "inline";
-            if (setTimelineChecked) {
+            if (setChecked) {
                 radiobtn = document.getElementById("view-timeline");
                 radiobtn.checked = true;
             }
@@ -138,6 +142,16 @@ function handleViewChoiceClick(viewChoice, setTimelineChecked) {
         }
 }
 
+function closeChartPopup(){
+    let tpEle = document.getElementById("tree-popup");
+    let rect = tpEle.getBoundingClientRect();
+    tpEle.style.display = "none";
+    let popupState = {shown: false, left: rect.left, top: rect.top, height: rect.height, width: rect.width};
+    console.log("closeChartPopup popupState: " + JSON.stringify(popupState));
+    localStorage.setItem("treePopupState", JSON.stringify(popupState));
+
+}
+
 function openOrgChartPopup(){
     radiobtn = document.getElementById("view-timeline");
     let tpEle = document.getElementById("tree-popup");
@@ -146,13 +160,27 @@ function openOrgChartPopup(){
     let ocSource = document.getElementById("chart-content-target");
     if (radiobtn.checked){
         console.log('openOrgChartPopup radiobtn.checked: ' + radiobtn.checked)
+
+        tpEle.style.height = 500;
+        tpEle.style.width = 500;
+
         ocEle.style.display = "block";
         tpEle.style.display = "block";
-        tpTarget.appendChild(ocSource.firstElementChild);
-        localStorage.setItem("treePopupUsed", 'true');
+        try {
+            tpTarget.appendChild(ocSource.firstElementChild);
+        } catch (error) {
+            console.log(error);            
+        }
     }
+    let rect = tpEle.getBoundingClientRect();
+    let popupState = {shown: true, left: rect.left, top: rect.top, height: rect.height, width: rect.width};
+    console.log("openOrgChartPopup state: " + JSON.stringify(popupState));
+    localStorage.setItem("treePopupState", JSON.stringify(popupState));
 }
 
-function orgChartPopupClosed(){
-    localStorage.setItem("treePopupUsed", 'false');
-}
+// function orgChartPopupClosed(){
+//     let rect = document.getElementById("tree-popup").getBoundingClientRect();
+//     let popupState = {shown: false, left: rect.left, top: rect.top, height: rect.height, width: rect.width};
+//     console.log("stop drag state: " + JSON.stringify(popupState));
+//     localStorage.setItem("treePopupState", JSON.stringify(popupState));
+// }

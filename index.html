@@ -1,36 +1,36 @@
-<!doctype html>
-<html lang="en-US">
-
 <head>
   <title>Trabin Family History</title>
   <link rel="stylesheet" type="text/css" href="index.css">
 </head>
 
 <body>
-  <div id="err_msg"></div>
-  <div id="tree-popup">
-    <div id="tree-popup-header">Click here to move</div>
-    <div id="popup-content-target">
-      <!-- <div id="chart-content-target" style="overflow-x: clip; overflow-y: clip;">
-        <div id="orgchart-container" style="border: 1px solid black; background-color: white;">
-          <div class="panzoom" sdid="panzoom_container>
-            <div id="chart_container"></div>
-          </div>
-        </div>
-      </div>  -->
-    </div>
+
+  <!-- <div id="tree-popup" class="resizable" style="border: 1px solid black; width: 200px; height: 200px;">Click to make me
+    resizable<div id="resizer" class="resizer"></div>
+  </div> -->
+
+  <div id="tree-popup" class="resizable" style="border: 1px solid black; width: 200px; height: 200px;">
+    <div id="tree-popup-header">Click here to move and bottom right to resize
+      <button class="close-popup-btn" title="click to close popup" style="padding-left: 13px;" onclick="closeChartPopup()">X</button>
+      <button title="click to open full tree" style="border: solid 3px; color:black; float:right; margin-top: 2px; " onclick="handleViewChoiceClick('view-tree', true);">&nbsp;</button></div>
+    <div id="popup-content-target"></div>
+    <div id="resizer" class="resizer"></div>
   </div>
 
+  <div id="iframe-container">
+    <iframe onmousewheel="" frameborder="0" scrolling="no" style="border-width:0; width: 100%; height: 99%;"
+      id="tl-timeline-iframe"></iframe>
+  </div>
 
-  <iframe onmousewheel="" frameborder="0" scrolling="no" style="border-width:0; width: 100%; height: 99%;"
-    id="tl-timeline-iframe" id="tl-timeline-iframe"></iframe>
   <div id="chart-content-target">
-    <div id="orgchart-container" style="display: none; border: 1px solid black; background-color: white; overflow-x: clip; overflow-y: clip;">
+    <div id="orgchart-container"
+      style="display: none; border: 1px solid black; background-color: white; overflow-x: clip; overflow-y: clip;">
       <div class="panzoom" id="panzoom_container">
         <div id="chart_container"></div>
       </div>
     </div>
   </div>
+
   <div id="radioViews"
     style="position: absolute; left: 8px; top: 8px; z-index: 100; width: 150px; background-color: rgb(212, 210, 210);">
     <fieldset style="width: 130px; border: none;">
@@ -47,6 +47,8 @@
       </div>
     </fieldset>
   </div>
+
+  </script>
 
   <script src="panzoom.js"></script>
   <script src="https://www.gstatic.com/charts/loader.js"></script>

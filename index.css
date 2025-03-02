@@ -31,6 +31,21 @@ html, body {
   display: inline;
 }
 
+/* #close-popup-btn{
+  font: 1.5rem 'Fira Sans', sans-serif;
+  border: 0 none transparent;
+  background: none;
+} */
+
+.close-popup-btn{
+  font: 1.5rem 'Fira Sans', sans-serif;
+  border: 0 none transparent;
+  background: none;
+  color: rgb(20, 17, 17);
+  /* margin-left: 15px; */
+  float: right;
+}
+
 label, legend {
   font:
     1rem "Fira Sans",
@@ -97,7 +112,7 @@ input {
   top: 400px;
   width: 480px;
   height: 550px;
-  z-index: 189;
+  z-index: 100;
   background-color: #f1f1f1;
   text-align: center;
   border: 1px solid #d3d3d3;
@@ -107,6 +122,27 @@ input {
   padding: 10px;
   cursor: move;
   z-index: 10;
-  background-color: #b5d9ea;
-  color: #fff;
+  background-color: #65bee7;
+  /* color: darkblue; */
+  font:
+    1rem "Fira Sans",
+    sans-serif;
+    color: rgb(20, 17, 17);
+}
+
+.resizable {
+  position: relative;
+}
+
+.resizer {
+  width: 0;
+  height: 0;
+  border-top: 15px solid transparent;
+  border-left: 15px solid #65bee7;
+  border-bottom: 15px solid transparent;
+  position: absolute;
+  right: -3px;
+  bottom: -10px;
+  cursor: se-resize;
+  transform: rotate(45deg);
 }
