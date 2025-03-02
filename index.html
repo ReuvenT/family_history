@@ -9,7 +9,7 @@
     resizable<div id="resizer" class="resizer"></div>
   </div> -->
 
-  <div id="tree-popup" class="resizable" style="border: 1px solid black; width: 200px; height: 200px;">
+  <div id="tree-popup" class="resizable" style="display: none;">
     <div id="tree-popup-header">Click here to move and bottom right to resize
       <button class="close-popup-btn" title="click to close popup" style="padding-left: 13px;" onclick="closeChartPopup()">X</button>
       <button title="click to open full tree" style="border: solid 3px; color:black; float:right; margin-top: 2px; " onclick="handleViewChoiceClick('view-tree', true);">&nbsp;</button></div>
@@ -23,8 +23,7 @@
   </div>
 
   <div id="chart-content-target">
-    <div id="orgchart-container"
-      style="display: none; border: 1px solid black; background-color: white; overflow-x: clip; overflow-y: clip;">
+    <div id="orgchart-container">
       <div class="panzoom" id="panzoom_container">
         <div id="chart_container"></div>
       </div>
@@ -38,7 +37,7 @@
       <div>
         <input type="radio" id="view-timeline" onclick="handleViewChoiceClick(this.value);" name="viewOption"
           value="view-timeline" checked />
-        <label for="view-timeline">Timeline&nbsp;&nbsp;&nbsp;<button id="tree-popup-btn" title="click here for tree popup" onclick="openOrgChartPopup()">┼</button></label>
+        <label for="view-timeline">Timeline&nbsp;&nbsp;&nbsp;<img src="..\img\tree_view.png" onclick="toggleOrgChartPopup()" id="tree-popup-btn" title="click here for tree popup"/>
       </div>
       <div>
         <input type="radio" id="view-tree" onclick="handleViewChoiceClick(this.value);" name="viewOption"

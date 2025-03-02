@@ -34,6 +34,7 @@ document.addEventListener('DOMContentLoaded', function () {
     });
 
     iframe.onload = function () {
+        initChartPopup(true);
         console.log('Iframe content loaded or reloaded');
     };
 
@@ -135,52 +136,7 @@ function handleViewChoiceClick(viewChoice, setChecked) {
                 radiobtn = document.getElementById("view-timeline");
                 radiobtn.checked = true;
             }
-            // if popup was previously displayed, re-show it
-            if (Boolean(localStorage.getItem("treePopupUsed"))){
-                openOrgChartPopup()
-            }
+            initChartPopup(true);
         }
 }
 
-function closeChartPopup(){
-    let tpEle = document.getElementById("tree-popup");
-    let rect = tpEle.getBoundingClientRect();
-    tpEle.style.display = "none";
-    let popupState = {shown: false, left: rect.left, top: rect.top, height: rect.height, width: rect.width};
-    console.log("closeChartPopup popupState: " + JSON.stringify(popupState));
-    localStorage.setItem("treePopupState", JSON.stringify(popupState));
-
-}
-
-function openOrgChartPopup(){
-    radiobtn = document.getElementById("view-timeline");
-    let tpEle = document.getElementById("tree-popup");
-    let tpTarget = document.getElementById("popup-content-target");
-    let ocEle= document.getElementById("orgchart-container");
-    let ocSource = document.getElementById("chart-content-target");
-    if (radiobtn.checked){
-        console.log('openOrgChartPopup radiobtn.checked: ' + radiobtn.checked)
-
-        tpEle.style.height = 500;
-        tpEle.style.width = 500;
-
-        ocEle.style.display = "block";
-        tpEle.style.display = "block";
-        try {
-            tpTarget.appendChild(ocSource.firstElementChild);
-        } catch (error) {
-            console.log(error);            
-        }
-    }
-    let rect = tpEle.getBoundingClientRect();
-    let popupState = {shown: true, left: rect.left, top: rect.top, height: rect.height, width: rect.width};
-    console.log("openOrgChartPopup state: " + JSON.stringify(popupState));
-    localStorage.setItem("treePopupState", JSON.stringify(popupState));
-}
-
-// function orgChartPopupClosed(){
-//     let rect = document.getElementById("tree-popup").getBoundingClientRect();
-//     let popupState = {shown: false, left: rect.left, top: rect.top, height: rect.height, width: rect.width};
-//     console.log("stop drag state: " + JSON.stringify(popupState));
-//     localStorage.setItem("treePopupState", JSON.stringify(popupState));
-// }

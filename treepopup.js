@@ -1,17 +1,69 @@
 const popup = document.getElementById("tree-popup");
-let popupStateItem = localStorage.getItem("treePopupState");
-if (popupStateItem != '[object Object]' && (typeof popupStateItem === 'string' || popupStateItem instanceof String)) {
-  let popupState = JSON.parse(popupStateItem);
-  if (popupState && popupState.shown) {
-    popup.style.top = (popupState.top) + "px";
-    popup.style.left = (popupState.left) + "px";
-    popup.style.width = (popupState.width) + "px";
-    popup.style.height = (popupState.height) + "px";
+//const popupStateItem = localStorage.getItem("treePopupState");
+var r = document.getElementById('resizer');
+r.addEventListener('mousedown', initDrag, false);
+
+
+// restore previous popup state
+function initChartPopup(callOpenPopup){
+  let popupStateItem = localStorage.getItem("treePopupState");
+  if (popupStateItem != '[object Object]' && (typeof popupStateItem === 'string' || popupStateItem instanceof String)) {
+    let popupState = JSON.parse(popupStateItem);
+    if (popupState) {
+      console.log("initChartPopup callOpenPopup, popupState: " + callOpenPopup + ", " + JSON.stringify(popupState));
+      popup.style.top = (popupState.top) + "px";
+      popup.style.left = (popupState.left) + "px";
+      popup.style.width = (popupState.width) + "px";
+      popup.style.height = (popupState.height) + "px";
+      if (callOpenPopup && popupState && popupState.shown) {
+        openOrgChartPopup();
+      }
+    }
   }
 }
 
-var r = document.getElementById('resizer');
-r.addEventListener('mousedown', initDrag, false);
+// restore previous popup state
+function captureAndSaveChartPopupState(shownFlag){
+  let rect = popup.getBoundingClientRect();
+  let pState = {shown: shownFlag, left: rect.left, top: rect.top, height: rect.height, width: rect.width};
+  console.log("captureChartPopupState popupState: " + JSON.stringify(pState));
+  localStorage.setItem("treePopupState", JSON.stringify(pState));
+}
+
+function toggleOrgChartPopup(){
+  if (popup.style.display == "none"){
+    openOrgChartPopup();
+  }
+  else{
+    closeChartPopup();
+  }
+}
+
+function closeChartPopup(){
+  popup.style.display = "none";
+  captureAndSaveChartPopupState(false);
+}
+
+function openOrgChartPopup(){
+  initChartPopup(false);
+  radiobtn = document.getElementById("view-timeline");
+  let tpTarget = document.getElementById("popup-content-target");
+  let ocEle= document.getElementById("orgchart-container");
+  let ocSource = document.getElementById("chart-content-target");
+  if (radiobtn.checked){
+      console.log('openOrgChartPopup radiobtn.checked: ' + radiobtn.checked)
+
+      ocEle.style.display = "block";
+      popup.style.display = "block";
+      try {
+          tpTarget.appendChild(ocSource.firstElementChild);
+      } catch (error) {
+          console.log(error);            
+      }
+  }
+}
+
+
 var startX, startY, startWidth, startHeight;
 
 function initDrag(e) {
@@ -33,10 +85,8 @@ function doResizePopup(e) {
 function stopResizePopup(e) {
   popup.removeEventListener('mousemove', doResizePopup, false);
   popup.removeEventListener('mouseup', stopResizePopup, false);
-  let rect = popup.getBoundingClientRect();
-  let popupState = { shown: true, left: rect.left, top: rect.top, height: rect.height, width: rect.width };
-  console.log("stop drag state: " + JSON.stringify(popupState));
-  localStorage.setItem("treePopupState", JSON.stringify(popupState));
+  captureAndSaveChartPopupState(true);
+  console.log("stop drag state");
 }
 
 dragElement(popup);
@@ -79,5 +129,8 @@ function dragElement(elmnt) {
     /* stop moving when mouse button is released:*/
     document.onmouseup = null;
     document.onmousemove = null;
+    captureAndSaveChartPopupState(true);
+    console.log("closeDragElement");
+    
   }
 }

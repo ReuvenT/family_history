@@ -21,21 +21,12 @@ html, body {
 }
 
 #tree-popup-btn{
-  /* font-size: larger; 
-  font-weight: bold;  
-  margin-left: 10px; */
-  width: 15px;
-  height: 11px;
-  border: 0 none transparent;
-  background: none;
-  display: inline;
+  margin-bottom: -3px; 
+  margin-left: 5px; 
+  width: 20px;
+  height: 20px;
+  
 }
-
-/* #close-popup-btn{
-  font: 1.5rem 'Fira Sans', sans-serif;
-  border: 0 none transparent;
-  background: none;
-} */
 
 .close-popup-btn{
   font: 1.5rem 'Fira Sans', sans-serif;
@@ -67,15 +58,20 @@ input {
   /* display: block; */
 }
 
-.base-container {
-  /* width: 1530px;  */
-  /* height: 850px; */
-}
-
 .tl-link-btn {
   height: 24px;
   background: url(/img/open_story.png) no-repeat 27px center;
   display: block;
+}
+
+#orgchart-container {
+  display: none; 
+  border: 1px solid black; 
+  background-color: white; 
+  overflow-x: clip; 
+  overflow-y: clip;
+  /* width: inherit;
+  height: inherit; */
 }
 
 .oc-wid-node {
@@ -110,8 +106,9 @@ input {
 #tree-popup {
   position: absolute;
   top: 400px;
-  width: 480px;
-  height: 550px;
+  /* width: 480px;
+  height: 550px; 
+  box-sizing: border-box;*/
   z-index: 100;
   background-color: #f1f1f1;
   text-align: center;
@@ -119,7 +116,8 @@ input {
 }
 
 #tree-popup-header {
-  padding: 10px;
+  padding: 12px;
+  /* margin-bottom: 4px; */
   cursor: move;
   z-index: 10;
   background-color: #65bee7;
@@ -134,15 +132,16 @@ input {
   position: relative;
 }
 
+/* triangle to move popup */
 .resizer {
   width: 0;
   height: 0;
-  border-top: 15px solid transparent;
-  border-left: 15px solid #65bee7;
-  border-bottom: 15px solid transparent;
+  border-top: 20px solid transparent;
+  border-left: 20px solid #65bee7;
+  border-bottom: 20px solid transparent;
   position: absolute;
-  right: -3px;
-  bottom: -10px;
+  right: -1px;
+  bottom: -12px;
   cursor: se-resize;
   transform: rotate(45deg);
 }
