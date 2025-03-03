@@ -35,6 +35,7 @@ function prepChartTable(data, newTable) {
 }
 
 function treeSelectHandler() {
+    localStorage.setItem('selectedOrgItem', null);
     var selectedItem = chart.getSelection()[0];
     if (selectedItem && selectedItem.hasOwnProperty('row')) { //&& selectedItem.row) {
         if (selectedItem) {
@@ -45,7 +46,6 @@ function treeSelectHandler() {
             localStorage.setItem('selectedOrgItem', JSON.stringify({ 'row': selectedItem.row, 'url': val3 }));
             console.log('The user selected row ' + selectedItem.row + ' with values ' + val0 + ', ' + val1 + ', ' + val2 + ', ' + val3);
         }
-
     }
 }
 
@@ -57,7 +57,7 @@ function processData(csvData, isForToolTip) {
     // any row starting with # is informational only - not processed
     for (let i = 0; i < rows.length; i++) {
         rawRow = rows[i];
-        if (!rawRow.startsWith("#")) {
+        if (rawRow.length > 1 &&  !rawRow.startsWith("#")) {
             let rowArray = processDataRow(rows[i], i, j++);
             if (rowArray.length > 2) {
                 data.push(rowArray);
@@ -75,13 +75,16 @@ function processDataRow(csvDataRow, i, dataRowNbr) {
     let dataRow = [];
     try {
         var body = cells[2];
+        var insertPoint = body.indexOf(bodyInsertHtml) + 7;
         // insert link button if url is specified
-        if (cells.length > 3 && cells[4]) {
-            var insertPoint = body.indexOf(bodyInsertHtml) + 7;
-            if (insertPoint > 7) {
-                body = body.slice(0, insertPoint) + '<span data-row="' + dataRowNbr + '" id="' + cells[4] + timelineLinkBtnHtml + body.slice(insertPoint);
-            }
+        if (cells.length > 3 && cells[4] && insertPoint > 7 ) {
+            body = body.slice(0, insertPoint) + '<span data-row="' + dataRowNbr + '" id="' + cells[4] + timelineLinkBtnHtml + body.slice(insertPoint);
         }
+        else{
+            insertPoint = body.indexOf("<div >") + 5;
+            body = body.slice(0, insertPoint) + ' data-row="' + dataRowNbr + '" id="' + cells[0] + '"' + body.slice(insertPoint);
+        }
+        //console.log("tree load dataRowNbr " + dataRowNbr + " body: " + body)
         dataRow.push({ "v": cells[0], "f": body });         // Key_Name, Body
         dataRow.push(cells[1]);                             // Parent
 
@@ -152,62 +155,83 @@ function navigateToNode(elementId, useScrollIntoView) {
     }
 }
 
+function moveOrgChart(targetContainer, isFullPage, scale) {
+    let ocSource = document.getElementById("orgchart-container");
+    var selectedItem = JSON.parse(localStorage.getItem('selectedOrgItem')); 
+    console.log('moveOrgChart moving to target ' + targetContainer.id + ' with selected item ' + JSON.stringify(selectedItem));
+    let fromCenteredEl = (!selectedItem || selectedItem.row < 1) 
+        ? getCenterElement(ocSource) 
+        : document.querySelector('[data-row="' + (selectedItem.row)  + '"]');
+    try {
+        if (ocSource.innerHTML.length > 1000) {
+            targetContainer.appendChild(ocSource);
+        }
+        showNode(fromCenteredEl, false);
+    } catch (error) {
+        console.log(error);
+    }
+
+}
+
+function getCenterElement(container) {
+    // calculate the central point of the container
+    let chartContainerBounds = container.getBoundingClientRect();
+    let containerCenter = {x: (chartContainerBounds.left + (chartContainerBounds.width/2)), y: (chartContainerBounds.top + (chartContainerBounds.height/2))};
+    //console.log(`getCenterElement: container ${container.id} bounds (top, right, bottom, and left) ${chartContainerBounds.top}px, ${chartContainerBounds.right}px, ${chartContainerBounds.bottom}px, ${chartContainerBounds.left}px center: ${JSON.stringify(containerCenter)}`);
+    let sortedDist = [];
+    let elements = document.querySelectorAll('[data-row]');
+    elements.forEach((el) => {
+        //console.log('popup element: ' + el.id + ' visibility: ' +  elementIsVisibleInViewport(el)); //.checkVisibility());
+        if (elementIsVisibleInViewport(el))
+            {
+                let elBounds = el.getBoundingClientRect();
+                if (elBounds.right == 0){
+                    elBounds = el.parentElement.getBoundingClientRect();
+                }
+                let elCenter = {x: (elBounds.left + (elBounds.width/2)) , y:  (elBounds.top + (elBounds.height/2))};
+                let dist = ((containerCenter.x - elCenter.x) * (containerCenter.x - elCenter.x)) + ((containerCenter.y - elCenter.y) * (containerCenter.y - elCenter.y));
+                //console.log('popup element: ' + el.id + " el mid x,y: " +  (elBounds.left + (elBounds.width/2)) + ", " +  (elBounds.top + (elBounds.height/2)));
+                //console.log('popup element: ' + el.id + " row: " + el.getAttribute("data-row") + " dist: " +  Math.sqrt(dist));
+                sortedDist.push({elId: el.id, row: el.getAttribute("data-row") , dist: Math.sqrt(dist)});
+            }
+    });
+    orderedList = sortedDist.sort((a, b) => a.dist - b.dist)
+    console.log('for container: ' + container.id +  ' closest element: ' + orderedList[0].elId + ' row: ' + orderedList[0].row + " dist: " +  orderedList[0].dist);
+    return document.getElementById(orderedList[0].elId );
+}
+
+const elementIsVisibleInViewport = (el, partiallyVisible = false) => {
+    const { top, left, bottom, right } = el.getBoundingClientRect();
+    const { innerHeight, innerWidth } = window;
+    return partiallyVisible
+      ? ((top > 0 && top < innerHeight) ||
+          (bottom > 0 && bottom < innerHeight)) &&
+          ((left > 0 && left < innerWidth) || (right > 0 && right < innerWidth))
+      : top >= 0 && left >= 0 && bottom <= innerHeight && right <= innerWidth;
+  };
+
+
 function showNode(nodeEl, useScrolIntoView) {
     if (nodeEl) {
+        console.log(`showNode nodeEl id:  ${nodeEl.id}, useScrolIntoView: ${useScrolIntoView}`);
         let elBounds = nodeEl.getBoundingClientRect();
+        if (elBounds.right == 0){
+            elBounds = nodeEl.parentElement.getBoundingClientRect();
+        }
         let chartContainerBounds = document.getElementById("chart_container").getBoundingClientRect();
-        console.log(`showNode: cont bounds (top, right, bottom, and left) ${chartContainerBounds.top}px, ${chartContainerBounds.right}px, ${chartContainerBounds.bottom}px, ${chartContainerBounds.left}px`);
-        console.log(`showNode: item bounds (top, right, bottom, and left) ${elBounds.top}px, ${elBounds.right}px, ${elBounds.bottom}px, ${elBounds.left}px`);
+        //console.log(`showNode: cont bounds (top, right, bottom, and left) ${chartContainerBounds.top}px, ${chartContainerBounds.right}px, ${chartContainerBounds.bottom}px, ${chartContainerBounds.left}px`);
+        //console.log(`showNode: item bounds (top, right, bottom, and left) ${elBounds.top}px, ${elBounds.right}px, ${elBounds.bottom}px, ${elBounds.left}px`);
         let xTranslation = 0;
         let xScale = 1;
         let yTranslation = 0;
         let yScale = 1;
-        // todo: figure out scale
-        if (elBounds.left < chartContainerBounds.left) {
-            if (elBounds.right > chartContainerBounds.right) {
-                // item is larger that container
-                //xScale = (chartContainerBounds.width / elBounds.width) * 95;
-                //xLeft += chartContainerBounds.width * .1;
-            }
-            else {
-                xTranslation = (chartContainerBounds.left - elBounds.left + (chartContainerBounds.width / 2));
-            }
-        }
-        else {
-            if (elBounds.right > chartContainerBounds.right) {
-                //xScale = (chartContainerBounds.width / elBounds.width) * 95;
-                xTranslation = - (elBounds.right - chartContainerBounds.right + (chartContainerBounds.width / 2));
-            }
-        }
-        if (elBounds.top < chartContainerBounds.top) {
-            if (elBounds.bottom > chartContainerBounds.bottom) {
-                // item is larger that container
-                //xScale = (chartContainerBounds.width / elBounds.width) * 95;
-                //xLeft += chartContainerBounds.width * .1;
-            }
-            else {
-                yTranslation = (chartContainerBounds.top - elBounds.top + (chartContainerBounds.height / 2));
-            }
-        }
-        else {
-            if (elBounds.bottom > chartContainerBounds.bottom) {
-                //xScale = (chartContainerBounds.width / elBounds.width) * 95;
-                yTranslation = - (elBounds.bottom - chartContainerBounds.bottom + (chartContainerBounds.height / 2));
-            }
-        }
 
-        if (xScale + yScale + xTranslation + yTranslation === 2)
-        {
-            if (useScrolIntoView){
-                var scrollOptions = { behavior: "smooth", block: "center", inline: "center" };
-                nodeEl.scrollIntoView(scrollOptions);
-            }
-            else{
-               // center manually 
-                xTranslation =  (chartContainerBounds.width * .5) - elBounds.left;
-                yTranslation = (chartContainerBounds.height * 1.5) - elBounds.bottom
-                }
-        }
+        let containerCenter = {x: (chartContainerBounds.left + (chartContainerBounds.width/2)), y: (chartContainerBounds.top + (chartContainerBounds.height/2))};
+        let elCenter = {x: (elBounds.left + (elBounds.width/2)), y: (elBounds.top + (elBounds.height/2))};
+        xTranslation = -(elCenter.x - containerCenter.x);
+        yTranslation = -(elCenter.y - containerCenter.y);
+
+        // // todo: figure out scale
         let matrix = 'matrix(' + xScale + ', 0, 0, ' + yScale + ', ' + xTranslation + ', ' + yTranslation + ')';
         console.log("transform matrix: " + matrix);
         document.getElementById("panzoom_container").style.transform = matrix;

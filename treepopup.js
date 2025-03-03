@@ -91,19 +91,35 @@ function closeChartPopup() {
 function openOrgChartPopup() {
   initChartPopup(false);
   radiobtn = document.getElementById("view-timeline");
-  let tpTarget = document.getElementById("popup-content-target");
+  //let tpTarget = document.getElementById("popup-content-target");
   let ocEle = document.getElementById("orgchart-container");
-  let ocSource = document.getElementById("tree_container");
+  //let ocSource = document.getElementById("tree_container"); //.firstChild;
   if (radiobtn.checked) {
     console.log('openOrgChartPopup radiobtn.checked: ' + radiobtn.checked)
     captureAndSaveChartPopupState(true);
     ocEle.style.display = "block";
     popup.style.display = "block";
-    try {
-      tpTarget.appendChild(ocSource.firstElementChild);
-    } catch (error) {
-      console.log(error);
-    }
+    moveOrgChart(document.getElementById("popup-content-target"), false, 1) 
+    // try {
+
+    //   //let tpSource = document.getElementById("popup-content-target");
+    //   //let ocTarget = document.getElementById("tree_container");
+    //   if (ocSource.innerHTML.length > 1000){
+    //       console.log('openOrgChartPopup moving to popup');
+    //       ocSource.appendChild(tpTarget.firstElementChild);
+    //   }
+
+
+
+
+    //   let fragment = document.createDocumentFragment();
+    //   fragment.appendChild(ocSource);
+    //   // Append fragment to desired element:
+    //   tpTarget.appendChild(fragment);
+    //   //tpTarget.appendChild(ocSource.firstElementChild);
+    // } catch (error) {
+    //   console.log(error);
+    // }
   }
 }
 

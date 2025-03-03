@@ -34,7 +34,14 @@ document.addEventListener('DOMContentLoaded', function () {
     });
 
     iframe.onload = function () {
-        initChartPopup(true);
+        if (document.getElementById("orgchart-container").innerHTML.length > 500){
+            initChartPopup(true);
+        }
+        else{
+            setTimeout(() => {
+                initChartPopup(true);
+            }, 250);
+        }
         console.log('Iframe content loaded or reloaded');
     };
 
@@ -75,6 +82,8 @@ async function drawChart() {
 
     // Draw the chart, setting the allowHtml option to true for the tooltips.
     chart.draw(renderedTable, drawOptions);
+
+    console.log('chart drawn');
 }
 
 if (window.postMessage) {
@@ -111,6 +120,7 @@ function handleViewChoiceClick(viewChoice, setChecked) {
     if (viewChoice == "view-tree") {
         tlFrame.classList.remove("fullScreen");
         tlFrame.style.display = "none";
+        moveOrgChart(document.getElementById("tree_container"), true, 1)
         ocEle.style.display = "block"; //orgchart-container
         ocEle.classList.add("fullScreen");
         pu.style.display = "none";
@@ -119,14 +129,9 @@ function handleViewChoiceClick(viewChoice, setChecked) {
             radiobtn = document.getElementById("view-tree");
             radiobtn.checked = true;
         }
-    // move chart back home if it was in the popup
-        let tpSource = document.getElementById("popup-content-target");
-        let ocTarget = document.getElementById("tree_container");
-        if (tpSource.innerHTML.length > 1000){
-            console.log('handleViewChoiceClick moving from popup back to chart container ');
-            ocTarget.appendChild(tpSource.firstElementChild);
+        // move chart back home if it was in the popup
+        //moveOrgChart(document.getElementById("tree_container"), true, 1)
         }
-    }
         else if (viewChoice == "view-timeline") {
             ocEle.classList.remove("fullScreen");
             tlFrame.classList.add("fullScreen");
