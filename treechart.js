@@ -67,7 +67,7 @@ function processData(csvData, isForToolTip) {
     return data;
 }
 const timelineEmbedBaseUrl = 'https://www.tiki-toki.com/timeline/embed/';
-const timelineLinkBtnHtml = '"></span><a class="tl-link-btn" onclick="timelineLink(this)"></a>';
+const timelineLinkBtnHtml = '" class="tl-span-id"></span><a class="tl-link-btn" onclick="timelineLink(this)"></a><br/>';
 const bodyInsertHtml = "-node'>";
 
 function processDataRow(csvDataRow, i, dataRowNbr) {

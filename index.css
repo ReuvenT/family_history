@@ -58,10 +58,17 @@ input {
   /* display: block; */
 }
 
+.tl-span-id {
+  display: none;
+}
+
 .tl-link-btn {
   height: 24px;
-  background: url(/img/open_story.png) no-repeat 27px center;
+  background: url(/img/open_story.png) no-repeat center;
   display: block;
+  /* padding-bottom: 35px;
+  margin-bottom: 30px; */
+  /* text-align: center; */
 }
 
 #orgchart-container {
@@ -77,12 +84,15 @@ input {
 .oc-wid-node {
   min-width: 92px;
   font-size: large;
+  /* text-align: center; */
 }
 
 .oc-med-node {
   min-width: 75px;
   font-size: large;
+  /* text-align: center; */
 }
+
 
 .oc-nar-node {
   min-width: 66px;
