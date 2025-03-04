@@ -102,3 +102,18 @@ function AttachPanZoom(ele, minScale, maxScale, increment, liner) {
   ele.addEventListener('DOMMouseScroll',this.getScrollDirection,false);
   ele.addEventListener('mousewheel',this.getScrollDirection,false); 
 }
+
+function getTransformScale() {
+  let tScale = 1;
+  try {
+    transform = document.getElementById("panzoom_container").style.transform;
+    console.log("getTransformScale transform: " + JSON.stringify(transform));
+    let start = transform.indexOf("(") + 1;
+    let end = transform.indexOf(")");
+    let matrix = transform.slice(start, end).split(",");
+    tScale =  +matrix[0]; 
+  } catch (error) {
+    console.log("getTransformScale matrix error: " + error);
+  }
+  return tScale;
+}

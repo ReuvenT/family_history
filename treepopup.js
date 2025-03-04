@@ -24,34 +24,34 @@ function initChartPopup(callOpenPopup) {
   }
 }
 
-function getPopupScale() {
-  let popupScale = 1;
-  try {
-    popupTransform = document.getElementById("panzoom_container").style.transform;
-    console.log("captureChartPopupState popupTransform: " + JSON.stringify(popupTransform));
-    let start = popupTransform.indexOf("(") + 1;
-    let end = popupTransform.indexOf(")");
-    let matrix = popupTransform.slice(start, end).split(",");
-    popupScale =  +matrix[0]; 
-  } catch (error) {
-    console.log("getPopupScale matrix error: " + error);
-  }
-  return popupScale;
-}
+// function getTransformScale() {
+//   let tScale = 1;
+//   try {
+//     transform = document.getElementById("panzoom_container").style.transform;
+//     console.log("getTransformScale transform: " + JSON.stringify(transform));
+//     let start = transform.indexOf("(") + 1;
+//     let end = transform.indexOf(")");
+//     let matrix = transform.slice(start, end).split(",");
+//     tScale =  +matrix[0]; 
+//   } catch (error) {
+//     console.log("getTransformScale matrix error: " + error);
+//   }
+//   return tScale;
+// }
 
 // restore previous popup state
 function captureAndSaveChartPopupState(shownFlag) {
   var pState;
   let rect = popup.getBoundingClientRect();
   if (rect.width > 30 && rect.height > 50) {
-    pState = { shown: shownFlag, left: rect.left, top: rect.top, height: rect.height, width: rect.width, scale: getPopupScale() };
+    pState = { shown: shownFlag, left: rect.left, top: rect.top, height: rect.height, width: rect.width, scale: getTransformScale() };
   }
   else{
     // container is no longer available use values in localstorage
     let popupStateItem = localStorage.getItem("treePopupState");
     if (popupStateItem != '[object Object]' && (typeof popupStateItem === 'string' || popupStateItem instanceof String)) {
       pState = JSON.parse(popupStateItem);
-      pState.scale = getPopupScale();
+      pState.scale = getTransformScale();
       pState.shown = shownFlag;
     }
   }

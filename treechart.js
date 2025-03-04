@@ -158,9 +158,9 @@ function navigateToNode(elementId, useScrollIntoView) {
 function moveOrgChart(targetContainer, isFullPage, scale) {
     let ocSource = document.getElementById("orgchart-container");
     var selectedItem = JSON.parse(localStorage.getItem('selectedOrgItem')); 
-    console.log('moveOrgChart moving to target ' + targetContainer.id + ' with selected item ' + JSON.stringify(selectedItem));
+    console.log('moveOrgChart moving to target ' + targetContainer.id + ' to ' + (isFullPage ? 'full': 'popup') + ' with selected item ' + JSON.stringify(selectedItem));
     let fromCenteredEl = (!selectedItem || selectedItem.row < 1) 
-        ? getCenterElement(ocSource) 
+        ? getCenterElement(ocSource).centerEl 
         : document.querySelector('[data-row="' + (selectedItem.row)  + '"]');
     try {
         if (ocSource.innerHTML.length > 1000) {
@@ -170,6 +170,9 @@ function moveOrgChart(targetContainer, isFullPage, scale) {
     } catch (error) {
         console.log(error);
     }
+    // if (!isFullPage){
+    //     document.getElementById("panzoom_container").style.transform = "matrix(.5, 0, 0, .5, 0, 0)";
+    // }
 
 }
 
@@ -180,24 +183,45 @@ function getCenterElement(container) {
     //console.log(`getCenterElement: container ${container.id} bounds (top, right, bottom, and left) ${chartContainerBounds.top}px, ${chartContainerBounds.right}px, ${chartContainerBounds.bottom}px, ${chartContainerBounds.left}px center: ${JSON.stringify(containerCenter)}`);
     let sortedDist = [];
     let elements = document.querySelectorAll('[data-row]');
+    let visibleCount = 0;
     elements.forEach((el) => {
-        //console.log('popup element: ' + el.id + ' visibility: ' +  elementIsVisibleInViewport(el)); //.checkVisibility());
-        if (elementIsVisibleInViewport(el))
-            {
-                let elBounds = el.getBoundingClientRect();
-                if (elBounds.right == 0){
-                    elBounds = el.parentElement.getBoundingClientRect();
-                }
-                let elCenter = {x: (elBounds.left + (elBounds.width/2)) , y:  (elBounds.top + (elBounds.height/2))};
-                let dist = ((containerCenter.x - elCenter.x) * (containerCenter.x - elCenter.x)) + ((containerCenter.y - elCenter.y) * (containerCenter.y - elCenter.y));
-                //console.log('popup element: ' + el.id + " el mid x,y: " +  (elBounds.left + (elBounds.width/2)) + ", " +  (elBounds.top + (elBounds.height/2)));
-                //console.log('popup element: ' + el.id + " row: " + el.getAttribute("data-row") + " dist: " +  Math.sqrt(dist));
-                sortedDist.push({elId: el.id, row: el.getAttribute("data-row") , dist: Math.sqrt(dist)});
-            }
+        let elBounds = el.getBoundingClientRect();
+        if (elBounds.right == 0){
+            elBounds = el.parentElement.getBoundingClientRect();
+        }
+        
+        let { top, left, bottom, right } = el.getBoundingClientRect();
+        let elCenter = {x: (left + ((right-left)/2)) , y:  (top + ((bottom - top)/2))};
+        if (elCenter.x > chartContainerBounds.left && elCenter.y < chartContainerBounds.bottom && elCenter.x < chartContainerBounds.right && elCenter.y > chartContainerBounds.top){
+            visibleCount ++;
+            let dist = ((containerCenter.x - elCenter.x) * (containerCenter.x - elCenter.x)) + ((containerCenter.y - elCenter.y) * (containerCenter.y - elCenter.y));
+            sortedDist.push({elId: el.id, row: el.getAttribute("data-row") , dist: Math.sqrt(dist)});
+            //console.log('getCenterElement visible row ' + el.dataset.row + ' ' + JSON.stringify(elBounds));
+        }
+        else{
+            //console.log('getCenterElement not vis row ' + el.dataset.row + ' ' + JSON.stringify(elBounds));
+        }
+        // //console.log('popup element: ' + el.id + ' visibility: ' +  elementIsVisibleInViewport(el)); //.checkVisibility());
+        // if (elementIsVisibleInViewport(el))
+        //     {
+        //         let elBounds = el.getBoundingClientRect();
+        //         if (elBounds.right == 0){
+        //             elBounds = el.parentElement.getBoundingClientRect();
+        //         }
+        //         let elCenter = {x: (elBounds.left + (elBounds.width/2)) , y:  (elBounds.top + (elBounds.height/2))};
+        //         let dist = ((containerCenter.x - elCenter.x) * (containerCenter.x - elCenter.x)) + ((containerCenter.y - elCenter.y) * (containerCenter.y - elCenter.y));
+        //         //console.log('popup element: ' + el.id + " el mid x,y: " +  (elBounds.left + (elBounds.width/2)) + ", " +  (elBounds.top + (elBounds.height/2)));
+        //         //console.log('popup element: ' + el.id + " row: " + el.getAttribute("data-row") + " dist: " +  Math.sqrt(dist));
+        //         sortedDist.push({elId: el.id, row: el.getAttribute("data-row") , dist: Math.sqrt(dist)});
+        //     }
     });
     orderedList = sortedDist.sort((a, b) => a.dist - b.dist)
-    console.log('for container: ' + container.id +  ' closest element: ' + orderedList[0].elId + ' row: ' + orderedList[0].row + " dist: " +  orderedList[0].dist);
-    return document.getElementById(orderedList[0].elId );
+    if (orderedList.length == 0){
+        console.log('for container: ' + container.id +  ' no visible elements found'); 
+        return {centerEl: null, visibleCount: 0}; 
+    }
+    //console.log('for container: ' + container.id +  ' closest element: ' + orderedList[0].elId + ' row: ' + orderedList[0].row + " dist: " +  orderedList[0].dist + " visible " +  visibleCount  + "/" +  elements.length );
+    return {centerEl: document.getElementById(orderedList[0].elId), visibleCount}; 
 }
 
 const elementIsVisibleInViewport = (el, partiallyVisible = false) => {
@@ -219,6 +243,7 @@ function showNode(nodeEl, useScrolIntoView) {
             elBounds = nodeEl.parentElement.getBoundingClientRect();
         }
         let chartContainerBounds = document.getElementById("chart_container").getBoundingClientRect();
+        let centerEl = getCenterElement(document.getElementById("orgchart-container")).centerEl 
         //console.log(`showNode: cont bounds (top, right, bottom, and left) ${chartContainerBounds.top}px, ${chartContainerBounds.right}px, ${chartContainerBounds.bottom}px, ${chartContainerBounds.left}px`);
         //console.log(`showNode: item bounds (top, right, bottom, and left) ${elBounds.top}px, ${elBounds.right}px, ${elBounds.bottom}px, ${elBounds.left}px`);
         let xTranslation = 0;
@@ -238,7 +263,7 @@ function showNode(nodeEl, useScrolIntoView) {
 
         // log the "after"
         elBounds = nodeEl.getBoundingClientRect();
-        console.log(`showNode (after): item bounds (top, right, bottom, and left) ${elBounds.top}px, ${elBounds.right}px, ${elBounds.bottom}px, ${elBounds.left}px`);
+        //console.log(`showNode (after): item bounds (top, right, bottom, and left) ${elBounds.top}px, ${elBounds.right}px, ${elBounds.bottom}px, ${elBounds.left}px`);
 
 
 
