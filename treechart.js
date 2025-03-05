@@ -57,7 +57,7 @@ function processData(csvData, isForToolTip) {
     // any row starting with # is informational only - not processed
     for (let i = 0; i < rows.length; i++) {
         rawRow = rows[i];
-        if (rawRow.length > 1 &&  !rawRow.startsWith("#")) {
+        if (rawRow.length > 1 && !rawRow.startsWith("#")) {
             let rowArray = processDataRow(rows[i], i, j++);
             if (rowArray.length > 2) {
                 data.push(rowArray);
@@ -77,10 +77,10 @@ function processDataRow(csvDataRow, i, dataRowNbr) {
         var body = cells[2];
         var insertPoint = body.indexOf(bodyInsertHtml) + 7;
         // insert link button if url is specified
-        if (cells.length > 3 && cells[4] && insertPoint > 7 ) {
+        if (cells.length > 3 && cells[4] && insertPoint > 7) {
             body = body.slice(0, insertPoint) + '<span data-row="' + dataRowNbr + '" id="' + cells[4] + timelineLinkBtnHtml + body.slice(insertPoint);
         }
-        else{
+        else {
             insertPoint = body.indexOf("<div >") + 5;
             body = body.slice(0, insertPoint) + ' data-row="' + dataRowNbr + '" id="' + cells[0] + '"' + body.slice(insertPoint);
         }
@@ -157,16 +157,16 @@ function navigateToNode(elementId, useScrollIntoView) {
 
 function moveOrgChart(targetContainer, isFullPage, scale) {
     let ocSource = document.getElementById("orgchart-container");
-    var selectedItem = JSON.parse(localStorage.getItem('selectedOrgItem')); 
-    console.log('moveOrgChart moving to target ' + targetContainer.id + ' to ' + (isFullPage ? 'full': 'popup') + ' with selected item ' + JSON.stringify(selectedItem));
-    let fromCenteredEl = (!selectedItem || selectedItem.row < 1) 
-        ? getCenterElement(ocSource).centerEl 
-        : document.querySelector('[data-row="' + (selectedItem.row)  + '"]');
+    var selectedItem = JSON.parse(localStorage.getItem('selectedOrgItem'));
+    console.log('moveOrgChart moving to target ' + targetContainer.id + ' to ' + (isFullPage ? 'full' : 'popup') + ' with selected item ' + JSON.stringify(selectedItem));
+    let fromCenteredEl = (!selectedItem || selectedItem.row < 1)
+        ? getCenterElement(ocSource).centerEl
+        : document.querySelector('[data-row="' + (selectedItem.row) + '"]');
     try {
         if (ocSource.innerHTML.length > 1000) {
             targetContainer.appendChild(ocSource);
         }
-        showNode(fromCenteredEl, false);
+        showNode(fromCenteredEl, isFullPage);
     } catch (error) {
         console.log(error);
     }
@@ -179,94 +179,89 @@ function moveOrgChart(targetContainer, isFullPage, scale) {
 function getCenterElement(container) {
     // calculate the central point of the container
     let chartContainerBounds = container.getBoundingClientRect();
-    let containerCenter = {x: (chartContainerBounds.left + (chartContainerBounds.width/2)), y: (chartContainerBounds.top + (chartContainerBounds.height/2))};
+    let containerCenter = { x: (chartContainerBounds.left + (chartContainerBounds.width / 2)), y: (chartContainerBounds.top + (chartContainerBounds.height / 2)) };
     //console.log(`getCenterElement: container ${container.id} bounds (top, right, bottom, and left) ${chartContainerBounds.top}px, ${chartContainerBounds.right}px, ${chartContainerBounds.bottom}px, ${chartContainerBounds.left}px center: ${JSON.stringify(containerCenter)}`);
     let sortedDist = [];
     let elements = document.querySelectorAll('[data-row]');
     let visibleCount = 0;
     elements.forEach((el) => {
         let elBounds = el.getBoundingClientRect();
-        if (elBounds.right == 0){
+        if (elBounds.right == 0) {
             elBounds = el.parentElement.getBoundingClientRect();
         }
-        
+
         let { top, left, bottom, right } = el.getBoundingClientRect();
-        let elCenter = {x: (left + ((right-left)/2)) , y:  (top + ((bottom - top)/2))};
-        if (elCenter.x > chartContainerBounds.left && elCenter.y < chartContainerBounds.bottom && elCenter.x < chartContainerBounds.right && elCenter.y > chartContainerBounds.top){
-            visibleCount ++;
+        let elCenter = { x: (left + ((right - left) / 2)), y: (top + ((bottom - top) / 2)) };
+        if (elCenter.x > chartContainerBounds.left && elCenter.y < chartContainerBounds.bottom && elCenter.x < chartContainerBounds.right && elCenter.y > chartContainerBounds.top) {
+            visibleCount++;
             let dist = ((containerCenter.x - elCenter.x) * (containerCenter.x - elCenter.x)) + ((containerCenter.y - elCenter.y) * (containerCenter.y - elCenter.y));
-            sortedDist.push({elId: el.id, row: el.getAttribute("data-row") , dist: Math.sqrt(dist)});
+            sortedDist.push({ elId: el.id, row: el.getAttribute("data-row"), dist: Math.sqrt(dist) });
             //console.log('getCenterElement visible row ' + el.dataset.row + ' ' + JSON.stringify(elBounds));
         }
-        else{
+        else {
             //console.log('getCenterElement not vis row ' + el.dataset.row + ' ' + JSON.stringify(elBounds));
         }
-        // //console.log('popup element: ' + el.id + ' visibility: ' +  elementIsVisibleInViewport(el)); //.checkVisibility());
-        // if (elementIsVisibleInViewport(el))
-        //     {
-        //         let elBounds = el.getBoundingClientRect();
-        //         if (elBounds.right == 0){
-        //             elBounds = el.parentElement.getBoundingClientRect();
-        //         }
-        //         let elCenter = {x: (elBounds.left + (elBounds.width/2)) , y:  (elBounds.top + (elBounds.height/2))};
-        //         let dist = ((containerCenter.x - elCenter.x) * (containerCenter.x - elCenter.x)) + ((containerCenter.y - elCenter.y) * (containerCenter.y - elCenter.y));
-        //         //console.log('popup element: ' + el.id + " el mid x,y: " +  (elBounds.left + (elBounds.width/2)) + ", " +  (elBounds.top + (elBounds.height/2)));
-        //         //console.log('popup element: ' + el.id + " row: " + el.getAttribute("data-row") + " dist: " +  Math.sqrt(dist));
-        //         sortedDist.push({elId: el.id, row: el.getAttribute("data-row") , dist: Math.sqrt(dist)});
-        //     }
     });
     orderedList = sortedDist.sort((a, b) => a.dist - b.dist)
-    if (orderedList.length == 0){
-        console.log('for container: ' + container.id +  ' no visible elements found'); 
-        return {centerEl: null, visibleCount: 0}; 
+    if (orderedList.length == 0) {
+        console.log('for container: ' + container.id + ' no visible elements found');
+        return { centerEl: null, visibleCount: 0 };
     }
     //console.log('for container: ' + container.id +  ' closest element: ' + orderedList[0].elId + ' row: ' + orderedList[0].row + " dist: " +  orderedList[0].dist + " visible " +  visibleCount  + "/" +  elements.length );
-    return {centerEl: document.getElementById(orderedList[0].elId), visibleCount}; 
+    return { centerEl: document.getElementById(orderedList[0].elId), visibleCount };
 }
 
 const elementIsVisibleInViewport = (el, partiallyVisible = false) => {
     const { top, left, bottom, right } = el.getBoundingClientRect();
     const { innerHeight, innerWidth } = window;
     return partiallyVisible
-      ? ((top > 0 && top < innerHeight) ||
-          (bottom > 0 && bottom < innerHeight)) &&
-          ((left > 0 && left < innerWidth) || (right > 0 && right < innerWidth))
-      : top >= 0 && left >= 0 && bottom <= innerHeight && right <= innerWidth;
-  };
+        ? ((top > 0 && top < innerHeight) ||
+            (bottom > 0 && bottom < innerHeight)) &&
+        ((left > 0 && left < innerWidth) || (right > 0 && right < innerWidth))
+        : top >= 0 && left >= 0 && bottom <= innerHeight && right <= innerWidth;
+};
 
 
-function showNode(nodeEl, useScrolIntoView) {
+function showNode(nodeEl, isFullPage) {
     if (nodeEl) {
-        console.log(`showNode nodeEl id:  ${nodeEl.id}, useScrolIntoView: ${useScrolIntoView}`);
+        console.log(`showNode nodeEl id:  ${nodeEl.id}, isFullPage: ${isFullPage}`);
         let elBounds = nodeEl.getBoundingClientRect();
-        if (elBounds.right == 0){
+        if (elBounds.right == 0) {
             elBounds = nodeEl.parentElement.getBoundingClientRect();
         }
         let chartContainerBounds = document.getElementById("chart_container").getBoundingClientRect();
-        let centerEl = getCenterElement(document.getElementById("orgchart-container")).centerEl 
+        let centerEl = getCenterElement(document.getElementById("orgchart-container")).centerEl
         //console.log(`showNode: cont bounds (top, right, bottom, and left) ${chartContainerBounds.top}px, ${chartContainerBounds.right}px, ${chartContainerBounds.bottom}px, ${chartContainerBounds.left}px`);
         //console.log(`showNode: item bounds (top, right, bottom, and left) ${elBounds.top}px, ${elBounds.right}px, ${elBounds.bottom}px, ${elBounds.left}px`);
-        let xTranslation = 0;
-        let xScale = 1;
-        let yTranslation = 0;
-        let yScale = 1;
+        let scale = 1;
 
-        let containerCenter = {x: (chartContainerBounds.left + (chartContainerBounds.width/2)), y: (chartContainerBounds.top + (chartContainerBounds.height/2))};
-        let elCenter = {x: (elBounds.left + (elBounds.width/2)), y: (elBounds.top + (elBounds.height/2))};
-        xTranslation = -(elCenter.x - containerCenter.x);
-        yTranslation = -(elCenter.y - containerCenter.y);
+        let containerCenter = { x: (chartContainerBounds.left + (chartContainerBounds.width / 2)), y: (chartContainerBounds.top + (chartContainerBounds.height / 2)) };
+        let elCenter = { x: (elBounds.left + (elBounds.width / 2)), y: (elBounds.top + (elBounds.height / 2)) };
+        let xTranslation = -(elCenter.x - containerCenter.x);
+        let yTranslation = -(elCenter.y - containerCenter.y);
 
-        // // todo: figure out scale
-        let matrix = 'matrix(' + xScale + ', 0, 0, ' + yScale + ', ' + xTranslation + ', ' + yTranslation + ')';
+        // restore scale
+        let popupStateItem = localStorage.getItem("treePopupState");
+        if (popupStateItem != '[object Object]' && (typeof popupStateItem === 'string' || popupStateItem instanceof String)) {
+            let pState = JSON.parse(popupStateItem);
+            if (isFullPage) {
+                scale = pState.fullScale;  // moving to full
+            }
+            else {
+                scale = pState.popupScale;  // moving to popup
+            }
+            if (scale == 0 || Math.abs(scale) > 1) {
+                scale = 1;
+            }
+        }
+
+        let matrix = 'matrix(' + scale + ', 0, 0, ' + scale + ', ' + xTranslation + ', ' + yTranslation + ')';
         console.log("transform matrix: " + matrix);
         document.getElementById("panzoom_container").style.transform = matrix;
 
         // log the "after"
         elBounds = nodeEl.getBoundingClientRect();
         //console.log(`showNode (after): item bounds (top, right, bottom, and left) ${elBounds.top}px, ${elBounds.right}px, ${elBounds.bottom}px, ${elBounds.left}px`);
-
-
-
     }
 }
 

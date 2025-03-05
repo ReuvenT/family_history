@@ -1,5 +1,4 @@
 const popup = document.getElementById("tree-popup");
-//const popupStateItem = localStorage.getItem("treePopupState");
 var r = document.getElementById('resizer');
 r.addEventListener('mousedown', initDrag, false);
 
@@ -16,45 +15,35 @@ function initChartPopup(callOpenPopup) {
       popup.style.width = (popupState.width) + "px";
       popup.style.height = (popupState.height) + "px";
       if (callOpenPopup && popupState && popupState.shown) {
-        let matrix = 'matrix(' + popup.style.scale + ', 0, 0, ' + popup.style.scale + ', 0, 0)';
-        //document.getElementById("panzoom_container").style.transform = matrix;
+        let matrix = 'matrix(' + popup.style.popupScale + ', 0, 0, ' + popup.style.popupScale + ', 0, 0)';
+        document.getElementById("panzoom_container").style.transform = matrix;
         openOrgChartPopup();
       }
     }
   }
 }
 
-// function getTransformScale() {
-//   let tScale = 1;
-//   try {
-//     transform = document.getElementById("panzoom_container").style.transform;
-//     console.log("getTransformScale transform: " + JSON.stringify(transform));
-//     let start = transform.indexOf("(") + 1;
-//     let end = transform.indexOf(")");
-//     let matrix = transform.slice(start, end).split(",");
-//     tScale =  +matrix[0]; 
-//   } catch (error) {
-//     console.log("getTransformScale matrix error: " + error);
-//   }
-//   return tScale;
-// }
-
-// restore previous popup state
 function captureAndSaveChartPopupState(shownFlag) {
-  var pState;
+  var pState = { shown: shownFlag, left: 1, top: 1, height: 150, width: 300, popupScale: 1, fullScale: 1 };
+  let popupStateItem = localStorage.getItem("treePopupState");
+  let mode = "popup";
+  if (popupStateItem != '[object Object]' && (typeof popupStateItem === 'string' || popupStateItem instanceof String)) {
+    pState = JSON.parse(popupStateItem);
+  }
+  pState.shown = shownFlag;
   let rect = popup.getBoundingClientRect();
   if (rect.width > 30 && rect.height > 50) {
-    pState = { shown: shownFlag, left: rect.left, top: rect.top, height: rect.height, width: rect.width, scale: getTransformScale() };
+    pState.left = rect.left; 
+    pState.top = rect.top; 
+    pState.height = rect.height; 
+    pState.width = rect.width;
+    pState.popupScale = getTransformScale();
   }
   else{
-    // container is no longer available use values in localstorage
-    let popupStateItem = localStorage.getItem("treePopupState");
-    if (popupStateItem != '[object Object]' && (typeof popupStateItem === 'string' || popupStateItem instanceof String)) {
-      pState = JSON.parse(popupStateItem);
-      pState.scale = getTransformScale();
-      pState.shown = shownFlag;
-    }
+    mode = "full";
+    pState.fullScale = getTransformScale();
   }
+
   // safeguards:
   if (pState.left < 1) {
     pState.left = 1;
@@ -69,7 +58,14 @@ function captureAndSaveChartPopupState(shownFlag) {
     pState.height = 150;
   }
 
-  console.log("captureChartPopupState popupState: " + JSON.stringify(pState));
+  if (Math.abs(pState.popupScale) > 1 || Math.abs(pState.popupScale) < 0.5) {
+    pState.popupScale = 1;
+  }
+  if (Math.abs(pState.fullScale) > 1.5 || Math.abs(pState.fullScale) < 0.5) {
+    pState.fullScale = 1;
+  }
+
+  console.log("captureChartPopupState (" + mode + ") popupState: " + JSON.stringify(pState));
   localStorage.setItem("treePopupState", JSON.stringify(pState));
 }
 
@@ -100,26 +96,7 @@ function openOrgChartPopup() {
     ocEle.style.display = "block";
     popup.style.display = "block";
     moveOrgChart(document.getElementById("popup-content-target"), false, 1) 
-    // try {
-
-    //   //let tpSource = document.getElementById("popup-content-target");
-    //   //let ocTarget = document.getElementById("tree_container");
-    //   if (ocSource.innerHTML.length > 1000){
-    //       console.log('openOrgChartPopup moving to popup');
-    //       ocSource.appendChild(tpTarget.firstElementChild);
-    //   }
-
-
-
-
-    //   let fragment = document.createDocumentFragment();
-    //   fragment.appendChild(ocSource);
-    //   // Append fragment to desired element:
-    //   tpTarget.appendChild(fragment);
-    //   //tpTarget.appendChild(ocSource.firstElementChild);
-    // } catch (error) {
-    //   console.log(error);
-    // }
+   
   }
 }
 
@@ -156,10 +133,7 @@ function dragElement(elmnt) {
   if (document.getElementById(elmnt.id + "-header")) {
     /* if present, the header is where you move the DIV from:*/
     document.getElementById(elmnt.id + "-header").onmousedown = dragMouseDown;
-    // } else {
-    //   /* otherwise, move the DIV from anywhere inside the DIV:*/
-    //   elmnt.onmousedown = dragMouseDown;
-  }
+    }
 
   function dragMouseDown(e) {
     e = e || window.event;
