@@ -28,7 +28,9 @@ ul.tft-basic-ft {
 
 u.tft-basic-ft {
   color: #aaa;
-  font-size: 0.9em;
+  /* font-size: 0.9em; */
+  font-weight: bolder;
+  font-style: italic;
 }
 
 p.tft-basic-ft, a.tft-basic-ft, li.tft-basic-ft  {
