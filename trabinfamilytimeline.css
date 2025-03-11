@@ -23,11 +23,16 @@ ul.tft-basic-ft {
   font-size: 0.9em;
   font-style: italic;
   list-style-type: square;
+  margin-top: 0;
 }
 
-p.tft-basic-ft, a.tft-basic-ft, li.tft-basic-ft {
+u.tft-basic-ft {
+  color: #aaa;
+  font-size: 0.9em;
+}
+
+p.tft-basic-ft, a.tft-basic-ft, li.tft-basic-ft  {
   color: #aaa;
   font-size: 0.9em;
   margin: 5px;
-  /* font-style: italic; */
 }
