@@ -148,10 +148,27 @@ function selectChartItem(rowIndex) {
 }
 
 function navigateToNode(elementId, useScrollIntoView) {
-    console.log('navigating to ' + elementId);
     const element = document.getElementById(elementId);
     if (element) {
         selectChartItem(element.dataset.row);
+        if (useScrollIntoView) {
+            let popupStateItem = localStorage.getItem("treePopupState");
+            if (popupStateItem != '[object Object]' && (typeof popupStateItem === 'string' || popupStateItem instanceof String)) {
+                let pState = JSON.parse(popupStateItem);
+                if (pState.shown) {
+                    console.log('navigating to ' + elementId + ' for popup');
+                    initChartPopup(true);
+                    showNode(element, true);
+                }
+                else {
+                    console.log('navigating to ' + elementId + ' for full tree');
+                    moveOrgChart(document.getElementById("tree_container"), true, 1);
+                    showNode(element, true);
+                    //initChartPopup(false);
+                    //showNode(element, true);
+                }
+            }
+        }
     }
 }
 
@@ -176,9 +193,49 @@ function moveOrgChart(targetContainer, isFullPage, scale) {
 
 }
 
+
+function getDefaultCurrentElement(container, isFirstDisplay) {
+    // find selected, iFrame, or centered element in container
+    let selectedItem = JSON.parse(localStorage.getItem('selectedOrgItem'));
+    if (selectedItem && Number.isInteger(selectedItem.row)){
+        //console.log('getDefaultCurrentElement for container: ' + container.id + ' returning selected row: ' + selectedItem.row);
+        return document.querySelector('[data-row="' + (selectedItem.row) + '"]');
+    }
+    else if (chart.getSelection()[0]){
+        //console.log('getDefaultCurrentElement for container: ' + container.id + ' returning selected* row: ' + chart.getSelection()[0].row);
+        return document.querySelector('[data-row="' + (chart.getSelection()[0].row) + '"]');
+    }
+    else {
+        if (isFirstDisplay) {
+            let nodeId = "";
+            let iFrameSourceElements = document.getElementById('tl-timeline-iframe').src.split("/")
+            if (iFrameSourceElements.length > 3) {
+                nodeId = iFrameSourceElements[iFrameSourceElements.length - 3] + "/" + iFrameSourceElements[iFrameSourceElements.length - 2] + "/"
+            }
+            if (nodeId == "") {
+                //console.log('getDefaultCurrentElement (firstDisplay) for container: ' + container.id + ' returning getCenterElement');
+                return getCenterElement(container).centerEl;
+            }
+            else {
+                //console.log('getDefaultCurrentElement (firstDisplay) for container: ' + container.id + ' returning element with nodeId: ' + nodeId);
+                return document.getElementById(nodeId);
+            }
+        }
+        else {
+            //console.log('getDefaultCurrentElement for container: ' + container.id + ' returning getCenterElement');
+            return getCenterElement(container).centerEl;
+        }
+    }
+}
+
+
 function getCenterElement(container) {
     // calculate the central point of the container
     let chartContainerBounds = container.getBoundingClientRect();
+    if (chartContainerBounds.width + chartContainerBounds.height == 0) {
+        //console.log('container: ' + container.id + ' had no width and height, cannot get center element');
+        return { centerEl: null, visibleCount: 0 };
+    }
     let containerCenter = { x: (chartContainerBounds.left + (chartContainerBounds.width / 2)), y: (chartContainerBounds.top + (chartContainerBounds.height / 2)) };
     //console.log(`getCenterElement: container ${container.id} bounds (top, right, bottom, and left) ${chartContainerBounds.top}px, ${chartContainerBounds.right}px, ${chartContainerBounds.bottom}px, ${chartContainerBounds.left}px center: ${JSON.stringify(containerCenter)}`);
     let sortedDist = [];
@@ -207,7 +264,7 @@ function getCenterElement(container) {
         console.log('for container: ' + container.id + ' no visible elements found');
         return { centerEl: null, visibleCount: 0 };
     }
-    //console.log('for container: ' + container.id +  ' closest element: ' + orderedList[0].elId + ' row: ' + orderedList[0].row + " dist: " +  orderedList[0].dist + " visible " +  visibleCount  + "/" +  elements.length );
+    //console.log('for container: ' + container.id + ' closest element: ' + orderedList[0].elId + ' row: ' + orderedList[0].row + " dist: " + orderedList[0].dist + " visible " + visibleCount + "/" + elements.length);
     return { centerEl: document.getElementById(orderedList[0].elId), visibleCount };
 }
 
@@ -224,7 +281,7 @@ const elementIsVisibleInViewport = (el, partiallyVisible = false) => {
 
 function showNode(nodeEl, isFullPage) {
     if (nodeEl) {
-        console.log(`showNode nodeEl id:  ${nodeEl.id}, isFullPage: ${isFullPage}`);
+        //console.log(`showNode nodeEl id:  ${nodeEl.id}, isFullPage: ${isFullPage}`);
         let elBounds = nodeEl.getBoundingClientRect();
         if (elBounds.right == 0) {
             elBounds = nodeEl.parentElement.getBoundingClientRect();
@@ -256,7 +313,7 @@ function showNode(nodeEl, isFullPage) {
         }
 
         let matrix = 'matrix(' + scale + ', 0, 0, ' + scale + ', ' + xTranslation + ', ' + yTranslation + ')';
-        console.log("transform matrix: " + matrix);
+        //console.log("transform matrix: " + matrix);
         document.getElementById("panzoom_container").style.transform = matrix;
 
         // log the "after"

@@ -2,7 +2,11 @@
 # backslash with %2F to encode, for example root timeline is 2138285/2648138406/ needs to appear as 2138285%2F2648138406%2F in the 
 # link in the tiki-toki exotra info link, e.g. 
 # to return to root [click here](http://127.0.0.1:5500/redirect%20to%20story%20example.html?newtimeline=2138285%2F2648138406%2F)
-# 
+# to return to root [click here](http://127.0.0.1:5500/index.html?newtimeline=2138285%2F2648138406%2F)
+# Other addresses:
+# Ida 
+# Harry             http://127.0.0.1:5500/index.html?newtimeline=2141911/5281753800/
+# Jacob             http://127.0.0.1:5500/index.html?newtimeline=2139216/5281753800/
 # Below are the data used to populate the tree struction
 # data columns: Id/Key_Name, parent Id, display content, tooltip, timeline id, panel hash (leave empty for first panel
 ####### root (Louis)
@@ -35,8 +39,8 @@ MIL_TRA,HAR_TRA,<div class='oc-med-node'>Millie (Trabin) Henkin Swern </div>,,,
 BRU_HEN,MIL_TRA,<div class='oc-nar-node'>Bruce and Cynthia (?) Henkin</div>,,,
 JEN_HEN,BRU_HEN,<div class='oc-nar-node'>Jenny Henkin</div>,,,
 RIC_HEN,MIL_TRA,<div class='oc-nar-node'>Rick Henkin</div>,,,
-EDW_TRA,HAR_TRA,<div class='oc-med-node'>Ed and Toby (?) Trabin</div>,,,
-DAL_TRA,EDW_TRA,<div class='oc-nar-node'>Dale (Trabin) and Marty Washitz</div>,,,
+EDW_TRA,HAR_TRA,<div class='oc-med-node'>Ed and Tovia (Friedman) Trabin</div>,,,
+DAL_TRA,EDW_TRA,<div class='oc-nar-node'>Dale (Trabin) and Marty Waschitz</div>,,,
 FAT_TRA,EDW_TRA,<div class='oc-nar-node'>Faith (Trabin) and Jeff Osheroff</div>,,,
 EVE_OSH,FAT_TRA,<div class='oc-nar-node'>Evan Osheroff</div>,,,
 SCO_OSH,FAT_TRA,<div class='oc-nar-node'>Scott Osheroff</div>,,,

@@ -7,8 +7,6 @@ window.onload = function () {
     PanZoom(".panzoom");
 }
 
-localStorage.setItem('selectedOrgItem', null);
-
 google.charts.load('current', { packages: ["orgchart"] });
 google.charts.setOnLoadCallback(drawChart);
 
@@ -43,6 +41,10 @@ document.addEventListener('DOMContentLoaded', function () {
             }, 250);
         }
         console.log('Iframe content loaded or reloaded');
+        if (chart.getSelection()[0]){
+            localStorage.setItem('selectedOrgItem', JSON.stringify({row: chart.getSelection()[0].row, url: ""}));
+        }
+        showNode(getDefaultCurrentElement(document.getElementById("orgchart-container"), false), true);
     };
 
 
@@ -103,7 +105,7 @@ if (window.postMessage) {
 
 function redirectiFrames(timeframeUrl, orgChartElId) {
     redirectTimelineiFrame(timeframeUrl);
-    navigateToNode(orgChartElId, false);
+    navigateToNode(orgChartElId, true);
 }
 
 function redirectTimelineiFrame(newUrl) {
@@ -121,6 +123,9 @@ function handleViewChoiceClick(viewChoice, setChecked) {
         tlFrame.classList.remove("fullScreen");
         tlFrame.style.display = "none";
         moveOrgChart(document.getElementById("tree_container"), true, 1)
+        setTimeout(() => {
+            showNode(getDefaultCurrentElement(document.getElementById("orgchart-container"), false), true);
+        }, 50);
         ocEle.style.display = "block"; //orgchart-container
         ocEle.classList.add("fullScreen");
         pu.style.display = "none";
@@ -129,6 +134,7 @@ function handleViewChoiceClick(viewChoice, setChecked) {
             radiobtn = document.getElementById("view-tree");
             radiobtn.checked = true;
         }
+
         // move chart back home if it was in the popup
         //moveOrgChart(document.getElementById("tree_container"), true, 1)
         }
@@ -142,6 +148,9 @@ function handleViewChoiceClick(viewChoice, setChecked) {
                 radiobtn.checked = true;
             }
             initChartPopup(true);
+            setTimeout(() => {
+                showNode(getDefaultCurrentElement(document.getElementById("orgchart-container"), false), false);
+            }, 50);
         }
 }
 
