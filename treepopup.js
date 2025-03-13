@@ -31,17 +31,20 @@ function captureAndSaveChartPopupState(shownFlag) {
     pState = JSON.parse(popupStateItem);
   }
   pState.shown = shownFlag;
+  let elCount = getCenterElement(document.getElementById("orgchart-container")).visibleCount;
   let rect = popup.getBoundingClientRect();
   if (rect.width > 30 && rect.height > 50) {
     pState.left = rect.left; 
     pState.top = rect.top; 
     pState.height = rect.height; 
     pState.width = rect.width;
-    pState.popupScale = getTransformScale();
+    pState.popupScale = getTransformScale(elCount, true);
+    // capture the "current" tree node
+    captureAndSaveCurrentNodeState();
   }
   else{
+    pState.fullScale = getTransformScale(elCount, false);
     mode = "full";
-    pState.fullScale = getTransformScale();
   }
 
   // safeguards:
@@ -58,15 +61,9 @@ function captureAndSaveChartPopupState(shownFlag) {
     pState.height = 150;
   }
 
-  if (Math.abs(pState.popupScale) > 1 || Math.abs(pState.popupScale) < 0.5) {
-    pState.popupScale = 1;
-  }
-  if (Math.abs(pState.fullScale) > 1.5 || Math.abs(pState.fullScale) < 0.5) {
-    pState.fullScale = 1;
-  }
-
   console.log("captureChartPopupState (" + mode + ") popupState: " + JSON.stringify(pState));
   localStorage.setItem("treePopupState", JSON.stringify(pState));
+  return pState.popupScale;
 }
 
 function toggleOrgChartPopup() {
@@ -92,10 +89,10 @@ function openOrgChartPopup() {
   //let ocSource = document.getElementById("tree_container"); //.firstChild;
   if (radiobtn.checked) {
     console.log('openOrgChartPopup radiobtn.checked: ' + radiobtn.checked)
-    captureAndSaveChartPopupState(true);
+    let tScale = captureAndSaveChartPopupState(true);
     ocEle.style.display = "block";
     popup.style.display = "block";
-    moveOrgChart(document.getElementById("popup-content-target"), false, 1) 
+    moveOrgChart(document.getElementById("popup-content-target"), false, tScale) 
    
   }
 }

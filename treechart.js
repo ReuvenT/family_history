@@ -35,18 +35,18 @@ function prepChartTable(data, newTable) {
 }
 
 function treeSelectHandler() {
-    localStorage.setItem('selectedOrgItem', null);
+    let currentState = { 'row': -1, isSelected: false, 'url': null };
     var selectedItem = chart.getSelection()[0];
     if (selectedItem && selectedItem.hasOwnProperty('row')) { //&& selectedItem.row) {
-        if (selectedItem) {
-            var val0 = fullTable.getValue(selectedItem.row, 0);
-            var val1 = fullTable.getValue(selectedItem.row, 1);
-            var val2 = fullTable.getValue(selectedItem.row, 2);
-            var val3 = fullTable.getValue(selectedItem.row, 3);
-            localStorage.setItem('selectedOrgItem', JSON.stringify({ 'row': selectedItem.row, 'url': val3 }));
-            console.log('The user selected row ' + selectedItem.row + ' with values ' + val0 + ', ' + val1 + ', ' + val2 + ', ' + val3);
-        }
+        currentState.row = fullTable.getValue(selectedItem.row, 0);
+        currentState.isSelected = true;
+        currentState.url = fullTable.getValue(selectedItem.row, 3);
+        console.log('treeSelectHandler: user selected row ' + selectedItem.row + ' from values ' + JSON.stringify(selectedItem));
     }
+    else {
+        console.log('treeSelectHandler: user un-selected row '); //+ chart.getSelection()[0] + ', current values: ' + JSON.stringify(selectedItem));
+    }
+    localStorage.setItem('currentNodeRow', JSON.stringify(currentState));
 }
 
 
@@ -123,7 +123,7 @@ function removeTags(str) {
 }
 
 function timelineLink(el) {
-    var storedSelection = JSON.parse(localStorage.getItem('selectedOrgItem'));
+    var storedSelection = JSON.parse(localStorage.getItem('currentNodeRow'));
     if (storedSelection) {
         console.log("timelineLink clicked for row(cell) " + storedSelection.row + " with url " + storedSelection.url);
         // Just fire the message through parent object (this is still used even though it was coded when this was in iFrame)
@@ -147,61 +147,56 @@ function selectChartItem(rowIndex) {
     chart.setSelection(selectionArray);
 }
 
-function navigateToNode(elementId, useScrollIntoView) {
-    const element = document.getElementById(elementId);
-    if (element) {
-        selectChartItem(element.dataset.row);
-        if (useScrollIntoView) {
-            let popupStateItem = localStorage.getItem("treePopupState");
-            if (popupStateItem != '[object Object]' && (typeof popupStateItem === 'string' || popupStateItem instanceof String)) {
-                let pState = JSON.parse(popupStateItem);
-                if (pState.shown) {
-                    console.log('navigating to ' + elementId + ' for popup');
-                    initChartPopup(true);
-                    showNode(element, true);
-                }
-                else {
-                    console.log('navigating to ' + elementId + ' for full tree');
-                    moveOrgChart(document.getElementById("tree_container"), true, 1);
-                    showNode(element, true);
-                    //initChartPopup(false);
-                    //showNode(element, true);
-                }
-            }
-        }
+function captureAndSaveCurrentNodeState() {
+    let currentNodeState = localStorage.getItem('currentNodeRow');
+    let nodeState = (currentNodeState != '[object Object]' && (typeof currentNodeState === 'string' || currentNodeState instanceof String)) ?
+        JSON.parse(currentNodeState) : { "row": -1, "isSelected": false, "url": null };
+
+    var selectedItem = chart.getSelection()[0];
+    if (selectedItem && selectedItem.hasOwnProperty('row')) {
+        nodeState.row = selectedItem.row;
+        nodeState.isSelected = true;
+        nodeState.url = fullTable.getValue(selectedItem.row, 3);
     }
+    else {
+        let currentEl = getCenterElement(document.getElementById("orgchart-container")).centerEl;
+        nodeState.row = currentEl.getAttribute('data-row');
+        nodeState.isSelected = false;
+    }
+    console.log('captureAndSaveCurrentNodeState: ' + JSON.stringify(nodeState));
+    localStorage.setItem('currentNodeRow', JSON.stringify(nodeState));
 }
 
 function moveOrgChart(targetContainer, isFullPage, scale) {
     let ocSource = document.getElementById("orgchart-container");
-    var selectedItem = JSON.parse(localStorage.getItem('selectedOrgItem'));
-    console.log('moveOrgChart moving to target ' + targetContainer.id + ' to ' + (isFullPage ? 'full' : 'popup') + ' with selected item ' + JSON.stringify(selectedItem));
-    let fromCenteredEl = (!selectedItem || selectedItem.row < 1)
-        ? getCenterElement(ocSource).centerEl
-        : document.querySelector('[data-row="' + (selectedItem.row) + '"]');
+    var currentItem = JSON.parse(localStorage.getItem('currentNodeRow'));
+
+    if (scale > .2 && scale < 1.1) {
+        let matrix = 'matrix(' + scale + ', 0, 0, ' + scale + ', 0, 0)';
+        document.getElementById("panzoom_container").style.transform = matrix;
+    }
+    console.log('moveOrgChart moving to target ' + targetContainer.id + ' to ' + (isFullPage ? 'full' : 'popup') + ' scale: ' + scale + ' with current item ' + JSON.stringify(currentItem));
     try {
         if (ocSource.innerHTML.length > 1000) {
             targetContainer.appendChild(ocSource);
         }
-        showNode(fromCenteredEl, isFullPage);
+        let currentNodeState = JSON.parse(localStorage.getItem('currentNodeRow'));
+        let treeEl = document.querySelector('[data-row="' + (currentNodeState.row) + '"]');
+        showNode(treeEl, isFullPage);
     } catch (error) {
         console.log(error);
     }
-    // if (!isFullPage){
-    //     document.getElementById("panzoom_container").style.transform = "matrix(.5, 0, 0, .5, 0, 0)";
-    // }
-
 }
 
 
 function getDefaultCurrentElement(container, isFirstDisplay) {
     // find selected, iFrame, or centered element in container
-    let selectedItem = JSON.parse(localStorage.getItem('selectedOrgItem'));
-    if (selectedItem && Number.isInteger(selectedItem.row)){
-        //console.log('getDefaultCurrentElement for container: ' + container.id + ' returning selected row: ' + selectedItem.row);
-        return document.querySelector('[data-row="' + (selectedItem.row) + '"]');
+    let currentItem = JSON.parse(localStorage.getItem('currentNodeRow'));
+    if (currentItem && (true + currentItem.row > 0)) {
+        //console.log('getDefaultCurrentElement for container: ' + container.id + ' returning current row: ' + currentItem.row);
+        return document.querySelector('[data-row="' + (currentItem.row) + '"]');
     }
-    else if (chart.getSelection()[0]){
+    else if (chart.getSelection()[0]) {
         //console.log('getDefaultCurrentElement for container: ' + container.id + ' returning selected* row: ' + chart.getSelection()[0].row);
         return document.querySelector('[data-row="' + (chart.getSelection()[0].row) + '"]');
     }
@@ -222,7 +217,7 @@ function getDefaultCurrentElement(container, isFirstDisplay) {
             }
         }
         else {
-            //console.log('getDefaultCurrentElement for container: ' + container.id + ' returning getCenterElement');
+            console.log('getDefaultCurrentElement for container: ' + container.id + ' returning getCenterElement');
             return getCenterElement(container).centerEl;
         }
     }
@@ -247,16 +242,16 @@ function getCenterElement(container) {
             elBounds = el.parentElement.getBoundingClientRect();
         }
 
-        let { top, left, bottom, right } = el.getBoundingClientRect();
+        let { top, left, bottom, right } = elBounds;// el.getBoundingClientRect();
         let elCenter = { x: (left + ((right - left) / 2)), y: (top + ((bottom - top) / 2)) };
         if (elCenter.x > chartContainerBounds.left && elCenter.y < chartContainerBounds.bottom && elCenter.x < chartContainerBounds.right && elCenter.y > chartContainerBounds.top) {
             visibleCount++;
             let dist = ((containerCenter.x - elCenter.x) * (containerCenter.x - elCenter.x)) + ((containerCenter.y - elCenter.y) * (containerCenter.y - elCenter.y));
             sortedDist.push({ elId: el.id, row: el.getAttribute("data-row"), dist: Math.sqrt(dist) });
-            //console.log('getCenterElement visible row ' + el.dataset.row + ' ' + JSON.stringify(elBounds));
+            //console.log('getCenterElement visible row ' + el.dataset.row + ' ' + JSON.stringify(elCenter));
         }
         else {
-            //console.log('getCenterElement not vis row ' + el.dataset.row + ' ' + JSON.stringify(elBounds));
+            //console.log('getCenterElement not vis row ' + el.dataset.row + ' ' + JSON.stringify(elCenter));
         }
     });
     orderedList = sortedDist.sort((a, b) => a.dist - b.dist)
@@ -264,7 +259,7 @@ function getCenterElement(container) {
         console.log('for container: ' + container.id + ' no visible elements found');
         return { centerEl: null, visibleCount: 0 };
     }
-    //console.log('for container: ' + container.id + ' closest element: ' + orderedList[0].elId + ' row: ' + orderedList[0].row + " dist: " + orderedList[0].dist + " visible " + visibleCount + "/" + elements.length);
+    console.log('for container: ' + container.id + ' closest element: ' + orderedList[0].elId + ' row: ' + orderedList[0].row + " dist: " + orderedList[0].dist + " visible " + visibleCount + "/" + elements.length);
     return { centerEl: document.getElementById(orderedList[0].elId), visibleCount };
 }
 
@@ -281,7 +276,7 @@ const elementIsVisibleInViewport = (el, partiallyVisible = false) => {
 
 function showNode(nodeEl, isFullPage) {
     if (nodeEl) {
-        //console.log(`showNode nodeEl id:  ${nodeEl.id}, isFullPage: ${isFullPage}`);
+        console.log(`showNode nodeEl id:  ${nodeEl.id}, isFullPage: ${isFullPage}`);
         let elBounds = nodeEl.getBoundingClientRect();
         if (elBounds.right == 0) {
             elBounds = nodeEl.parentElement.getBoundingClientRect();
@@ -313,7 +308,7 @@ function showNode(nodeEl, isFullPage) {
         }
 
         let matrix = 'matrix(' + scale + ', 0, 0, ' + scale + ', ' + xTranslation + ', ' + yTranslation + ')';
-        //console.log("transform matrix: " + matrix);
+        console.log("showNode transform matrix: " + matrix);
         document.getElementById("panzoom_container").style.transform = matrix;
 
         // log the "after"

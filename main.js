@@ -35,16 +35,10 @@ document.addEventListener('DOMContentLoaded', function () {
         if (document.getElementById("orgchart-container").innerHTML.length > 500){
             initChartPopup(true);
         }
-        else{
-            setTimeout(() => {
-                initChartPopup(true);
-            }, 250);
-        }
-        console.log('Iframe content loaded or reloaded');
+      console.log('Iframe content loaded or reloaded');
         if (chart.getSelection()[0]){
-            localStorage.setItem('selectedOrgItem', JSON.stringify({row: chart.getSelection()[0].row, url: ""}));
+            localStorage.setItem('currentNodeRow', JSON.stringify({row: chart.getSelection()[0].row, isSelected: true, url: ""}));
         }
-        showNode(getDefaultCurrentElement(document.getElementById("orgchart-container"), false), true);
     };
 
 
@@ -105,7 +99,8 @@ if (window.postMessage) {
 
 function redirectiFrames(timeframeUrl, orgChartElId) {
     redirectTimelineiFrame(timeframeUrl);
-    navigateToNode(orgChartElId, true);
+    console.log('redirectiFrames orgChartElId: data-row: ' + orgChartElId + ": " + document.getElementById(orgChartElId).getAttribute("data-row"));
+    selectChartItem(document.getElementById(orgChartElId).getAttribute("data-row"));
 }
 
 function redirectTimelineiFrame(newUrl) {
@@ -119,13 +114,11 @@ function handleViewChoiceClick(viewChoice, setChecked) {
     let tpEle = document.getElementById("tree-popup");
     let pu = document.getElementById("tree-popup-btn");
     console.log('handleViewChoiceClick to viewChoice: ' + viewChoice + ', setChecked: ' + setChecked)
+    captureAndSaveCurrentNodeState();
     if (viewChoice == "view-tree") {
         tlFrame.classList.remove("fullScreen");
         tlFrame.style.display = "none";
         moveOrgChart(document.getElementById("tree_container"), true, 1)
-        setTimeout(() => {
-            showNode(getDefaultCurrentElement(document.getElementById("orgchart-container"), false), true);
-        }, 50);
         ocEle.style.display = "block"; //orgchart-container
         ocEle.classList.add("fullScreen");
         pu.style.display = "none";
@@ -148,9 +141,6 @@ function handleViewChoiceClick(viewChoice, setChecked) {
                 radiobtn.checked = true;
             }
             initChartPopup(true);
-            setTimeout(() => {
-                showNode(getDefaultCurrentElement(document.getElementById("orgchart-container"), false), false);
-            }, 50);
         }
 }
 
