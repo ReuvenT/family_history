@@ -101,6 +101,7 @@ function redirectiFrames(timeframeUrl, orgChartElId) {
     redirectTimelineiFrame(timeframeUrl);
     console.log('redirectiFrames orgChartElId: data-row: ' + orgChartElId + ": " + document.getElementById(orgChartElId).getAttribute("data-row"));
     selectChartItem(document.getElementById(orgChartElId).getAttribute("data-row"));
+    captureAndSaveCurrentNodeState();
 }
 
 function redirectTimelineiFrame(newUrl) {

@@ -160,7 +160,7 @@ function captureAndSaveCurrentNodeState() {
     }
     else {
         let currentEl = getCenterElement(document.getElementById("orgchart-container")).centerEl;
-        nodeState.row = currentEl.getAttribute('data-row');
+        nodeState.row = (!currentEl) ? -1 : currentEl.getAttribute('data-row');
         nodeState.isSelected = false;
     }
     console.log('captureAndSaveCurrentNodeState: ' + JSON.stringify(nodeState));
