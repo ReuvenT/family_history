@@ -142,6 +142,6 @@ function getTransformScale(elCount, isPopup) {
   } catch (error) {
     console.log("getTransformScale matrix error: " + error);
   }
-  console.log("getTransformScale returns: " + tScale + " for elCount " + elCount + ", isPopup: " + isPopup);
+  //console.log("getTransformScale returns: " + tScale + " for elCount " + elCount + ", isPopup: " + isPopup);
   return tScale;
 }

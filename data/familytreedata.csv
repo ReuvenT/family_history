@@ -8,14 +8,14 @@
 # Harry             http://127.0.0.1:5500/index.html?newtimeline=2141911/5281753800/
 # Jacob             http://127.0.0.1:5500/index.html?newtimeline=2139216/5281753800/
 # Below are the data used to populate the tree struction
-# data columns: Id/Key_Name, parent Id, display content, tooltip, timeline id, panel hash (leave empty for first panel
+# data columns: Id/Key_Name, parent Id, display content, tooltip, timeline id, panel hash (leave empty for first panel)
 ####### root (Louis)
-LOU_TRA,,<div class='oc-wid-node'>Louis "Yuda Lieb" and Freida Trabin</div>,tool tip,2138285/2648138406/,
+LOU_TRA,,<div class='oc-wid-node'>Louis "Yuda Lieb" and Freida Trabin</div>,tool tip,2138285/2648138406/,,{'menu': 'Trabin Family'; 'access': 'open'; 'seq': 1; 'level': 1}
 ####### Sam
-SAM_TRA,LOU_TRA,<div class='oc-wid-node'>Shrul Sam "Israel" and Celia ?? Trabin</div>,,2141912/5281753800/,
+SAM_TRA,LOU_TRA,<div class='oc-wid-node'>Shrul Sam "Israel" and Celia ?? Trabin</div>,,2141912/5281753800/,,{'menu': 'Sam Trabin Family'; 'access': 'gated'; 'seq': 20; 'level': 2}
 NC1_TRA,SAM_TRA,<div class='oc-nar-node'>No recorded children</div>,,,
 ####### Ida and descendents
-IDA_TRA,LOU_TRA,<div class='oc-wid-node'>Ida (Trabin) and Chaim Kilberg</div>,,2141914/5281753800/,
+IDA_TRA,LOU_TRA,<div class='oc-wid-node'>Ida (Trabin) and Chaim Kilberg</div>,,2141914/5281753800/,,{'menu': 'Ida (Trabin) Kilberg Family'; 'access': 'gated'; 'seq': 30; 'level': 2}
 ALB_KIL,IDA_TRA,<div class='oc-med-node'>Al and Selma Kilberg</div>,,,
 JAN_KIL,ALB_KIL,<div class='oc-med-node'>Jane Kilberg</div>,,,
 TOM_KIL,ALB_KIL,<div class='oc-med-node'>Tom Kilberg</div>,,,
@@ -37,7 +37,7 @@ CEL_BAK,JER_TRA,<div class='oc-nar-node'>Celia Baker</div>,,,
 RBT_TRA,BER_TRA,<div class='oc-nar-node'>Robert "Rob" Trabin</div>,,,
 MIL_TRA,HAR_TRA,<div class='oc-med-node'>Millie (Trabin) Henkin Swern </div>,,,
 BRU_HEN,MIL_TRA,<div class='oc-nar-node'>Bruce and Cynthia (?) Henkin</div>,,,
-JEN_HEN,BRU_HEN,<div class='oc-nar-node'>Jenny Henkin</div>,,,
+JOA_HEN,BRU_HEN,<div class='oc-nar-node'>Joanna Henkin</div>,,,
 RIC_HEN,MIL_TRA,<div class='oc-nar-node'>Rick Henkin</div>,,,
 EDW_TRA,HAR_TRA,<div class='oc-med-node'>Ed and Tovia (Friedman) Trabin</div>,,,
 DAL_TRA,EDW_TRA,<div class='oc-nar-node'>Dale (Trabin) and Marty Waschitz</div>,,,
@@ -46,8 +46,8 @@ EVE_OSH,FAT_TRA,<div class='oc-nar-node'>Evan Osheroff</div>,,,
 SCO_OSH,FAT_TRA,<div class='oc-nar-node'>Scott Osheroff</div>,,,
 AND_TRA,EDW_TRA,<div class='oc-nar-node'>Andrew "Andy" Jay Trabin</div>,,,
 ####### Jacob and descendents
-JAC_TRA,LOU_TRA,<div class='oc-wid-node'>Jankel "Jacob" and Sadie (Weiss)</div>,,2139216/5281753800/,
-CAR_TRA,JAC_TRA,<div class='oc-med-node'>Carl and Laura (Schacter) Trabin</div>,,2139607/5812857090/,
+JAC_TRA,LOU_TRA,<div class='oc-wid-node'>Jankel "Jacob" and Sadie (Weiss)</div>,,2139216/5281753800/,,{'menu': 'Jacob Trabin Family'; 'access': 'open'; 'seq': 40; 'level': 2}
+CAR_TRA,JAC_TRA,<div class='oc-med-node'>Carl and Laura (Schacter) Trabin</div>,,2139607/5812857090/,,{'menu': 'Carl Trabin Family'; 'access': 'open'; 'seq': 41; 'level': 3}
 SAN_TRA,CAR_TRA,<div class='oc-nar-node'>Sandi (Trabin) Advocat<b/><div style='font-style:italic; font-size:smaller; font-weight: 400;'> m/div: Steve Advocat</div></div>,,2139607/5812857090/#vars!panel=19750573!
 ROB_ADV,SAN_TRA,<div class='oc-nar-node'>Robin (Advocat) Mancol<b/><div style='font-style:italic; font-size:smaller; font-weight: 400;'> m: Matt Mancol</div></div>,,,
 HAN_ADV,ROB_ADV,<div class='oc-nar-node'>Hannah Advocat</div>,,,
@@ -78,13 +78,13 @@ ERI_TRA,JAY_TRA,<div class='oc-nar-node'>Eric Trabin</div>,,,
 RON_TRA,SYD_TRA,<div class='oc-nar-node'>Ron And Janice (??) Trabin</div>,,,
 RNG_TRA,RON_TRA,<div class='oc-nar-node'>Ron (?) Trabin</div>,,,
 BEN_TRA,RON_TRA,<div class='oc-nar-node'>Benjamin Trabin</div>,,,
-HEL_TRA,JAC_TRA,<div class='oc-med-node'>Helene (Trabin) and Daniel Berne</div>,,,
+HEL_TRA,JAC_TRA,<div class='oc-med-node'>Helene (Trabin) and Daniel Berne</div>,,2141156/0328610175/,,{'menu': 'Helen (Trabin) Berne Family'; 'access': 'gated'; 'seq': 42; 'level': 3}
 DOU_BER,HEL_TRA,<div class='oc-nar-node'>Doug and Cheryl Berne</div>,,,
 CAN_BER,DOU_BER,<div class='oc-nar-node'>Candace Berne</div>,,,
 LIA+BER,DOU_BER,<div class='oc-nar-node'>Lianne Berne</div>,,,
 JAM_BER,HEL_TRA,<div class='oc-nar-node'>James Berne</div>,,,
 ####### Jenny and descendents
-SHE_TRA,LOU_TRA,<div class='oc-wid-node'>Sheindel "Jenny" (Trabin) and Samuel Herlich</div>,,2141915/5281753800/,
+SHE_TRA,LOU_TRA,<div class='oc-wid-node'>Sheindel "Jenny" (Trabin) and Samuel Herlich</div>,,2141915/5281753800/,,{'menu': 'Jenny (Trabin) Herlich Family'; 'access': 'gated'; 'seq': 50; 'level': 2}
 RUT_HER,SHE_TRA,<div class='oc-med-node'>Ruth (Herlich) and Marty Titleman</div>,,,
 MAR_TIT,RUT_HER,<div class='oc-nar-node'>Richard Herlich</div>,,,
 CHI_TIT,RUT_HER,<div class='oc-nar-node'>?? Herlich</div>,,,
@@ -92,13 +92,13 @@ EST_HER,SHE_TRA,<div class='oc-med-node'>Ester (Herlich) Beifel Lazar</div>,,,
 STE_BEI,EST_HER,<div class='oc-nar-node'>Steve Beifel</div>,,,
 BAR_BEI,EST_HER,<div class='oc-nar-node'>Barbara Beifel</div>,,,
 ####### Simon and descendents
-SHI_TRA,LOU_TRA,<div class='oc-wid-node'>Simon "Shimon" and Esther (Kaufman) Trabin</div>,,2141912/5281753800/,
+SHI_TRA,LOU_TRA,<div class='oc-wid-node'>Simon "Shimon" and Esther (Kaufman) Trabin</div>,,2141912/5281753800/,,{'menu': 'Simon Trabin Family'; 'access': 'gated'; 'seq': 60; 'level': 2}
 DEL_PIL,SHI_TRA,<div class='oc-med-node'>Delores (Trabin) and Ronald Pillet</div>,,,
 AND_MAD,DEL_PIL,<div class='oc-med-node'>Andrea (Pillet) and Michael Madden</div>,,,
 STA_PIL,DEL_PIL,<div class='oc-med-node'>Stacey Pillet</div>,,,
 JRM_PIL,SHI_TRA,<div class='oc-med-node'>Jerome "Jack" and Theodora (Rosenblatt) Trabin</div>,,,
 ####### Phillip and descendents
-PHI_TRA,LOU_TRA,<div class='oc-wid-node'>Phillip and Mary (Chef?) Trabin</div>,,2141910/5281753800,
+PHI_TRA,LOU_TRA,<div class='oc-wid-node'>Phillip and Mary (Chef?) Trabin</div>,,2141910/5281753800,,{'menu': 'Philip Trabin Family'; 'access': 'gated'; 'seq': 70; 'level': 2}
 COR_BAC,PHI_TRA,<div class='oc-med-node'>Corinne and Francis Baca</div>,,,
 MIC_BAC,COR_BAC,<div class='oc-nar-node'>Michael and Joyce (?) Baca</div>,,,
 CH1_BAC,MIC_BAC,<div class='oc-nar-node'>Baca grandchild 1</div>,,,
@@ -111,7 +111,7 @@ LIS_SUC,SEY_TRA,<div class='oc-nar-node'>Lisa (Suckiel) and Peter Ockerman</div>
 IAN_OCK,LIS_SUC,<div class='oc-nar-node'>Ian Ockerman</div>,,,
 RAC_OCK,LIS_SUC,<div class='oc-nar-node'>Rachel Ockerman</div>,,,
 ####### Fanny and descendents
-FAN_TRA,LOU_TRA,<div class='oc-wid-node'>Feige "Fanny" (Trabin) and Harry Barnow</div>,,2147312/5281753800/,
+FAN_TRA,LOU_TRA,<div class='oc-wid-node'>Feige "Fanny" (Trabin) and Harry Barnow</div>,,2147312/5281753800/,,{'menu': 'Fanny (Trabin) Barnow Family'; 'access': 'gated'; 'seq': 80; 'level': 2}
 EST_BAR,FAN_TRA,<div class='oc-med-node'>Estelle (Barnow) Katz</div>,,,
 BY1_KAT,EST_BAR,<div class='oc-nar-node'>Boy 1</div>,,,
 BY2_KAT,EST_BAR,<div class='oc-nar-node'>Boy 2</div>,,,

@@ -1,4 +1,5 @@
 let fullTable;
+const timelineMenu = [];
 
 function prepChartTable(data, newTable) {
     // prepere column properties 
@@ -64,8 +65,32 @@ function processData(csvData, isForToolTip) {
             }
         }
     }
+    // add timeline links to menu
+    const menu = document.getElementById("tl-menu");
+    timelineMenu.sort((a, b) => a.seq - b.seq).forEach((menuItem) => {
+        const listItem = document.createElement("li");
+        const label = document.createElement("label");
+        const span = document.createElement("span");
+        const link = document.createElement("a");
+        label.className = "tl-menu-" + menuItem.level;
+        label.htmlFor = 'tl-menu-cbx'; 
+        link.textContent = menuItem.menu;
+        span.className = "tl-menu-prefix tl-menu-" + menuItem.level;
+        span.textContent = "&nbsp;"
+        label.onclick = (function(base, link){return function(){ redirectiFrames(baseiFrameSrc + link, link); this.parentNode.click(); }})(baseiFrameSrc, menuItem.timelineId);
+        
+        label.appendChild(span);
+        label.appendChild(link);
+        listItem.appendChild(label);
+        
+        menu.appendChild(listItem);
+        //console.log("ordered tree (menu): " + listItem.outerHTML);
+
+    });
+
     return data;
 }
+
 const timelineEmbedBaseUrl = 'https://www.tiki-toki.com/timeline/embed/';
 const timelineLinkBtnHtml = '" class="tl-span-id"></span><a class="tl-link-btn" onclick="timelineLink(this)"></a><br/>';
 const bodyInsertHtml = "-node'>";
@@ -93,14 +118,28 @@ function processDataRow(csvDataRow, i, dataRowNbr) {
                 dataRow.push(cells[3]);                             // provided Tooltip
             }
             else {
-                dataRow.push(removeTags(cells[2]));                             // use body as Tooltip (without html)
+                dataRow.push(removeTags(cells[2]));                 // use body as Tooltip (without html)
             }
         }
         if (cells[4]) {
-            dataRow.push(timelineEmbedBaseUrl + cells[4]);
+            dataRow.push(timelineEmbedBaseUrl + cells[4]);          // button link to new timeline
         }
         else {
             dataRow.push('');
+        }
+
+        if (cells.length > 5 && cells[6]) {             // menu item
+            try {
+                let menuItem = JSON.parse(cells[6].replaceAll("'", "\"").replaceAll(";", ","));
+                menuItem.elId = cells[0];
+                menuItem.timelineId = cells[4];
+                //console.log("tree (menu) in source file row " + i + " : " + JSON.stringify(menuItem));
+                timelineMenu.push(menuItem);
+            } catch (error) {
+                alert("tree (menu) load error in source file row " + i)
+                console.log("tree (menu) load error in source file row " + i)
+                console.error(error);
+            }
         }
 
 
@@ -163,7 +202,7 @@ function captureAndSaveCurrentNodeState() {
         nodeState.row = (!currentEl) ? -1 : currentEl.getAttribute('data-row');
         nodeState.isSelected = false;
     }
-    console.log('captureAndSaveCurrentNodeState: ' + JSON.stringify(nodeState));
+    //console.log('captureAndSaveCurrentNodeState: ' + JSON.stringify(nodeState));
     localStorage.setItem('currentNodeRow', JSON.stringify(nodeState));
 }
 
@@ -185,6 +224,11 @@ function moveOrgChart(targetContainer, isFullPage, scale) {
         showNode(treeEl, isFullPage);
     } catch (error) {
         console.log(error);
+    }
+    // clear timeline menu if open
+    let cbx = document.getElementById("tl-menu-cbx");
+    if (cbx.checked){
+        cbx.checked = false;
     }
 }
 
@@ -217,7 +261,7 @@ function getDefaultCurrentElement(container, isFirstDisplay) {
             }
         }
         else {
-            console.log('getDefaultCurrentElement for container: ' + container.id + ' returning getCenterElement');
+            //console.log('getDefaultCurrentElement for container: ' + container.id + ' returning getCenterElement');
             return getCenterElement(container).centerEl;
         }
     }
@@ -256,10 +300,10 @@ function getCenterElement(container) {
     });
     orderedList = sortedDist.sort((a, b) => a.dist - b.dist)
     if (orderedList.length == 0) {
-        console.log('for container: ' + container.id + ' no visible elements found');
+        //console.log('for container: ' + container.id + ' no visible elements found');
         return { centerEl: null, visibleCount: 0 };
     }
-    console.log('for container: ' + container.id + ' closest element: ' + orderedList[0].elId + ' row: ' + orderedList[0].row + " dist: " + orderedList[0].dist + " visible " + visibleCount + "/" + elements.length);
+    //console.log('for container: ' + container.id + ' closest element: ' + orderedList[0].elId + ' row: ' + orderedList[0].row + " dist: " + orderedList[0].dist + " visible " + visibleCount + "/" + elements.length);
     return { centerEl: document.getElementById(orderedList[0].elId), visibleCount };
 }
 
@@ -276,7 +320,7 @@ const elementIsVisibleInViewport = (el, partiallyVisible = false) => {
 
 function showNode(nodeEl, isFullPage) {
     if (nodeEl) {
-        console.log(`showNode nodeEl id:  ${nodeEl.id}, isFullPage: ${isFullPage}`);
+        //console.log(`showNode nodeEl id:  ${nodeEl.id}, isFullPage: ${isFullPage}`);
         let elBounds = nodeEl.getBoundingClientRect();
         if (elBounds.right == 0) {
             elBounds = nodeEl.parentElement.getBoundingClientRect();
@@ -308,7 +352,7 @@ function showNode(nodeEl, isFullPage) {
         }
 
         let matrix = 'matrix(' + scale + ', 0, 0, ' + scale + ', ' + xTranslation + ', ' + yTranslation + ')';
-        console.log("showNode transform matrix: " + matrix);
+        //console.log("showNode transform matrix: " + matrix);
         document.getElementById("panzoom_container").style.transform = matrix;
 
         // log the "after"

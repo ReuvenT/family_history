@@ -1,4 +1,4 @@
-const baseTimelineUrl = 'https://www.tiki-toki.com/timeline/embed/';
+const baseiFrameSrc = 'https://www.tiki-toki.com/timeline/embed/';
 const rootTimeline = "2138285/2648138406/";
 
 
@@ -49,10 +49,10 @@ document.addEventListener('DOMContentLoaded', function () {
         if (redirectedTimeline && redirectedTimeline != "null") {
             urlParams.delete("redirectedTimeline");
             console.log('redirectedTimeline: ' + decodeURI(redirectedTimeline));
-            redirectiFrames(baseTimelineUrl + redirectedTimeline, redirectedTimeline);
+            redirectiFrames(baseiFrameSrc + redirectedTimeline, redirectedTimeline);
         }
         else {
-            redirectiFrames(baseTimelineUrl + rootTimeline, rootTimeline);
+            redirectiFrames(baseiFrameSrc + rootTimeline, rootTimeline);
         }
     }, 250);
 }, false);

@@ -10,7 +10,7 @@
       <div style="white-space: nowrap; text-align: left; max-width: 250px; overflow-x: clip;">Click here to move, bottom right <br/>to resize, and inside to pan/zoom</div>
       <button class="close-popup-btn" title="click to close popup" style="padding-left: 15px; margin-top: -31px;" onclick="closeChartPopup()">X</button>
       <button style="background: url(/img/tree_view.png); float:right; height: 27px;  width: 29px; margin-top: -30px; margin-right: 40px;"  onclick="handleViewChoiceClick('view-tree', true)" title="click here for full tree" ></button>
-      </div>
+    </div>
     <div id="popup-content-target"></div>
     <div id="resizer" class="resizer"></div>
   </div>
@@ -28,10 +28,9 @@
     </div>
   </div>
 
-  <div id="radioViews"
-    style="position: absolute; left: 8px; top: 8px; z-index: 100; width: 150px; background-color: rgb(212, 210, 210);">
+  <div id="radioViews" style="position: absolute; left: 8px; top: 8px; z-index: 100; width: 150px; background-color: rgb(212, 210, 210); border-radius: 4px;">
     <fieldset style="width: 130px; border: none;">
-      <legend>Select a view:</legend>
+      <legend style = "margin-left: 20px; padding-top: 4px;">Select a view:</legend>
       <div>
         <input type="radio" id="view-timeline" onclick="handleViewChoiceClick(this.value);" name="viewOption"
           value="view-timeline" checked />
@@ -44,6 +43,25 @@
         <label for="view-tree">Family Tree</label>
       </div>
     </fieldset>
+    <!-- https://codepen.io/erikterwan/pen/EVzeRP-->
+    <nav role="navigation">
+      <div id="tl-menu-toggle">
+        <input type="checkbox" id="tl-menu-cbx" />
+        <span class="burger-slice"></span>
+        <span class="burger-slice"></span>
+        <span class="burger-slice"></span>
+        <ul id="tl-menu">
+          <li>
+            <label for="tl-menu-cbx" onclick="this.parentNode.click();"><a href="#">Home</a></label>
+          </li>
+          <li>
+             <label for="tl-menu-cbx" onclick="this.parentNode.click();"><a href="#about">About</a></label>
+          </li>
+          <li><label for="tl-menu-cbx"><a>Info</a></label></li>
+          <li style="font: .75rem 'Fira Sans', sans-serif;">-----Timeline Links------------</li>
+        </ul>
+      </div>
+    </nav>
   </div>
 
   <script src="panzoom.js"></script>

@@ -61,7 +61,7 @@ function captureAndSaveChartPopupState(shownFlag) {
     pState.height = 150;
   }
 
-  console.log("captureChartPopupState (" + mode + ") popupState: " + JSON.stringify(pState));
+  //console.log("captureChartPopupState (" + mode + ") popupState: " + JSON.stringify(pState));
   localStorage.setItem("treePopupState", JSON.stringify(pState));
   return pState.popupScale;
 }
