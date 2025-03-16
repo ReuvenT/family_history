@@ -144,6 +144,7 @@ input {
 
 .resizable {
   position: relative;
+  overflow: hidden;
 }
 
 /* triangle to move popup */
@@ -154,8 +155,8 @@ input {
   border-left: 20px solid #65bee7;
   border-bottom: 20px solid transparent;
   position: absolute;
-  right: -2px;
-  bottom: -73px;
+  right: -3px;
+  bottom: -13px;
   cursor: se-resize;
   transform: rotate(45deg);
 }

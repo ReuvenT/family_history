@@ -24,10 +24,10 @@ function initChartPopup(callOpenPopup) {
 }
 
 function captureAndSaveChartPopupState(shownFlag) {
-  var pState = { shown: shownFlag, left: 1, top: 1, height: 150, width: 300, popupScale: 1, fullScale: 1 };
+  var pState = { shown: shownFlag, left: 130, top: 80, height: 380, width: 350, popupScale: 1, fullScale: 1 };
   let popupStateItem = localStorage.getItem("treePopupState");
   let mode = "popup";
-  if (popupStateItem != '[object Object]' && (typeof popupStateItem === 'string' || popupStateItem instanceof String)) {
+  if (popupStateItem != null && popupStateItem != "null" && popupStateItem != '[object Object]' && (typeof popupStateItem === 'string' || popupStateItem instanceof String)) {
     pState = JSON.parse(popupStateItem);
   }
   pState.shown = shownFlag;

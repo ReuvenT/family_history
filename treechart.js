@@ -320,12 +320,20 @@ const elementIsVisibleInViewport = (el, partiallyVisible = false) => {
 
 function showNode(nodeEl, isFullPage) {
     if (nodeEl) {
-        //console.log(`showNode nodeEl id:  ${nodeEl.id}, isFullPage: ${isFullPage}`);
+        let nodeText = nodeEl.textContent;
+        if (nodeText == ''){
+            nodeText = nodeEl.parentElement.textContent;
+        }
+        //console.log(`showNode nodeEl ${nodeText}, id:  ${nodeEl.id}, isFullPage: ${isFullPage}`);
         let elBounds = nodeEl.getBoundingClientRect();
         if (elBounds.right == 0) {
             elBounds = nodeEl.parentElement.getBoundingClientRect();
         }
-        let chartContainerBounds = document.getElementById("chart_container").getBoundingClientRect();
+        let chartContainerBounds = (isFullPage) ? document.getElementById("chart_container").getBoundingClientRect() : 
+            document.getElementById("tree-popup").getBoundingClientRect()
+        if (chartContainerBounds.right == 0 && chartContainerBounds.parentElement) {
+            chartContainerBounds = chartContainerBounds.parentElement.getBoundingClientRect();
+        }
         let centerEl = getCenterElement(document.getElementById("orgchart-container")).centerEl
         //console.log(`showNode: cont bounds (top, right, bottom, and left) ${chartContainerBounds.top}px, ${chartContainerBounds.right}px, ${chartContainerBounds.bottom}px, ${chartContainerBounds.left}px`);
         //console.log(`showNode: item bounds (top, right, bottom, and left) ${elBounds.top}px, ${elBounds.right}px, ${elBounds.bottom}px, ${elBounds.left}px`);
@@ -335,6 +343,8 @@ function showNode(nodeEl, isFullPage) {
         let elCenter = { x: (elBounds.left + (elBounds.width / 2)), y: (elBounds.top + (elBounds.height / 2)) };
         let xTranslation = -(elCenter.x - containerCenter.x);
         let yTranslation = -(elCenter.y - containerCenter.y);
+        //console.log(`showNode: cont center (x, y): ${containerCenter.x}px, ${containerCenter.y}px`);
+        //console.log(`showNode: item center (x, y): ${elCenter.x}px, ${elCenter.y}px`);
 
         // restore scale
         let popupStateItem = localStorage.getItem("treePopupState");
@@ -356,7 +366,7 @@ function showNode(nodeEl, isFullPage) {
         document.getElementById("panzoom_container").style.transform = matrix;
 
         // log the "after"
-        elBounds = nodeEl.getBoundingClientRect();
+        //elBounds = nodeEl.getBoundingClientRect();
         //console.log(`showNode (after): item bounds (top, right, bottom, and left) ${elBounds.top}px, ${elBounds.right}px, ${elBounds.bottom}px, ${elBounds.left}px`);
     }
 }
