@@ -49,6 +49,7 @@ function AttachPanZoom(ele, minScale, maxScale, increment, liner) {
     newTrans.transX += dx;
     newTrans.transY += dy;
     this.setTransformMatrix(newTrans);
+    //console.log("applyTranslate manewTranstrix: " + JSON.stringify(newTrans));
   }
 
   // Applying Deltas to Scale and Translate transformations
@@ -93,10 +94,14 @@ function AttachPanZoom(ele, minScale, maxScale, increment, liner) {
 
   this.getScrollDirection = function (e) {
     var delta = Math.max(-1, Math.min(1, (e.wheelDelta || -e.detail)));
-    if (delta < 0)
+    if (delta < 0){
       self.applyScale(-self.increment, e.offsetX, e.offsetY)
-    else
+    }
+    else{
       self.applyScale(self.increment, e.offsetX, e.offsetY);
+    }
+    console.log("getScrollDirection delta: " + delta);
+    //showNode(getCenterElement().centerEl);
   }
 
   ele.addEventListener('DOMMouseScroll', this.getScrollDirection, false);

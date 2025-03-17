@@ -32,12 +32,22 @@ document.addEventListener('DOMContentLoaded', function () {
     });
 
     iframe.onload = function () {
-        if (document.getElementById("orgchart-container").innerHTML.length > 500){
+        if (document.getElementById("orgchart-container").innerHTML.length > 500) {
             initChartPopup(true);
         }
-      console.log('Iframe content loaded or reloaded');
-        if (chart.getSelection()[0]){
-            localStorage.setItem('currentNodeRow', JSON.stringify({row: chart.getSelection()[0].row, isSelected: true, url: ""}));
+        console.log('Iframe content loaded or reloaded');
+        if ((typeof chart) == 'undefined') {
+            setTimeout(() => {
+                if (chart.getSelection()[0]) {
+                    localStorage.setItem('currentNodeRow', JSON.stringify({ row: chart.getSelection()[0].row, isSelected: true, url: "" }));
+                }
+                handleViewChoiceClick("view-timeline", true);
+            }, 500);
+        }
+        else {
+            if (chart.getSelection()[0]) {
+                localStorage.setItem('currentNodeRow', JSON.stringify({ row: chart.getSelection()[0].row, isSelected: true, url: "" }));
+            }
         }
     };
 
@@ -99,10 +109,13 @@ if (window.postMessage) {
 
 function redirectiFrames(timeframeUrl, orgChartElId) {
     redirectTimelineiFrame(timeframeUrl);
-    console.log('redirectiFrames orgChartElId: data-row: ' + orgChartElId + ": " + document.getElementById(orgChartElId).getAttribute("data-row"));
-    selectChartItem(document.getElementById(orgChartElId).getAttribute("data-row"));
-    captureAndSaveCurrentNodeState();
-    handleViewChoiceClick("view-timeline", true) ;
+    if (document.getElementById(orgChartElId)) {
+        let currRow = document.getElementById(orgChartElId).getAttribute("data-row");
+        console.log('redirectiFrames orgChartElId: data-row: ' + orgChartElId + ": " + currRow);
+        selectChartItem(currRow);
+        captureAndSaveCurrentNodeState();
+        handleViewChoiceClick("view-timeline", true);
+    }
 }
 
 function redirectTimelineiFrame(newUrl) {
@@ -120,7 +133,7 @@ function handleViewChoiceClick(viewChoice, setChecked) {
     if (viewChoice == "view-tree") {
         tlFrame.classList.remove("fullScreen");
         tlFrame.style.display = "none";
-        moveOrgChart(document.getElementById("tree_container"), true, 1)
+        moveOrgChart(true)
         ocEle.style.display = "block"; //orgchart-container
         ocEle.classList.add("fullScreen");
         pu.style.display = "none";
@@ -132,17 +145,19 @@ function handleViewChoiceClick(viewChoice, setChecked) {
 
         // move chart back home if it was in the popup
         //moveOrgChart(document.getElementById("tree_container"), true, 1)
+    }
+    else if (viewChoice == "view-timeline") {
+        //console.log('handleViewChoiceClick viewChoice: ' + viewChoice);
+        ocEle.classList.remove("fullScreen");
+        tlFrame.classList.add("fullScreen");
+        tlFrame.style.display = "block";
+        pu.style.display = "inline";
+        if (setChecked) {
+            radiobtn = document.getElementById("view-timeline");
+            radiobtn.checked = true;
         }
-        else if (viewChoice == "view-timeline") {
-            ocEle.classList.remove("fullScreen");
-            tlFrame.classList.add("fullScreen");
-            tlFrame.style.display = "block";
-            pu.style.display = "inline";
-            if (setChecked) {
-                radiobtn = document.getElementById("view-timeline");
-                radiobtn.checked = true;
-            }
-            initChartPopup(true);
-        }
+        initChartPopup(true);
+        console.log('handleViewChoiceClick viewChoice: ' + viewChoice);
+    }
 }
 

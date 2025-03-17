@@ -34,7 +34,7 @@ body {
   border: 0 none transparent;
   background: none;
   color: rgb(20, 17, 17);
-  /* margin-left: 15px; */
+  min-width: 30px; 
   float: right;
 }
 
@@ -118,7 +118,7 @@ input {
 #tree-popup {
   position: absolute;
   top: 400px;
-  min-width: 300px;
+  min-width: 150px;
   /* width: 480px;
   height: 550px; 
   box-sizing: border-box;*/
@@ -129,7 +129,7 @@ input {
 }
 
 #tree-popup-header {
-  padding: 12px;
+  padding: 6px;
   /* margin-bottom: 4px; */
   max-height: 60px;
   cursor: move;

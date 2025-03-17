@@ -9,7 +9,7 @@ function initChartPopup(callOpenPopup) {
   if (popupStateItem != '[object Object]' && (typeof popupStateItem === 'string' || popupStateItem instanceof String)) {
     let popupState = JSON.parse(popupStateItem);
     if (popupState) {
-      console.log("initChartPopup callOpenPopup, popupState: " + callOpenPopup + ", " + JSON.stringify(popupState));
+      //console.log("initChartPopup callOpenPopup, popupState: " + callOpenPopup + ", " + JSON.stringify(popupState));
       popup.style.top = (popupState.top) + "px";
       popup.style.left = (popupState.left) + "px";
       popup.style.width = (popupState.width) + "px";
@@ -88,12 +88,10 @@ function openOrgChartPopup() {
   let ocEle = document.getElementById("orgchart-container");
   //let ocSource = document.getElementById("tree_container"); //.firstChild;
   if (radiobtn.checked) {
-    console.log('openOrgChartPopup radiobtn.checked: ' + radiobtn.checked)
-    let tScale = captureAndSaveChartPopupState(true);
+    //console.log('openOrgChartPopup radiobtn.checked: ' + radiobtn.checked)
     ocEle.style.display = "block";
     popup.style.display = "block";
-    moveOrgChart(document.getElementById("popup-content-target"), false, tScale) 
-   
+    moveOrgChart(false) ;
   }
 }
 

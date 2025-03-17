@@ -9,9 +9,22 @@
 
   <div id="tree-popup" class="resizable" style="display: none;">
     <div id="tree-popup-header">
-      <div style="white-space: nowrap; text-align: left; max-width: 250px; overflow-x: clip;">Click here to move, bottom right <br/>to resize, and inside to pan/zoom</div>
-      <button class="close-popup-btn" title="click to close popup" style="padding-left: 15px; margin-top: -31px;" onclick="closeChartPopup()">X</button>
-      <button style="background: url(/img/tree_view.png); float:right; height: 27px;  width: 29px; margin-top: -30px; margin-right: 40px;"  onclick="handleViewChoiceClick('view-tree', true)" title="click here for full tree" ></button>
+      <table style="width:100%; table-layout: fixed;">
+        <tr style="max-height:30px;">
+          <td>
+            <div style="white-space: nowrap; text-align: left; max-width: 250px; overflow-x: clip;">Click here to move, bottom right <br/>to resize, and inside to pan/zoom</div>
+          </td>
+          <td style="width:30px;">
+            <button style="background: url(/img/tree_view.png); height: 27px;  width: 29px; margin-top: 0px;"  onclick="handleViewChoiceClick('view-tree', true)" title="click here for full tree" ></button>
+          </td>
+          <td style="width:30px;">
+            <button class="close-popup-btn" title="click to close popup" style="" onclick="closeChartPopup()">X</button>
+          </td>
+        </tr>
+      </table>
+      
+      
+      
     </div>
     <div id="popup-content-target" style="overflow: hidden;"></div>
     <div id="resizer" class="resizer"></div>

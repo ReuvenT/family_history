@@ -73,16 +73,16 @@ function processData(csvData, isForToolTip) {
         const span = document.createElement("span");
         const link = document.createElement("a");
         label.className = "tl-menu-" + menuItem.level;
-        label.htmlFor = 'tl-menu-cbx'; 
+        label.htmlFor = 'tl-menu-cbx';
         link.textContent = menuItem.menu;
         span.className = "tl-menu-prefix tl-menu-" + menuItem.level;
         span.textContent = "&nbsp;"
-        label.onclick = (function(base, link){return function(){ redirectiFrames(baseiFrameSrc + link, link); this.parentNode.click(); }})(baseiFrameSrc, menuItem.timelineId);
-        
+        label.onclick = (function (base, link) { return function () { redirectiFrames(baseiFrameSrc + link, link); this.parentNode.click(); } })(baseiFrameSrc, menuItem.timelineId);
+
         label.appendChild(span);
         label.appendChild(link);
         listItem.appendChild(label);
-        
+
         menu.appendChild(listItem);
         //console.log("ordered tree (menu): " + listItem.outerHTML);
 
@@ -198,23 +198,23 @@ function captureAndSaveCurrentNodeState() {
         nodeState.url = fullTable.getValue(selectedItem.row, 3);
     }
     else {
-        let currentEl = getCenterElement(document.getElementById("orgchart-container")).centerEl;
+        let currentEl = getCenterElement().centerEl;
         nodeState.row = (!currentEl) ? -1 : currentEl.getAttribute('data-row');
         nodeState.isSelected = false;
     }
-    //console.log('captureAndSaveCurrentNodeState: ' + JSON.stringify(nodeState));
+    console.log('captureAndSaveCurrentNodeState: ' + JSON.stringify(nodeState));
     localStorage.setItem('currentNodeRow', JSON.stringify(nodeState));
 }
 
-function moveOrgChart(targetContainer, isFullPage, scale) {
+function moveOrgChart(isFullPage) {
     let ocSource = document.getElementById("orgchart-container");
     var currentItem = JSON.parse(localStorage.getItem('currentNodeRow'));
-
-    if (scale > .2 && scale < 1.1) {
-        let matrix = 'matrix(' + scale + ', 0, 0, ' + scale + ', 0, 0)';
-        document.getElementById("panzoom_container").style.transform = matrix;
-    }
-    console.log('moveOrgChart moving to target ' + targetContainer.id + ' to ' + (isFullPage ? 'full' : 'popup') + ' scale: ' + scale + ' with current item ' + JSON.stringify(currentItem));
+    let targetContainer = document.getElementById((isFullPage ? 'tree_container' : 'popup-content-target'));
+    // if (scale > .2 && scale < 1.1) {
+    //     let matrix = 'matrix(' + scale + ', 0, 0, ' + scale + ', 0, 0)';
+    //     document.getElementById("panzoom_container").style.transform = matrix;
+    // }
+    console.log('moveOrgChart moving to ' + (isFullPage ? 'full' : 'popup') + 'page with current item ' + JSON.stringify(currentItem));
     try {
         if (ocSource.innerHTML.length > 1000) {
             targetContainer.appendChild(ocSource);
@@ -227,13 +227,13 @@ function moveOrgChart(targetContainer, isFullPage, scale) {
     }
     // clear timeline menu if open
     let cbx = document.getElementById("tl-menu-cbx");
-    if (cbx.checked){
+    if (cbx.checked) {
         cbx.checked = false;
     }
 }
 
 
-function getDefaultCurrentElement(container, isFirstDisplay) {
+function xgetDefaultCurrentElement(isFirstDisplay) {
     // find selected, iFrame, or centered element in container
     let currentItem = JSON.parse(localStorage.getItem('currentNodeRow'));
     if (currentItem && (true + currentItem.row > 0)) {
@@ -253,7 +253,7 @@ function getDefaultCurrentElement(container, isFirstDisplay) {
             }
             if (nodeId == "") {
                 //console.log('getDefaultCurrentElement (firstDisplay) for container: ' + container.id + ' returning getCenterElement');
-                return getCenterElement(container).centerEl;
+                return getCenterElement().centerEl;
             }
             else {
                 //console.log('getDefaultCurrentElement (firstDisplay) for container: ' + container.id + ' returning element with nodeId: ' + nodeId);
@@ -262,21 +262,26 @@ function getDefaultCurrentElement(container, isFirstDisplay) {
         }
         else {
             //console.log('getDefaultCurrentElement for container: ' + container.id + ' returning getCenterElement');
-            return getCenterElement(container).centerEl;
+            return getCenterElement().centerEl;
         }
     }
 }
 
+function isFullChartPageDisplayed() {
+    return document.getElementById("tree_container").innerHTML.length > 100;
+}
 
-function getCenterElement(container) {
+function getCenterElement() {
     // calculate the central point of the container
-    let chartContainerBounds = container.getBoundingClientRect();
+    let isFullPage = isFullChartPageDisplayed();
+    let chartContainerBounds = (isFullPage) ? document.getElementById("chart_container").getBoundingClientRect() :
+        document.getElementById("tree-popup").getBoundingClientRect();
     if (chartContainerBounds.width + chartContainerBounds.height == 0) {
-        //console.log('container: ' + container.id + ' had no width and height, cannot get center element');
+        console.log('getCenterElement isFullPage: ' + isFullPage + ' had no width and height, cannot get center element');
         return { centerEl: null, visibleCount: 0 };
     }
     let containerCenter = { x: (chartContainerBounds.left + (chartContainerBounds.width / 2)), y: (chartContainerBounds.top + (chartContainerBounds.height / 2)) };
-    //console.log(`getCenterElement: container ${container.id} bounds (top, right, bottom, and left) ${chartContainerBounds.top}px, ${chartContainerBounds.right}px, ${chartContainerBounds.bottom}px, ${chartContainerBounds.left}px center: ${JSON.stringify(containerCenter)}`);
+    //console.log(`getCenterElement: isFullPage ${isFullPage} bounds (top, right, bottom, and left) ${chartContainerBounds.top}px, ${chartContainerBounds.right}px, ${chartContainerBounds.bottom}px, ${chartContainerBounds.left}px center: ${JSON.stringify(containerCenter)}`);
     let sortedDist = [];
     let elements = document.querySelectorAll('[data-row]');
     let visibleCount = 0;
@@ -288,22 +293,22 @@ function getCenterElement(container) {
 
         let { top, left, bottom, right } = elBounds;// el.getBoundingClientRect();
         let elCenter = { x: (left + ((right - left) / 2)), y: (top + ((bottom - top) / 2)) };
+        let dist = ((containerCenter.x - elCenter.x) * (containerCenter.x - elCenter.x)) + ((containerCenter.y - elCenter.y) * (containerCenter.y - elCenter.y));
         if (elCenter.x > chartContainerBounds.left && elCenter.y < chartContainerBounds.bottom && elCenter.x < chartContainerBounds.right && elCenter.y > chartContainerBounds.top) {
             visibleCount++;
-            let dist = ((containerCenter.x - elCenter.x) * (containerCenter.x - elCenter.x)) + ((containerCenter.y - elCenter.y) * (containerCenter.y - elCenter.y));
             sortedDist.push({ elId: el.id, row: el.getAttribute("data-row"), dist: Math.sqrt(dist) });
-            //console.log('getCenterElement visible row ' + el.dataset.row + ' ' + JSON.stringify(elCenter));
+            //console.log('getCenterElement visible row ' + el.dataset.row + ', dist ' + Math.sqrt(dist)  + ' ' + JSON.stringify(elCenter));
         }
         else {
-            //console.log('getCenterElement not vis row ' + el.dataset.row + ' ' + JSON.stringify(elCenter));
+            //console.log('getCenterElement not vis row ' + el.dataset.row + ', dist ' + Math.sqrt(dist)  + ' ' + JSON.stringify(elCenter));
         }
     });
     orderedList = sortedDist.sort((a, b) => a.dist - b.dist)
     if (orderedList.length == 0) {
-        //console.log('for container: ' + container.id + ' no visible elements found');
+        console.log('for isFullPage: ' + isFullPage + ' no visible elements found');
         return { centerEl: null, visibleCount: 0 };
     }
-    //console.log('for container: ' + container.id + ' closest element: ' + orderedList[0].elId + ' row: ' + orderedList[0].row + " dist: " + orderedList[0].dist + " visible " + visibleCount + "/" + elements.length);
+    console.log('getCenterElement isFullPage: ' + isFullPage + ' closest element: ' + orderedList[0].elId + ' row: ' + orderedList[0].row + " dist: " + orderedList[0].dist + " visible " + visibleCount + "/" + elements.length);
     return { centerEl: document.getElementById(orderedList[0].elId), visibleCount };
 }
 
@@ -321,53 +326,80 @@ const elementIsVisibleInViewport = (el, partiallyVisible = false) => {
 function showNode(nodeEl, isFullPage) {
     if (nodeEl) {
         let nodeText = nodeEl.textContent;
-        if (nodeText == ''){
+        if (nodeText == '') {
             nodeText = nodeEl.parentElement.textContent;
         }
-        //console.log(`showNode nodeEl ${nodeText}, id:  ${nodeEl.id}, isFullPage: ${isFullPage}`);
+        console.log(`showNode nodeEl ${nodeText}, id:  ${nodeEl.id}, isFullPage: ${isFullPage}`);
         let elBounds = nodeEl.getBoundingClientRect();
         if (elBounds.right == 0) {
             elBounds = nodeEl.parentElement.getBoundingClientRect();
         }
-        let chartContainerBounds = (isFullPage) ? document.getElementById("chart_container").getBoundingClientRect() : 
-            document.getElementById("tree-popup").getBoundingClientRect()
+        let chartContainer = document.getElementById("chart_container"); ////(isFullPage) ? document.getElementById("chart_container").getBoundingClientRect() : 
+        let chartContainerBounds = chartContainer.getBoundingClientRect(); ////(isFullPage) ? document.getElementById("chart_container").getBoundingClientRect() : 
         if (chartContainerBounds.right == 0 && chartContainerBounds.parentElement) {
-            chartContainerBounds = chartContainerBounds.parentElement.getBoundingClientRect();
+            chartContainerBounds = chartContainer.parentElement.getBoundingClientRect();
         }
-        let centerEl = getCenterElement(document.getElementById("orgchart-container")).centerEl
+
         //console.log(`showNode: cont bounds (top, right, bottom, and left) ${chartContainerBounds.top}px, ${chartContainerBounds.right}px, ${chartContainerBounds.bottom}px, ${chartContainerBounds.left}px`);
         //console.log(`showNode: item bounds (top, right, bottom, and left) ${elBounds.top}px, ${elBounds.right}px, ${elBounds.bottom}px, ${elBounds.left}px`);
-        let scale = 1;
+
+        let panZoomStyle = document.getElementById("panzoom_container").style;
+        let matrix = panZoomStyle.transform;
+        let idxScale = matrix.indexOf(",");
+        let scale = matrix.slice(7, idxScale) * 1;
 
         let containerCenter = { x: (chartContainerBounds.left + (chartContainerBounds.width / 2)), y: (chartContainerBounds.top + (chartContainerBounds.height / 2)) };
         let elCenter = { x: (elBounds.left + (elBounds.width / 2)), y: (elBounds.top + (elBounds.height / 2)) };
-        let xTranslation = -(elCenter.x - containerCenter.x);
-        let yTranslation = -(elCenter.y - containerCenter.y);
         //console.log(`showNode: cont center (x, y): ${containerCenter.x}px, ${containerCenter.y}px`);
         //console.log(`showNode: item center (x, y): ${elCenter.x}px, ${elCenter.y}px`);
 
-        // restore scale
-        let popupStateItem = localStorage.getItem("treePopupState");
-        if (popupStateItem != '[object Object]' && (typeof popupStateItem === 'string' || popupStateItem instanceof String)) {
-            let pState = JSON.parse(popupStateItem);
-            if (isFullPage) {
-                scale = pState.fullScale;  // moving to full
-            }
-            else {
-                scale = pState.popupScale;  // moving to popup
-            }
-            if (scale == 0 || Math.abs(scale) > 1) {
-                scale = 1;
-            }
-        }
+        let xTranslation = -(elCenter.x - containerCenter.x);
+        let yTranslation = -(elCenter.y - containerCenter.y);
 
-        let matrix = 'matrix(' + scale + ', 0, 0, ' + scale + ', ' + xTranslation + ', ' + yTranslation + ')';
-        //console.log("showNode transform matrix: " + matrix);
+        // adjust the height of the node if popup
+        if (!isFullPage) {
+            let popupContainerBounds = document.getElementById("tree-popup").getBoundingClientRect();
+            let yOffset = popupContainerBounds.height / 3;
+            //xTranslation = -(elCenter.x - popupCenter.x);
+            yTranslation -= yOffset;
+            console.log("showNode yOffset: " + yOffset);
+        }
+        
+        //console.log(`showNode: (xTranslation, yTranslation, scale): ${xTranslation}, ${yTranslation}, ${scale}`);
+        //console.log(`showNode: container y diff: : ${elCenter.y - containerCenter.x}px,`);
+
+        // let translate = `translate(${xTranslation}px, ${yTranslation}px)`;
+        // console.log("showNode translate: " + translate);
+        // document.getElementById("panzoom_container").style.transform = `translate(${xTranslation}px, ${yTranslation}px)`;
+
+        // restore scale
+        // let popupStateItem = localStorage.getItem("treePopupState");
+        // if (popupStateItem != '[object Object]' && (typeof popupStateItem === 'string' || popupStateItem instanceof String)) {
+        //     let pState = JSON.parse(popupStateItem);
+        //     if (isFullPage) {
+        //         scale = pState.fullScale;  // moving to full
+        //     }
+        //     else {
+        //         scale = pState.popupScale;  // moving to popup
+        //     }
+        //     if (scale == 0 || Math.abs(scale) > 1) {
+        scale = 1;
+        //     }
+        // }
+
+
+        matrix = 'matrix(' + scale + ', 0, 0, ' + scale + ', ' + xTranslation + ', ' + yTranslation + ')';
+        console.log("showNode transform matrix: " + matrix);
         document.getElementById("panzoom_container").style.transform = matrix;
 
         // log the "after"
-        //elBounds = nodeEl.getBoundingClientRect();
-        //console.log(`showNode (after): item bounds (top, right, bottom, and left) ${elBounds.top}px, ${elBounds.right}px, ${elBounds.bottom}px, ${elBounds.left}px`);
+        elBounds = nodeEl.getBoundingClientRect();
+        if (elBounds.right == 0) {
+            elBounds = nodeEl.parentElement.getBoundingClientRect();
+        }
+        console.log(`showNode (after): item bounds (top, right, bottom, and left) ${elBounds.top}px, ${elBounds.right}px, ${elBounds.bottom}px, ${elBounds.left}px`);
+
+
     }
 }
 
