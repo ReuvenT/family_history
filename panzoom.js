@@ -41,7 +41,10 @@ function AttachPanZoom(ele, minScale, maxScale, increment, liner) {
 
   // Given the scale, translateX and translateY apply to CSSS transform
   this.setTransformMatrix = function (o) {
-    ele.style.transform = 'matrix(' + o.scale + ', 0, 0, ' + o.scale + ', ' + o.transX + ', ' + o.transY + ')';
+    let matrix = 'matrix(' + o.scale + ', 0, 0, ' + o.scale + ', ' +  o.transX + ', ' + o.transY + ')';
+    let scale = 'scale(' + o.scale + ')';
+    //console.log("setTransformMatrix transform matrix: " + matrix + " scale: " + scale);
+    ele.style.transform = matrix;
   }
 
   this.applyTranslate = function (dx, dy) {
@@ -57,17 +60,18 @@ function AttachPanZoom(ele, minScale, maxScale, increment, liner) {
     let newTrans = this.getTransformMatrix();
     let width = ele.width ? ele.width : ele.offsetWidth;
     let height = ele.height ? ele.height : ele.offsetHeight;
-    let tranX = x - (width / 2);
-    let tranY = y - (height / 2);
+    let tranX = x - (width / 8);
+    let tranY = y - (height / 8);
     dscale = (this.liner ? dscale : dscale * (newTrans.scale)) // scale either liner or non-liner 
+    //console.log("applyScale (x,y): "  +  dscale + ', ' + tranX + ', ' + tranY );
     newTrans.scale += dscale;
     let maxOrMinScale = (newTrans.scale <= this.minScale || newTrans.scale >= this.maxScale);
     if (newTrans.scale < this.minScale) newTrans.scale = this.minScale;
     if (newTrans.scale > this.maxScale) newTrans.scale = this.maxScale;
     if (!maxOrMinScale) {
-      this.applyTranslate(tranX, tranY);
+      //this.applyTranslate(tranX, tranY);
       this.setTransformMatrix(newTrans);
-      this.applyTranslate(-(tranX * dscale), -(tranY * dscale));
+      //this.applyTranslate(-(tranX * dscale), -(tranY * dscale));
     }
   }
 
@@ -100,7 +104,7 @@ function AttachPanZoom(ele, minScale, maxScale, increment, liner) {
     else{
       self.applyScale(self.increment, e.offsetX, e.offsetY);
     }
-    console.log("getScrollDirection delta: " + delta);
+    //console.log("getScrollDirection delta: " + delta);
     //showNode(getCenterElement().centerEl);
   }
 

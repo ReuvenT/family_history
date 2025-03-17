@@ -274,14 +274,14 @@ function isFullChartPageDisplayed() {
 function getCenterElement() {
     // calculate the central point of the container
     let isFullPage = isFullChartPageDisplayed();
-    let chartContainerBounds = (isFullPage) ? document.getElementById("chart_container").getBoundingClientRect() :
+    let chartContainerBounds = (isFullPage) ? document.getElementById("orgchart-container").getBoundingClientRect() :
         document.getElementById("tree-popup").getBoundingClientRect();
     if (chartContainerBounds.width + chartContainerBounds.height == 0) {
         console.log('getCenterElement isFullPage: ' + isFullPage + ' had no width and height, cannot get center element');
         return { centerEl: null, visibleCount: 0 };
     }
     let containerCenter = { x: (chartContainerBounds.left + (chartContainerBounds.width / 2)), y: (chartContainerBounds.top + (chartContainerBounds.height / 2)) };
-    //console.log(`getCenterElement: isFullPage ${isFullPage} bounds (top, right, bottom, and left) ${chartContainerBounds.top}px, ${chartContainerBounds.right}px, ${chartContainerBounds.bottom}px, ${chartContainerBounds.left}px center: ${JSON.stringify(containerCenter)}`);
+    console.log(`getCenterElement: isFullPage ${isFullPage} bounds (top, right, bottom, and left) ${chartContainerBounds.top}px, ${chartContainerBounds.right}px, ${chartContainerBounds.bottom}px, ${chartContainerBounds.left}px center: ${JSON.stringify(containerCenter)}`);
     let sortedDist = [];
     let elements = document.querySelectorAll('[data-row]');
     let visibleCount = 0;
