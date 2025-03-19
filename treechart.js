@@ -189,24 +189,6 @@ function selectChartItem(rowIndex) {
     chart.setSelection(selectionArray);
 }
 
-function xcaptureAndSaveCurrentNodeState() {
-    let nodeState = getChartViewState();
-
-    var selectedItem = chart.getSelection()[0];
-    if (selectedItem && selectedItem.hasOwnProperty('row')) {
-        nodeState.row = selectedItem.row;
-        nodeState.isSelected = true;
-        nodeState.timelineId = extractTimelineIdFromURL(fullTable.getValue(selectedItem.row, 3));
-    }
-    else {
-        let currentEl = getCenterElement().centerEl;
-        nodeState.row = (!currentEl) ? -1 : currentEl.getAttribute('data-row');
-        nodeState.isSelected = false;
-    }
-    console.log('captureAndSaveCurrentNodeState: ' + JSON.stringify(nodeState));
-    setChartViewState(nodeState);
-}
-
 function moveOrgChart(isFullPage) {
     let ocSource = document.getElementById("orgchart-container");
     var currentItem = getChartViewState();

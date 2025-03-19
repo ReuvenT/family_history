@@ -139,31 +139,6 @@ function getTransformScale(elCount, isPopup) {
     let matrix = transform.slice(start, end).split(",");
     tScale = matrix[0];
 
-    // if (isPopup) {
-    //   if (Math.abs(tScale) > 1 || Math.abs(tScale) < 0.60) {
-    //     // safeguards
-    //     tScale = 1;
-    //   }
-    //   if (tScale == 1) {
-    //     if (elCount < 2) {
-    //       tScale = .60
-    //     }
-    //     else {
-    //       if (elCount < 12) {
-    //         tScale = .75
-    //       }
-    //     }
-    //   }
-    // }
-    // else {
-    //   if (Math.abs(tScale) > 1.25) {
-    //     // safeguard
-    //     tScale = 1;
-    //   } else if (Math.abs(tScale) < 0.5) {
-    //     // safeguards
-    //     tScale = .5;
-    //   }
-    //}
   } catch (error) {
     console.log("getTransformScale matrix error: " + error);
   }
