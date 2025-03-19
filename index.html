@@ -47,13 +47,13 @@
     <fieldset style="width: 130px; border: none;">
       <legend style = "margin-left: 20px; padding-top: 4px;">Select a view:</legend>
       <div>
-        <input type="radio" id="view-timeline" onclick="handleViewChoiceClick(this.value);" name="viewOption"
+        <input type="radio" id="view-timeline" onclick="handleViewChoiceClick(this.value, true);" name="viewOption"
           value="view-timeline" checked />
         <label for="view-timeline">Timeline&nbsp;&nbsp;&nbsp;<img src="..\img\tree_view.png"
             onclick="toggleOrgChartPopup()" id="tree-popup-btn" title="click here for tree popup" />
       </div>
       <div>
-        <input type="radio" id="view-tree" onclick="handleViewChoiceClick(this.value);" name="viewOption"
+        <input type="radio" id="view-tree" onclick="handleViewChoiceClick(this.value, true);" name="viewOption"
           value="view-tree" />
         <label for="view-tree">Family Tree</label>
       </div>

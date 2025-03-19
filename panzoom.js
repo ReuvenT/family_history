@@ -51,17 +51,19 @@ function AttachPanZoom(ele, minScale, maxScale, increment, liner) {
     let newTrans = this.getTransformMatrix();
     newTrans.transX += dx;
     newTrans.transY += dy;
-    this.setTransformMatrix(newTrans);
     //console.log("applyTranslate manewTranstrix: " + JSON.stringify(newTrans));
+    this.setTransformMatrix(newTrans);
   }
 
   // Applying Deltas to Scale and Translate transformations
   this.applyScale = function (dscale, x, y) {
+    //console.log("applyScale (x,y): "  +  dscale + ', ' + x + ', ' + y );
     let newTrans = this.getTransformMatrix();
     let width = ele.width ? ele.width : ele.offsetWidth;
     let height = ele.height ? ele.height : ele.offsetHeight;
-    let tranX = x - (width / 8);
-    let tranY = y - (height / 8);
+    //console.log("applyScale scale, (x,y): "  +  dscale + ', ' + x + ', ' + y + " offset (x,y): "  +  xOffset + ', ' + yOffset );
+    let tranX = x - (width / 2) ;
+    let tranY = y - (height / 2);
     dscale = (this.liner ? dscale : dscale * (newTrans.scale)) // scale either liner or non-liner 
     //console.log("applyScale (x,y): "  +  dscale + ', ' + tranX + ', ' + tranY );
     newTrans.scale += dscale;
@@ -69,9 +71,23 @@ function AttachPanZoom(ele, minScale, maxScale, increment, liner) {
     if (newTrans.scale < this.minScale) newTrans.scale = this.minScale;
     if (newTrans.scale > this.maxScale) newTrans.scale = this.maxScale;
     if (!maxOrMinScale) {
-      //this.applyTranslate(tranX, tranY);
+      //  get element in center before move
+      centEl = getCenterElement().centerEl;
+      cendElRect = centEl.getBoundingClientRect();
+      if (cendElRect.right == 0){
+        centEl = centEl.parentElement;
+        cendElRect = centEl.getBoundingClientRect();
+      }
+      cendPos = {x: cendElRect.left, y: cendElRect.top};
+      this.applyTranslate(tranX, tranY);
       this.setTransformMatrix(newTrans);
-      //this.applyTranslate(-(tranX * dscale), -(tranY * dscale));
+      //centEl = document.getElementById(centEl.id);
+      cendElRect = centEl.getBoundingClientRect();
+      let diffX = cendPos.x - cendElRect.left;
+      let diffY= cendPos.y - cendElRect.top;
+      //console.log("applyScale diff (x,y): "  +  diffX + ', ' + diffY );
+      this.applyTranslate(diffX, diffY);
+      //this.applyTranslate(-(tranX * dscale * 2), -(tranY * dscale * 2));
     }
   }
 
@@ -90,6 +106,7 @@ function AttachPanZoom(ele, minScale, maxScale, increment, liner) {
     if (this.panning) {
       let deltaX = e.clientX - this.oldX;
       let deltaY = e.clientY - this.oldY;
+
       self.applyTranslate(deltaX, deltaY);
       this.oldX = e.clientX;
       this.oldY = e.clientY;
@@ -122,32 +139,31 @@ function getTransformScale(elCount, isPopup) {
     let matrix = transform.slice(start, end).split(",");
     tScale = matrix[0];
 
-    if (isPopup) {
-      if (Math.abs(tScale) > 1 || Math.abs(tScale) < 0.60) {
-        // safeguards
-        tScale = 1;
-      }
-      if (tScale == 1) {
-        if (elCount < 2) {
-          tScale = .60
-        }
-        else {
-          if (elCount < 12) {
-            tScale = .75
-          }
-        }
-      }
-    }
-    else {
-      if (Math.abs(tScale) > 1.25) {
-        // safeguard
-        tScale = 1;
-      } else if (Math.abs(tScale) < 0.5) {
-        // safeguards
-        tScale = .5;
-      }
-
-    }
+    // if (isPopup) {
+    //   if (Math.abs(tScale) > 1 || Math.abs(tScale) < 0.60) {
+    //     // safeguards
+    //     tScale = 1;
+    //   }
+    //   if (tScale == 1) {
+    //     if (elCount < 2) {
+    //       tScale = .60
+    //     }
+    //     else {
+    //       if (elCount < 12) {
+    //         tScale = .75
+    //       }
+    //     }
+    //   }
+    // }
+    // else {
+    //   if (Math.abs(tScale) > 1.25) {
+    //     // safeguard
+    //     tScale = 1;
+    //   } else if (Math.abs(tScale) < 0.5) {
+    //     // safeguards
+    //     tScale = .5;
+    //   }
+    //}
   } catch (error) {
     console.log("getTransformScale matrix error: " + error);
   }

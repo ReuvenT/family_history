@@ -16,7 +16,7 @@ function prepChartTable(data, newTable) {
     fullTable.addColumn('string', 'Key_Name');
     fullTable.addColumn('string', 'Parent');
     fullTable.addColumn('string', 'tooltip');
-    fullTable.addColumn('string', 'TimelineUrl');   // timeline, with possible story hash 
+    fullTable.addColumn('string', 'TimelinetimelineId');   // timeline, with possible story hash 
 
     // compose source data into appropriate table values
     const sourceData = processData(data);
@@ -36,18 +36,21 @@ function prepChartTable(data, newTable) {
 }
 
 function treeSelectHandler() {
-    let currentState = { 'row': -1, isSelected: false, 'url': null };
+    let currentState = getChartViewState();
     var selectedItem = chart.getSelection()[0];
     if (selectedItem && selectedItem.hasOwnProperty('row')) { //&& selectedItem.row) {
-        currentState.row = fullTable.getValue(selectedItem.row, 0);
+        currentState.row = selectedItem.row; //' fullTable.getValue(selectedItem.row, 0);
         currentState.isSelected = true;
-        currentState.url = fullTable.getValue(selectedItem.row, 3);
+        currentState.timelineId = extractTimelineIdFromURL(fullTable.getValue(selectedItem.row, 3));
         console.log('treeSelectHandler: user selected row ' + selectedItem.row + ' from values ' + JSON.stringify(selectedItem));
     }
     else {
+        currentState.row = -1;
+        currentState.isSelected = false;
         console.log('treeSelectHandler: user un-selected row '); //+ chart.getSelection()[0] + ', current values: ' + JSON.stringify(selectedItem));
     }
-    localStorage.setItem('currentNodeRow', JSON.stringify(currentState));
+
+    setChartViewState(currentState);
 }
 
 
@@ -77,7 +80,7 @@ function processData(csvData, isForToolTip) {
         link.textContent = menuItem.menu;
         span.className = "tl-menu-prefix tl-menu-" + menuItem.level;
         span.textContent = "&nbsp;"
-        label.onclick = (function (base, link) { return function () { redirectiFrames(baseiFrameSrc + link, link); this.parentNode.click(); } })(baseiFrameSrc, menuItem.timelineId);
+        label.onclick = (function (base, link) { return function (event) { redirectiFrames(baseiFrameSrc + link, link); event.preventDefault(); } })(baseiFrameSrc, menuItem.timelineId);
 
         label.appendChild(span);
         label.appendChild(link);
@@ -91,7 +94,7 @@ function processData(csvData, isForToolTip) {
     return data;
 }
 
-const timelineEmbedBaseUrl = 'https://www.tiki-toki.com/timeline/embed/';
+const timelineEmbedBasetimelineId = 'https://www.tiki-toki.com/timeline/embed/';
 const timelineLinkBtnHtml = '" class="tl-span-id"></span><a class="tl-link-btn" onclick="timelineLink(this)"></a><br/>';
 const bodyInsertHtml = "-node'>";
 
@@ -101,7 +104,7 @@ function processDataRow(csvDataRow, i, dataRowNbr) {
     try {
         var body = cells[2];
         var insertPoint = body.indexOf(bodyInsertHtml) + 7;
-        // insert link button if url is specified
+        // insert link button if timelineId is specified
         if (cells.length > 3 && cells[4] && insertPoint > 7) {
             body = body.slice(0, insertPoint) + '<span data-row="' + dataRowNbr + '" id="' + cells[4] + timelineLinkBtnHtml + body.slice(insertPoint);
         }
@@ -122,7 +125,7 @@ function processDataRow(csvDataRow, i, dataRowNbr) {
             }
         }
         if (cells[4]) {
-            dataRow.push(timelineEmbedBaseUrl + cells[4]);          // button link to new timeline
+            dataRow.push(timelineEmbedBasetimelineId + cells[4]);          // button link to new timeline
         }
         else {
             dataRow.push('');
@@ -162,16 +165,16 @@ function removeTags(str) {
 }
 
 function timelineLink(el) {
-    var storedSelection = JSON.parse(localStorage.getItem('currentNodeRow'));
-    if (storedSelection) {
-        console.log("timelineLink clicked for row(cell) " + storedSelection.row + " with url " + storedSelection.url);
-        // Just fire the message through parent object (this is still used even though it was coded when this was in iFrame)
-        if (window.parent) {
-            window.parent.postMessage({ from: 'org-chart', node: storedSelection.row, url: storedSelection.url }, '*');
-        }
-        showNode(el, true);
-        handleViewChoiceClick("view-timeline", true)
-    }
+    var storedSelection = getChartViewState();
+    console.log("timelineLink clicked for row(cell) " + storedSelection.row + " with timelineId " + storedSelection.timelineId);
+    redirectiFrames(baseiFrameSrc + storedSelection.timelineId, storedSelection.timelineId);
+
+    // Just fire the message through parent object (this is still used even though it was coded when this was in iFrame)
+    // if (window.parent) {
+    //     window.parent.postMessage({ from: 'org-chart', row: storedSelection.row, timelineId: storedSelection.timelineId }, '*');
+    // }
+    //showNode(el, true, false);
+    //handleViewChoiceClick("view-timeline", true)
 };
 
 function removeRemainingColumns(data, fromIndex) {
@@ -186,16 +189,14 @@ function selectChartItem(rowIndex) {
     chart.setSelection(selectionArray);
 }
 
-function captureAndSaveCurrentNodeState() {
-    let currentNodeState = localStorage.getItem('currentNodeRow');
-    let nodeState = (currentNodeState != '[object Object]' && (typeof currentNodeState === 'string' || currentNodeState instanceof String)) ?
-        JSON.parse(currentNodeState) : { "row": -1, "isSelected": false, "url": null };
+function xcaptureAndSaveCurrentNodeState() {
+    let nodeState = getChartViewState();
 
     var selectedItem = chart.getSelection()[0];
     if (selectedItem && selectedItem.hasOwnProperty('row')) {
         nodeState.row = selectedItem.row;
         nodeState.isSelected = true;
-        nodeState.url = fullTable.getValue(selectedItem.row, 3);
+        nodeState.timelineId = extractTimelineIdFromURL(fullTable.getValue(selectedItem.row, 3));
     }
     else {
         let currentEl = getCenterElement().centerEl;
@@ -203,67 +204,23 @@ function captureAndSaveCurrentNodeState() {
         nodeState.isSelected = false;
     }
     console.log('captureAndSaveCurrentNodeState: ' + JSON.stringify(nodeState));
-    localStorage.setItem('currentNodeRow', JSON.stringify(nodeState));
+    setChartViewState(nodeState);
 }
 
 function moveOrgChart(isFullPage) {
     let ocSource = document.getElementById("orgchart-container");
-    var currentItem = JSON.parse(localStorage.getItem('currentNodeRow'));
+    var currentItem = getChartViewState();
     let targetContainer = document.getElementById((isFullPage ? 'tree_container' : 'popup-content-target'));
-    // if (scale > .2 && scale < 1.1) {
-    //     let matrix = 'matrix(' + scale + ', 0, 0, ' + scale + ', 0, 0)';
-    //     document.getElementById("panzoom_container").style.transform = matrix;
-    // }
+    let wasFullPageMode = !document.getElementById("popup-content-target").innerHTML.length > 0;
     console.log('moveOrgChart moving to ' + (isFullPage ? 'full' : 'popup') + 'page with current item ' + JSON.stringify(currentItem));
     try {
         if (ocSource.innerHTML.length > 1000) {
             targetContainer.appendChild(ocSource);
         }
-        let currentNodeState = JSON.parse(localStorage.getItem('currentNodeRow'));
-        let treeEl = document.querySelector('[data-row="' + (currentNodeState.row) + '"]');
-        showNode(treeEl, isFullPage);
+        let treeEl = document.querySelector('[data-row="' + (currentItem.row) + '"]');
+        showNode(treeEl, isFullPage, wasFullPageMode);
     } catch (error) {
         console.log(error);
-    }
-    // clear timeline menu if open
-    let cbx = document.getElementById("tl-menu-cbx");
-    if (cbx.checked) {
-        cbx.checked = false;
-    }
-}
-
-
-function xgetDefaultCurrentElement(isFirstDisplay) {
-    // find selected, iFrame, or centered element in container
-    let currentItem = JSON.parse(localStorage.getItem('currentNodeRow'));
-    if (currentItem && (true + currentItem.row > 0)) {
-        //console.log('getDefaultCurrentElement for container: ' + container.id + ' returning current row: ' + currentItem.row);
-        return document.querySelector('[data-row="' + (currentItem.row) + '"]');
-    }
-    else if (chart.getSelection()[0]) {
-        //console.log('getDefaultCurrentElement for container: ' + container.id + ' returning selected* row: ' + chart.getSelection()[0].row);
-        return document.querySelector('[data-row="' + (chart.getSelection()[0].row) + '"]');
-    }
-    else {
-        if (isFirstDisplay) {
-            let nodeId = "";
-            let iFrameSourceElements = document.getElementById('tl-timeline-iframe').src.split("/")
-            if (iFrameSourceElements.length > 3) {
-                nodeId = iFrameSourceElements[iFrameSourceElements.length - 3] + "/" + iFrameSourceElements[iFrameSourceElements.length - 2] + "/"
-            }
-            if (nodeId == "") {
-                //console.log('getDefaultCurrentElement (firstDisplay) for container: ' + container.id + ' returning getCenterElement');
-                return getCenterElement().centerEl;
-            }
-            else {
-                //console.log('getDefaultCurrentElement (firstDisplay) for container: ' + container.id + ' returning element with nodeId: ' + nodeId);
-                return document.getElementById(nodeId);
-            }
-        }
-        else {
-            //console.log('getDefaultCurrentElement for container: ' + container.id + ' returning getCenterElement');
-            return getCenterElement().centerEl;
-        }
     }
 }
 
@@ -323,13 +280,13 @@ const elementIsVisibleInViewport = (el, partiallyVisible = false) => {
 };
 
 
-function showNode(nodeEl, isFullPage) {
+function showNode(nodeEl, isFullPage, wasFullPage) {
     if (nodeEl) {
         let nodeText = nodeEl.textContent;
         if (nodeText == '') {
             nodeText = nodeEl.parentElement.textContent;
         }
-        console.log(`showNode nodeEl ${nodeText}, id:  ${nodeEl.id}, isFullPage: ${isFullPage}`);
+        console.log(`showNode nodeEl ${nodeText}, row: ${nodeEl.getAttribute('data-row')}, id: ${nodeEl.id}, isFullPage: ${isFullPage}, wasFullPage: ${wasFullPage}`);
         let elBounds = nodeEl.getBoundingClientRect();
         if (elBounds.right == 0) {
             elBounds = nodeEl.parentElement.getBoundingClientRect();
@@ -362,9 +319,9 @@ function showNode(nodeEl, isFullPage) {
             let yOffset = popupContainerBounds.height / 3;
             //xTranslation = -(elCenter.x - popupCenter.x);
             yTranslation -= yOffset;
-            console.log("showNode yOffset: " + yOffset);
+            //console.log("showNode yOffset: " + yOffset);
         }
-        
+
         //console.log(`showNode: (xTranslation, yTranslation, scale): ${xTranslation}, ${yTranslation}, ${scale}`);
         //console.log(`showNode: container y diff: : ${elCenter.y - containerCenter.x}px,`);
 
@@ -372,24 +329,34 @@ function showNode(nodeEl, isFullPage) {
         // console.log("showNode translate: " + translate);
         // document.getElementById("panzoom_container").style.transform = `translate(${xTranslation}px, ${yTranslation}px)`;
 
+
         // restore scale
-        // let popupStateItem = localStorage.getItem("treePopupState");
-        // if (popupStateItem != '[object Object]' && (typeof popupStateItem === 'string' || popupStateItem instanceof String)) {
-        //     let pState = JSON.parse(popupStateItem);
-        //     if (isFullPage) {
-        //         scale = pState.fullScale;  // moving to full
-        //     }
-        //     else {
-        //         scale = pState.popupScale;  // moving to popup
-        //     }
-        //     if (scale == 0 || Math.abs(scale) > 1) {
-        scale = 1;
-        //     }
-        // }
+        if (isFullPage != wasFullPage) {
+            let cState = getChartViewState();
+            let prevScale = scale;
+            xTranslation /= prevScale;
+            yTranslation /= prevScale;
+            if (isFullPage) {
+                scale = cState.fullScale;  // moving to full
+                cState.popupScale = prevScale;
+            }
+            else {
+                scale = cState.popupScale;  // moving to popup
+                cState.fullScale = prevScale;
+            }
+            if (scale == 0 || Math.abs(scale) > 1) {
+                scale = 1;
+            }
+            setChartViewState(cState);
+            // adjust x/y
+            xTranslation *= scale;
+            yTranslation *= scale;
+            //console.log(`showNode rescaled: (xTranslation, yTranslation, scale, fullScale, popupScale): ${xTranslation}, ${yTranslation}, ${scale}, ${cState.fullScale}, ${cState.popupScale}`);
+        }
 
 
         matrix = 'matrix(' + scale + ', 0, 0, ' + scale + ', ' + xTranslation + ', ' + yTranslation + ')';
-        console.log("showNode transform matrix: " + matrix);
+        //console.log("showNode transform matrix: " + matrix);
         document.getElementById("panzoom_container").style.transform = matrix;
 
         // log the "after"

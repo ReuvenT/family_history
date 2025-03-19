@@ -1,4 +1,4 @@
-# URL suffixes that link the timeline to the tree - important: when pasting the value in the timeline extra info, replace
+# timelineId suffixes that link the timeline to the tree - important: when pasting the value in the timeline extra info, replace
 # backslash with %2F to encode, for example root timeline is 2138285/2648138406/ needs to appear as 2138285%2F2648138406%2F in the 
 # link in the tiki-toki exotra info link, e.g. 
 # to return to root [click here](http://127.0.0.1:5500/redirect%20to%20story%20example.html?newtimeline=2138285%2F2648138406%2F)
@@ -29,7 +29,7 @@ ELI_OJA,KAR_SCH,<div class='oc-med-node'>Elisa Ojeda</div>,,,
 AMA_OJA,KAR_SCH,<div class='oc-med-node'>Amanda Ojeda</div>,,,
 NAT_KIL,IDA_TRA,<div class='oc-med-node'>Nathan Kilberg</div>,,,
 ####### Harry and descendents
-HAR_TRA,LOU_TRA,<div class='oc-wid-node'>Gershon "Harry" and Henrietta (Surman) Trabin </div>,,2141911/5281753800/,
+HAR_TRA,LOU_TRA,<div class='oc-wid-node'>Gershon "Harry" and Henrietta (Surman) Trabin </div>,,2141911/5281753800/,,{'menu': 'Harry Trabin Family'; 'access': 'gated'; 'seq': 30; 'level': 2}
 BER_TRA,HAR_TRA,<div class='oc-med-node'>Bernard and Frances (Latzer) Trabin</div>,,,
 TOM_TRA,BER_TRA,<div class='oc-nar-node'>Tom Trabin and Nancy Rakela</div>,,,
 JER_TRA,BER_TRA,<div class='oc-nar-node'>Jeri (Trabin) Baker</div>,,,
@@ -94,13 +94,13 @@ EST_HER,SHE_TRA,<div class='oc-med-node'>Ester (Herlich) Beifel Lazar</div>,,,
 STE_BEI,EST_HER,<div class='oc-nar-node'>Steve Beifel</div>,,,
 BAR_BEI,EST_HER,<div class='oc-nar-node'>Barbara Beifel</div>,,,
 ####### Simon and descendents
-SHI_TRA,LOU_TRA,<div class='oc-wid-node'>Simon "Shimon" and Esther (Kaufman) Trabin</div>,,2141912/5281753800/,,{'menu': 'Simon Trabin Family'; 'access': 'gated'; 'seq': 60; 'level': 2}
+SHI_TRA,LOU_TRA,<div class='oc-wid-node'>Simon "Shimon" and Esther (Kaufman) Trabin</div>,,2147311/5281753800/,,{'menu': 'Simon Trabin Family'; 'access': 'gated'; 'seq': 60; 'level': 2}
 DEL_PIL,SHI_TRA,<div class='oc-med-node'>Delores (Trabin) and Ronald Pillet</div>,,,
 AND_MAD,DEL_PIL,<div class='oc-med-node'>Andrea (Pillet) and Michael Madden</div>,,,
 STA_PIL,DEL_PIL,<div class='oc-med-node'>Stacey Pillet</div>,,,
 JRM_PIL,SHI_TRA,<div class='oc-med-node'>Jerome "Jack" and Theodora (Rosenblatt) Trabin</div>,,,
 ####### Phillip and descendents
-PHI_TRA,LOU_TRA,<div class='oc-wid-node'>Phillip and Mary (Chef?) Trabin</div>,,2141910/5281753800,,{'menu': 'Philip Trabin Family'; 'access': 'gated'; 'seq': 70; 'level': 2}
+PHI_TRA,LOU_TRA,<div class='oc-wid-node'>Phillip and Mary (Chef?) Trabin</div>,,2141910/5281753800/,,{'menu': 'Philip Trabin Family'; 'access': 'gated'; 'seq': 70; 'level': 2}
 COR_BAC,PHI_TRA,<div class='oc-med-node'>Corinne and Francis Baca</div>,,,
 MIC_BAC,COR_BAC,<div class='oc-nar-node'>Michael and Joyce (?) Baca</div>,,,
 CH1_BAC,MIC_BAC,<div class='oc-nar-node'>Baca grandchild 1</div>,,,
