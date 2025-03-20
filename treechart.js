@@ -61,7 +61,7 @@ function processData(csvData, isForToolTip) {
     // any row starting with # is informational only - not processed
     for (let i = 0; i < rows.length; i++) {
         rawRow = rows[i];
-        if (rawRow.length > 1 && !rawRow.startsWith("#")) {
+        if (rawRow.length > 8 && !rawRow.startsWith("#")) {
             let rowArray = processDataRow(rows[i], i, j++);
             if (rowArray.length > 2) {
                 data.push(rowArray);

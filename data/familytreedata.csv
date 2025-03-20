@@ -62,9 +62,7 @@ DEB_TRA,JAK_TRA,<div class='oc-nar-node'>Deb Trabin</div>,,,
 REU_TRA,CAR_TRA,<div class='oc-nar-node'>Robert "Reuven" and Bracha (Sabanek) Trabin</div>,,2139607/5812857090/#vars!panel=19740093!
 EIT_TRA,REU_TRA,<div class='oc-nar-node'>Eitan Trabin<b/><div style='font-style:italic; font-size:smaller; font-weight: 400;'> m/div: Natalie Stern</div></div>,,,
 MIR_TRA,EIT_TRA,<div class='oc-nar-node'>Mirko Trabin</div>,,,
-# there's a bug in the charting code that skips the 50th node, so it's repeated here
-MIL_TRA,EIT_TRA,<div class='oc-nar-node'>Milan Trabin</div>,,,
-ML2_TRA,EIT_TRA,<div class='oc-nar-node'>Milan Trabin</div>,,,
+MLN_TRA,EIT_TRA,<div class='oc-nar-node'>Milan Trabin</div>,,,
 MIS_TRA,EIT_TRA,<div class='oc-nar-node'>Mischa Trabin</div>,,,
 MAY_TRA,REU_TRA,<div class='oc-nar-node'>Maya Trabin and Trenton DuVal</div>,,,
 NAV_DUV,MAY_TRA,<div class='oc-nar-node'>Nava DuVal</div>,,,
