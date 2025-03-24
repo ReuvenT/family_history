@@ -1,3 +1,6 @@
+/* css to be referenced in tiki-toki advanced settings CSS File URL, uploaded to */
+/* https://trabinfamilystorage.blob.core.windows.net/resources/trabinfamilytimeline.css */
+
 table.tft-basic-tbla {
   color: #aaa;
   /* overflow:hidden; */
@@ -18,12 +21,19 @@ a.tft-basic-tbla {
   font-weight: bolder;
 }
 
+.tft-basic-ft ul li, .tft-basic-ft ul li a { 
+  color: #aaa;
+  font-size: 0.9em;
+  font-style: italic;
+ }
+
 ul.tft-basic-ft {
   color: #aaa;
   font-size: 0.9em;
   font-style: italic;
   list-style-type: square;
   margin-top: 0;
+  padding-left: 20px !important;
 }
 
 u.tft-basic-ft {
@@ -35,6 +45,6 @@ u.tft-basic-ft {
 
 p.tft-basic-ft, a.tft-basic-ft, li.tft-basic-ft  {
   color: #aaa;
-  font-size: 0.9em;
-  margin: 5px;
+  /* font-size: 0.9em; */
+  /* margin: 5px; */
 }
