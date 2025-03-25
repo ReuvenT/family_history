@@ -7,7 +7,7 @@
 
 <body>
 
-  <div id="tree-popup" class="resizable" style="display: none;">
+  <div id="tree-popup" class="resizable"  style="display: none; background-color: #4a4a4a;">
     <div id="tree-popup-header">
       <table style="width:100%; table-layout: fixed;">
         <tr style="max-height:30px;">
@@ -35,15 +35,15 @@
       id="tl-timeline-iframe"></iframe>
   </div>
 
-  <div id="tree_container">
+  <div style = "margin-top: 4px;" id="tree_container">
     <div id="orgchart-container">
       <div class="panzoom" id="panzoom_container">
-        <div id="chart_container" style="height: 100%;"></div>
+        <div class="orgChart" id="chart_container" style="height: 100%;"></div>
       </div>
     </div>
   </div>
 
-  <div id="radioViews" style="position: absolute; left: 8px; top: 8px; z-index: 100; width: 150px; background-color: rgb(212, 210, 210); border-radius: 4px;">
+  <div id="radioViews" style="position: absolute; left: 8px; top: 8px; z-index: 100; width: 150px; background-color: #bfbfbf; border-radius: 4px;">
     <fieldset style="width: 130px; border: none;">
       <legend style = "margin-left: 20px; padding-top: 4px;">Select a view:</legend>
       <div>
@@ -80,7 +80,6 @@
   </div>
 
   <script src="panzoom.js"></script>
-  <script src="https://www.gstatic.com/charts/loader.js"></script>
   <script src="treechart.js"></script>
   <script src="main.js"></script>
   <script src="treepopup.js"></script>

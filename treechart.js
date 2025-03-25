@@ -1,73 +1,10 @@
-let fullTable;
 const timelineMenu = [];
+const timelineLinkBtnHtml = '" class="tl-span-id"></span><a class="tl-link-btn" onclick="timelineLink(this)"></a><br/>';
 
-function prepChartTable(data, newTable) {
-    // prepere column properties 
-    var renderedTable = new google.visualization.DataTable();
-    //const fullTable = new google.visualization.DataTable();
-    fullTable = newTable;
-
-    renderedTable.addColumn('string', 'Key_Name');   // contains both the key and what's displayed in the box
-    renderedTable.addColumn('string', 'Parent');    // links to the parent key (empty if root)
-    // html for tool tip is not working, plain text populated in this (alwasy last) column
-    renderedTable.addColumn('string', 'tooltip', { html: true });
-
-    // create second table with same initial rows but not used for tooltip which is very finneky
-    fullTable.addColumn('string', 'Key_Name');
-    fullTable.addColumn('string', 'Parent');
-    fullTable.addColumn('string', 'tooltip');
-    fullTable.addColumn('string', 'TimelinetimelineId');   // timeline, with possible story hash 
-
-    // compose source data into appropriate table values
-    const sourceData = processData(data);
-    try {
-        renderedTable.addRows(removeRemainingColumns(sourceData, 1));
-    } catch (error) {
-        document.getElementById("err_msg").innerHTML = "Error loading tree data (row number does't count comment rows) " + error;
-        console.log(error);
-    }
-    fullTable.addRows(sourceData);
-
-    localStorage.setItem('chartFullTable', sourceData);
-    // Create the chart.
-    chart = new google.visualization.OrgChart(document.getElementById('chart_container'));  // popup test //
-
-    return renderedTable;
-}
-
-function treeSelectHandler() {
-    let currentState = getChartViewState();
-    var selectedItem = chart.getSelection()[0];
-    if (selectedItem && selectedItem.hasOwnProperty('row')) { //&& selectedItem.row) {
-        currentState.row = selectedItem.row; //' fullTable.getValue(selectedItem.row, 0);
-        currentState.isSelected = true;
-        currentState.timelineId = extractTimelineIdFromURL(fullTable.getValue(selectedItem.row, 3));
-        console.log('treeSelectHandler: user selected row ' + selectedItem.row + ' from values ' + JSON.stringify(selectedItem));
-    }
-    else {
-        currentState.row = -1;
-        currentState.isSelected = false;
-        console.log('treeSelectHandler: user un-selected row '); //+ chart.getSelection()[0] + ', current values: ' + JSON.stringify(selectedItem));
-    }
-
-    setChartViewState(currentState);
-}
-
-
-function processData(csvData, isForToolTip) {
+function prepChartTable(csvData, isForToolTip) {
     let rows = csvData.split(/\r?\n/);
-    let data = [];
-    let j = 0;
-    // any row starting with # is informational only - not processed
-    for (let i = 0; i < rows.length; i++) {
-        rawRow = rows[i];
-        if (rawRow.length > 8 && !rawRow.startsWith("#")) {
-            let rowArray = processDataRow(rows[i], i, j++);
-            if (rowArray.length > 2) {
-                data.push(rowArray);
-            }
-        }
-    }
+    let result = buildTree(rows, "", 0, 0);
+
     // add timeline links to menu
     const menu = document.getElementById("tl-menu");
     timelineMenu.sort((a, b) => a.seq - b.seq).forEach((menuItem) => {
@@ -80,7 +17,7 @@ function processData(csvData, isForToolTip) {
         link.textContent = menuItem.menu;
         span.className = "tl-menu-prefix tl-menu-" + menuItem.level;
         span.textContent = "&nbsp;"
-        label.onclick = (function (base, link) { return function (event) { redirectiFrames(baseiFrameSrc + link, link); event.preventDefault(); } })(baseiFrameSrc, menuItem.timelineId);
+        label.onclick = (function (base, link) { return function (event) { redirectiFrames(baseiFrameSrc + menuItem.timelineId, menuItem.elId); event.preventDefault(); } })(baseiFrameSrc, menuItem.timelineId);
 
         label.appendChild(span);
         label.appendChild(link);
@@ -91,102 +28,213 @@ function processData(csvData, isForToolTip) {
 
     });
 
-    return data;
+    return result;
 }
 
-const timelineEmbedBasetimelineId = 'https://www.tiki-toki.com/timeline/embed/';
-const timelineLinkBtnHtml = '" class="tl-span-id"></span><a class="tl-link-btn" onclick="timelineLink(this)"></a><br/>';
-const bodyInsertHtml = "-node'>";
+function buildTree(data, parentId, i, level) {
+    let tree = [];
+    data.forEach(item => {
+        if (!item.startsWith("#") && item.length > 8) {
+            // Check if the item belongs to the current parent
+            let parsedRow = processDataRow(item, i++, level);
+            if (parsedRow.parentId === parentId) {
+                // Recursively build the children of the current item
+                i++;
+                let children = buildTree(data, parsedRow.id, i, level);
+                // If children exist, assign them to the current item
+                if (children.length) {
+                    parsedRow.children = children;
+                    let itemCount = (JSON.stringify(children).match(/\"id\":/g) || []).length;
+                    let leafCount = (JSON.stringify(children).match(/isLeaf\":true/g) || []).length; // (JSON.stringify(result).match(/isLeaf\":true /g) || []).length;;
+                    //console.log("buildTree row count: " + itemCount + ", leaf count: " + leafCount);
+                    parsedRow.leafCount = leafCount;
+                }
+                else {
+                    level++;
+                    parsedRow.isLeaf = true;
+                }
+                //console.log("buildTree result: level: " + level + " " + parsedRow.id);
+                // Add the current item to the tree
+                tree.push(parsedRow);
+            }
 
-function processDataRow(csvDataRow, i, dataRowNbr) {
+        }
+
+    });
+    return tree;
+}
+
+
+function createTable(data, nbrChildren, level) {
+    const table = document.createElement('table');
+    table.setAttribute('cellpadding', 0);
+    table.setAttribute('cellspacing', 0);
+    table.setAttribute('border', 0);
+
+    const tbody = document.createElement('tbody');
+    table.appendChild(tbody);
+
+    let nodeRow = document.createElement('tr');
+    nodeRow.classList.add('oc-oc-node-cells')
+    let nodeCell = document.createElement('td');
+    nodeCell.classList.add('oc-node-cell')
+    nodeCell.setAttribute('colspan', nbrChildren * 2);
+    let nodeDiv = document.createElement('div');
+    nodeDiv.classList.add('oc-node')
+    nodeDiv.classList.add('oc-node-level-' + level);
+    nodeDiv.setAttribute('data-level', level);
+    nodeDiv.addEventListener("click", function () {
+        nodeClick(this, false);
+    });
+    nodeDiv.innerHTML = data.content;
+    nodeDiv.id = data.id;
+    if (data.parentId && data.parentId.length > 0) {
+        nodeDiv.setAttribute('data-parentId', data.parentId);
+    }
+    else {
+        nodeDiv.setAttribute('data-parentId', 'root');
+    }
+    if (data.timelineId && data.timelineId.length > 0) {
+        nodeDiv.setAttribute('data-timelineId', data.timelineId);
+    }
+    if (data.panelHash && data.panelHash.length > 0) {
+        nodeDiv.setAttribute('data-panelHash', data.panelHash);
+    }
+    if (data.tooltip && data.tooltip.length > 0) {
+        nodeDiv.setAttribute('title', data.tooltip);
+    }
+
+    nodeCell.appendChild(nodeDiv);
+    nodeRow.appendChild(nodeCell);
+    tbody.appendChild(nodeRow);
+
+    if (data.children) {
+        level++;
+        tbody.appendChild(createUpperBelowLine(data.children.length));
+        tbody.appendChild(createLowerBelowLine(data.children.length));
+        let childRow = document.createElement('tr');
+        for (const item of data.children) {
+            const cell = document.createElement('td');
+            cell.classList.add('oc-node-container')
+            cell.setAttribute('colspan', 2);
+            //cell.textContent = item.content;
+            //cell.style.paddingLeft = `${level * 20}px`;
+            const childTable = createTable(item, ((item.children) ? item.children.length : 0), level);
+            cell.appendChild(childTable);
+            childRow.appendChild(cell);
+            tbody.appendChild(childRow);
+        }
+    }
+    //console.log("createTable children count: " + (data.children ? data.children.length : 0) + ", level: " + level + " for: " + data.id);
+
+    return table;
+}
+
+function createUpperBelowLine(nbrChildren) {
+    let childRowHeader = document.createElement('tr');
+    let lineCell = document.createElement('td');
+    lineCell.setAttribute('colspan', nbrChildren * 2);
+    let lineDiv = document.createElement('div');
+    lineDiv.classList.add('line');
+    lineDiv.classList.add('down');
+    lineCell.appendChild(lineDiv);
+    childRowHeader.appendChild(lineCell);
+    return childRowHeader;
+}
+
+function createLowerBelowLine(nbrChildren) {
+    let childRowHeader = document.createElement('tr');
+    let lineCell1 = document.createElement('td');
+    lineCell1.classList.add('line', 'left')
+    lineCell1.textContent = " ";
+    let lineCell2 = document.createElement('td');
+    lineCell2.classList.add('line', 'right')
+    lineCell2.textContent = " ";
+    if (nbrChildren > 1) {
+        lineCell2.classList.add('top')
+    }
+    childRowHeader.appendChild(lineCell1);
+    childRowHeader.appendChild(lineCell2);
+    if (nbrChildren > 1) {
+        for (let i = 0; i < nbrChildren - 1; i++) {
+            let lineCell1 = document.createElement('td');
+            lineCell1.classList.add('line', 'left', 'top')
+            lineCell1.textContent = " ";
+            childRowHeader.appendChild(lineCell1);
+            let lineCell2 = document.createElement('td');
+            lineCell2.classList.add('line', 'right')
+            lineCell2.textContent = " ";
+            if (i < nbrChildren - 2) {
+                lineCell2.classList.add('top')
+            }
+            childRowHeader.appendChild(lineCell1);
+            childRowHeader.appendChild(lineCell2);
+        }
+
+    }
+    return childRowHeader;
+}
+
+function alignChildrenRows(parentId) {
+    let childNodes = document.querySelectorAll("[data-parentId='" + parentId + "']")
+    if (childNodes && childNodes.length) {
+        let maxHeight = 0;
+        childNodes.forEach(item => {
+            let ht = item.offsetHeight;
+            if (ht > maxHeight) {
+                maxHeight = ht;
+            }
+        });
+        //console.log("alignChildrenRows parentId: " + parentId + ", marginDiff:" + rootMarginDiff + ", maxHeight:" + maxHeight);
+        childNodes.forEach((item) => {
+            item.style.height = (maxHeight - rootMarginDiff) + "px";
+            //console.log("alignChildrenRows parentId: " + parentId + ", node Id " + item.id);
+            alignChildrenRows(item.id);
+        });
+    }
+}
+
+
+
+function processDataRow(csvDataRow, i) {
     let cells = csvDataRow.split(',');
-    let dataRow = [];
+    let item = { id: null, parentId: null, tooltip: null, timelineId: null, panelHash: null, menu: null, isLeaf: false, leafCount: 0 };
     try {
-        var body = cells[2];
-        var insertPoint = body.indexOf(bodyInsertHtml) + 7;
-        // insert link button if timelineId is specified
-        if (cells.length > 3 && cells[4] && insertPoint > 7) {
-            body = body.slice(0, insertPoint) + '<span data-row="' + dataRowNbr + '" id="' + cells[4] + timelineLinkBtnHtml + body.slice(insertPoint);
+        item.id = cells[0];
+        item.parentId = cells[1];
+        item.content = cells[2];
+        item.tooltip = cells[3];
+        if (cells.length > 3) {
+            item.timelineId = cells[4];
         }
-        else {
-            insertPoint = body.indexOf("<div >") + 5;
-            body = body.slice(0, insertPoint) + ' data-row="' + dataRowNbr + '" id="' + cells[0] + '"' + body.slice(insertPoint);
+        if (cells.length > 4) {
+            item.panelHash = cells[5];
         }
-        //console.log("tree load dataRowNbr " + dataRowNbr + " body: " + body)
-        dataRow.push({ "v": cells[0], "f": body });         // Key_Name, Body
-        dataRow.push(cells[1]);                             // Parent
-
-        if (cells.length > 2) {
-            if (cells[3]) {
-                dataRow.push(cells[3]);                             // provided Tooltip
-            }
-            else {
-                dataRow.push(removeTags(cells[2]));                 // use body as Tooltip (without html)
-            }
-        }
-        if (cells[4]) {
-            dataRow.push(timelineEmbedBasetimelineId + cells[4]);          // button link to new timeline
-        }
-        else {
-            dataRow.push('');
-        }
-
-        if (cells.length > 5 && cells[6]) {             // menu item
-            try {
-                let menuItem = JSON.parse(cells[6].replaceAll("'", "\"").replaceAll(";", ","));
-                menuItem.elId = cells[0];
-                menuItem.timelineId = cells[4];
-                //console.log("tree (menu) in source file row " + i + " : " + JSON.stringify(menuItem));
-                timelineMenu.push(menuItem);
-            } catch (error) {
-                alert("tree (menu) load error in source file row " + i)
-                console.log("tree (menu) load error in source file row " + i)
-                console.error(error);
+        if (cells.length > 5 && cells[6]) {
+            item.menu = cells[6];
+            let menuExists = timelineMenu.some(obj => obj.elId === cells[0]);
+            if (!menuExists) {
+                try {
+                    let menuItem = JSON.parse(cells[6].replaceAll("'", "\"").replaceAll(";", ","));
+                    menuItem.elId = cells[0];
+                    menuItem.timelineId = cells[4];
+                    //console.log("tree (menu) in source file row " + i + " : " + JSON.stringify(menuItem));
+                    timelineMenu.push(menuItem);
+                } catch (error) {
+                    alert("tree (menu) load error in source file row " + i)
+                    console.log("tree (menu) load error in source file row " + i)
+                    console.error(error);
+                }
             }
         }
-
 
     } catch (error) {
-        alert("tree load error in source file row " + i)
-        console.log("tree load error in source file row " + i)
-        console.error(error);
+        alert("tree load error in source file row " + i);
+        console.log("tree load error in source file row " + i);
+        console.log(error);
     }
-    return dataRow;
-}
-
-function removeTags(str) {
-    if ((str === null) || (str === ''))
-        return false;
-    else
-        str = str.toString();
-
-    // Regular expression to identify HTML tags in the input string. Replacing the identified HTML tag with a null string.
-    return str.replace(/(<([^>]+)>)/ig, '');
-}
-
-function timelineLink(el) {
-    var storedSelection = getChartViewState();
-    console.log("timelineLink clicked for row(cell) " + storedSelection.row + " with timelineId " + storedSelection.timelineId);
-    redirectiFrames(baseiFrameSrc + storedSelection.timelineId, storedSelection.timelineId);
-
-    // Just fire the message through parent object (this is still used even though it was coded when this was in iFrame)
-    // if (window.parent) {
-    //     window.parent.postMessage({ from: 'org-chart', row: storedSelection.row, timelineId: storedSelection.timelineId }, '*');
-    // }
-    //showNode(el, true, false);
-    //handleViewChoiceClick("view-timeline", true)
-};
-
-function removeRemainingColumns(data, fromIndex) {
-    return data.map(function (row) {
-        return row.slice(0, -fromIndex);
-    });
-}
-
-function selectChartItem(rowIndex) {
-    var selectionArray = new Array(1).fill({ row: rowIndex, column: null });
-    console.log("selectChartItem row(cell) " + JSON.stringify(selectionArray));
-    chart.setSelection(selectionArray);
+    //console.log("processDataRow result: " + i + " " + JSON.stringify(item));
+    return item;
 }
 
 function moveOrgChart(isFullPage) {
@@ -199,7 +247,7 @@ function moveOrgChart(isFullPage) {
         if (ocSource.innerHTML.length > 1000) {
             targetContainer.appendChild(ocSource);
         }
-        let treeEl = document.querySelector('[data-row="' + (currentItem.row) + '"]');
+        let treeEl = document.getElementById(currentItem.currentId);
         showNode(treeEl, isFullPage, wasFullPageMode);
     } catch (error) {
         console.log(error);
@@ -216,13 +264,14 @@ function getCenterElement() {
     let chartContainerBounds = (isFullPage) ? document.getElementById("orgchart-container").getBoundingClientRect() :
         document.getElementById("tree-popup").getBoundingClientRect();
     if (chartContainerBounds.width + chartContainerBounds.height == 0) {
-        console.log('getCenterElement isFullPage: ' + isFullPage + ' had no width and height, cannot get center element');
+        //console.log('getCenterElement isFullPage: ' + isFullPage + ' had no width and height, cannot get center element');
         return { centerEl: null, visibleCount: 0 };
     }
     let containerCenter = { x: (chartContainerBounds.left + (chartContainerBounds.width / 2)), y: (chartContainerBounds.top + (chartContainerBounds.height / 2)) };
-    console.log(`getCenterElement: isFullPage ${isFullPage} bounds (top, right, bottom, and left) ${chartContainerBounds.top}px, ${chartContainerBounds.right}px, ${chartContainerBounds.bottom}px, ${chartContainerBounds.left}px center: ${JSON.stringify(containerCenter)}`);
+    //console.log(`getCenterElement: isFullPage ${isFullPage} ${boundsDisplay(chartContainerBounds)}`);
+        
     let sortedDist = [];
-    let elements = document.querySelectorAll('[data-row]');
+    let elements = document.querySelectorAll('.oc-node');
     let visibleCount = 0;
     elements.forEach((el) => {
         let elBounds = el.getBoundingClientRect();
@@ -235,19 +284,19 @@ function getCenterElement() {
         let dist = ((containerCenter.x - elCenter.x) * (containerCenter.x - elCenter.x)) + ((containerCenter.y - elCenter.y) * (containerCenter.y - elCenter.y));
         if (elCenter.x > chartContainerBounds.left && elCenter.y < chartContainerBounds.bottom && elCenter.x < chartContainerBounds.right && elCenter.y > chartContainerBounds.top) {
             visibleCount++;
-            sortedDist.push({ elId: el.id, row: el.getAttribute("data-row"), dist: Math.sqrt(dist) });
-            //console.log('getCenterElement visible row ' + el.dataset.row + ', dist ' + Math.sqrt(dist)  + ' ' + JSON.stringify(elCenter));
+            sortedDist.push({ elId: el.id, dist: Math.sqrt(dist) });
+            //console.log('getCenterElement visible ' + el.id + ', dist ' + Math.sqrt(dist)  + ' ' + JSON.stringify(elCenter));
         }
         else {
-            //console.log('getCenterElement not vis row ' + el.dataset.row + ', dist ' + Math.sqrt(dist)  + ' ' + JSON.stringify(elCenter));
+            //console.log('getCenterElement not vis ' + el.id + ', dist ' + Math.sqrt(dist)  + ' ' + JSON.stringify(elCenter));
         }
     });
     orderedList = sortedDist.sort((a, b) => a.dist - b.dist)
     if (orderedList.length == 0) {
-        console.log('for isFullPage: ' + isFullPage + ' no visible elements found');
+        //console.log('for isFullPage: ' + isFullPage + ' no visible elements found');
         return { centerEl: null, visibleCount: 0 };
     }
-    console.log('getCenterElement isFullPage: ' + isFullPage + ' closest element: ' + orderedList[0].elId + ' row: ' + orderedList[0].row + " dist: " + orderedList[0].dist + " visible " + visibleCount + "/" + elements.length);
+    //console.log('getCenterElement isFullPage: ' + isFullPage + ' closest element: ' + orderedList[0].elId + " dist: " + orderedList[0].dist + " visible " + visibleCount + "/" + elements.length);
     return { centerEl: document.getElementById(orderedList[0].elId), visibleCount };
 }
 
@@ -268,7 +317,7 @@ function showNode(nodeEl, isFullPage, wasFullPage) {
         if (nodeText == '') {
             nodeText = nodeEl.parentElement.textContent;
         }
-        console.log(`showNode nodeEl ${nodeText}, row: ${nodeEl.getAttribute('data-row')}, id: ${nodeEl.id}, isFullPage: ${isFullPage}, wasFullPage: ${wasFullPage}`);
+        console.log(`showNode id: ${nodeEl.id}, isFullPage: ${isFullPage}, wasFullPage: ${wasFullPage}`);
         let elBounds = nodeEl.getBoundingClientRect();
         if (elBounds.right == 0) {
             elBounds = nodeEl.parentElement.getBoundingClientRect();
@@ -279,33 +328,39 @@ function showNode(nodeEl, isFullPage, wasFullPage) {
             chartContainerBounds = chartContainer.parentElement.getBoundingClientRect();
         }
 
-        //console.log(`showNode: cont bounds (top, right, bottom, and left) ${chartContainerBounds.top}px, ${chartContainerBounds.right}px, ${chartContainerBounds.bottom}px, ${chartContainerBounds.left}px`);
-        //console.log(`showNode: item bounds (top, right, bottom, and left) ${elBounds.top}px, ${elBounds.right}px, ${elBounds.bottom}px, ${elBounds.left}px`);
 
         let panZoomStyle = document.getElementById("panzoom_container").style;
         let matrix = panZoomStyle.transform;
         let idxScale = matrix.indexOf(",");
-        let scale = matrix.slice(7, idxScale) * 1;
+        let scale = 1; //matrix.slice(7, idxScale) * 1;
 
         let containerCenter = { x: (chartContainerBounds.left + (chartContainerBounds.width / 2)), y: (chartContainerBounds.top + (chartContainerBounds.height / 2)) };
         let elCenter = { x: (elBounds.left + (elBounds.width / 2)), y: (elBounds.top + (elBounds.height / 2)) };
-        //console.log(`showNode: cont center (x, y): ${containerCenter.x}px, ${containerCenter.y}px`);
-        //console.log(`showNode: item center (x, y): ${elCenter.x}px, ${elCenter.y}px`);
+        console.log("showNode: cont " + boundsDisplay(chartContainerBounds));
+        console.log(`showNode: cont center ${xyDisplay(containerCenter.x, containerCenter.y)}`);
+        console.log("showNode: item " + boundsDisplay(elBounds));
+        console.log(`showNode: item center ${xyDisplay(elCenter.x, elCenter.y)}`);
 
-        let xTranslation = -(elCenter.x - containerCenter.x);
-        let yTranslation = -(elCenter.y - containerCenter.y);
+        let xTranslation = -parseInt((elCenter.x - containerCenter.x));
+        let yTranslation = -parseInt((elCenter.y - containerCenter.y));
 
-        // adjust the height of the node if popup
-        if (!isFullPage) {
+        // adjust the height of the node based on the level
+        let rootDiv = document.querySelectorAll("[data-parentId='root']")[0];
+        let rootTop = rootDiv.getBoundingClientRect().top;
+        let level = nodeEl.getAttribute('data-level');
+        let yOffset = (elBounds.top - rootTop) / 5;
+        yOffset *= level;
+
+        //if (!isFullPage) {
+            //let level = nodeEl.getAttribute('data-level');
             let popupContainerBounds = document.getElementById("tree-popup").getBoundingClientRect();
-            let yOffset = popupContainerBounds.height / 3;
+            //let yOffset = popupContainerBounds.height / 2;
             //xTranslation = -(elCenter.x - popupCenter.x);
-            yTranslation -= yOffset;
-            //console.log("showNode yOffset: " + yOffset);
-        }
+            //yTranslation -= yOffset;
+            console.log("showNode yOffset: " + yOffset);
+        //}
 
-        //console.log(`showNode: (xTranslation, yTranslation, scale): ${xTranslation}, ${yTranslation}, ${scale}`);
-        //console.log(`showNode: container y diff: : ${elCenter.y - containerCenter.x}px,`);
+        console.log(`showNode: (xTranslation, yTranslation, scale): ${xTranslation}, ${yTranslation}, ${scale}`);
 
         // let translate = `translate(${xTranslation}px, ${yTranslation}px)`;
         // console.log("showNode translate: " + translate);
@@ -331,14 +386,17 @@ function showNode(nodeEl, isFullPage, wasFullPage) {
             }
             setChartViewState(cState);
             // adjust x/y
+            //scale = 1;
             xTranslation *= scale;
             yTranslation *= scale;
-            //console.log(`showNode rescaled: (xTranslation, yTranslation, scale, fullScale, popupScale): ${xTranslation}, ${yTranslation}, ${scale}, ${cState.fullScale}, ${cState.popupScale}`);
+            // xTranslation +=7;
+            // yTranslation  +=7;
+            console.log(`showNode rescaled: (xTranslation, yTranslation, scale, fullScale, popupScale): ${xTranslation}, ${yTranslation}, ${scale}, ${cState.fullScale}, ${cState.popupScale}`);
         }
+        //scale = 1;
 
-
-        matrix = 'matrix(' + scale + ', 0, 0, ' + scale + ', ' + xTranslation + ', ' + yTranslation + ')';
-        //console.log("showNode transform matrix: " + matrix);
+        matrix = 'matrix(' + scale + ', 0, 0, ' + scale + ', ' + parseInt(xTranslation) + ', ' + parseInt(yTranslation) + ')';
+        console.log("showNode transform matrix: " + matrix);
         document.getElementById("panzoom_container").style.transform = matrix;
 
         // log the "after"
@@ -346,9 +404,36 @@ function showNode(nodeEl, isFullPage, wasFullPage) {
         if (elBounds.right == 0) {
             elBounds = nodeEl.parentElement.getBoundingClientRect();
         }
-        console.log(`showNode (after): item bounds (top, right, bottom, and left) ${elBounds.top}px, ${elBounds.right}px, ${elBounds.bottom}px, ${elBounds.left}px`);
-
-
+        console.log("showNode (after): item " + boundsDisplay(elBounds));
     }
 }
+function nodeClick(node, forceSelected) {
+    let currentState = getChartViewState();
+    currentState.currentId = node.id;
+    if (forceSelected || !(node.classList.contains('selected'))) {
+        const selectedList = document.querySelectorAll('.selected');
+        selectedList.forEach(element => {
+            element.classList.remove('selected');
+        });
+        node.classList.toggle("selected", true);
+        currentState.isSelected = true;
+    }
+    else {
+        node.classList.toggle("selected", false);
+        currentState.isSelected = false;
+    }
+    setChartViewState(currentState);
+}
 
+function timelineLink(el) {
+    var storedSelection = getChartViewState();
+    console.log("timelineLink clicked for " + storedSelection.currentId + " with timelineId " + storedSelection.timelineId);
+    redirectiFrames(baseiFrameSrc + storedSelection.timelineId, storedSelection.timelineId);
+};
+
+function boundsDisplay(bounds){
+    return  ` bounds (top, right, bottom, and left) ${parseInt(bounds.top)}px, ${parseInt(bounds.right)}px, ${parseInt(bounds.bottom)}px, ${parseInt(bounds.left)}px`;
+}
+function xyDisplay(x, y){
+    return  ` (x, y) ${parseInt(x)}, ${parseInt(y)}`;
+}

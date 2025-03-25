@@ -2,48 +2,25 @@ const popup = document.getElementById("tree-popup");
 var r = document.getElementById('resizer');
 r.addEventListener('mousedown', initDrag, false);
 
-
-// restore previous popup state
-function xinitChartPopup(callOpenPopup) {
-  let popupState = getChartViewState();
-  console.log("initChartPopup callOpenPopup: " + callOpenPopup + ", popupState: " + JSON.stringify(popupState));
-  popup.style.top = (popupState.top) + "px";
-  popup.style.left = (popupState.left) + "px";
-  popup.style.width = (popupState.width) + "px";
-  popup.style.height = (popupState.height) + "px";
-  if (callOpenPopup && popupState.popUpShown) {
-    let matrix = 'matrix(' + popup.style.popupScale + ', 0, 0, ' + popup.style.popupScale + ', 0, 0)';
-    document.getElementById("panzoom_container").style.transform = matrix;
-    openOrgChartPopup();
-  }
-  popupState.popUpShown = callOpenPopup;
-  setChartViewState(popupState)
-}
-
 function captureAndSaveChartPopupState(shownFlag) {
   let mode = "popup";
   let pState = getChartViewState();
   pState.popUpShown = shownFlag;
-  let elCount = getCenterElement(document.getElementById("orgchart-container")).visibleCount;
+  let currentEl = getCenterElement().centerEl;
+  let selectedList = document.querySelectorAll('.selected');
+  if (selectedList && selectedList.length){
+    currentEl = selectedList[0];
+  }
   let rect = popup.getBoundingClientRect();
   if (rect.width > 30 && rect.height > 50) {
     pState.left = rect.left; 
     pState.top = rect.top; 
     pState.height = rect.height; 
     pState.width = rect.width;
-    //pState.popupScale = getTransformScale(elCount, true);
-    // capture the "current" tree node
-    //captureAndSaveCurrentNodeState();
-    var selectedItem = chart.getSelection()[0];
-    if (selectedItem && selectedItem.hasOwnProperty('row')) {
-      pState.row = selectedItem.row;
-      pState.isSelected = true;
-      pState.timelineId = extractTimelineIdFromURL(fullTable.getValue(selectedItem.row, 3));
-    }
-    else {
-        let currentEl = getCenterElement().centerEl;
-        pState.row = (!currentEl) ? -1 : currentEl.getAttribute('data-row');
-        pState.isSelected = false;
+    if (currentEl) {
+      pState.currentId = currentEl.id;
+      pState.isSelected = currentEl.classList.contains('.selected');
+      pState.timelineId = currentEl.getAttribute('data-timelineid');
     }
   }
   else{
