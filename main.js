@@ -56,12 +56,18 @@ document.addEventListener('DOMContentLoaded', function () {
         }
         else {
             console.log("default launch " + storedSelection.currentId + " with timelineId " + storedSelection.timelineId);
+            if (storedSelection.timelineId == null){
+                storedSelection.timelineId = "2138285/2648138406/";
+            }
         }
+
         if (storedSelection.currentId) {
-            storedSelection.isSelected = true;
+            if (storedSelection.isSelected){
+                nodeIdSetSelected(storedSelection.currentId);
+            }
             if (storedSelection.popUpShown) {
                 displayPopup = true;
-                storedSelection.popUpShown = false;
+            //     storedSelection.popUpShown = false;
             }
         }
         if (!storedSelection.timelineId){
@@ -236,6 +242,7 @@ function handleViewChoiceClick(viewChoice, setChecked) {
         pu.style.display = "inline";
         if (setChecked) {
             radiobtn = document.getElementById("view-timeline");
+
             radiobtn.checked = true;
         }
 

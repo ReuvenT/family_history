@@ -66,8 +66,11 @@ input {
 
 .tl-link-btn {
   height: 24px;
-  background: url(/img/open_story.png) no-repeat center;
+  background: #d0cfd0;
+  border: none;
   display: block;
+  margin-bottom: 5px;
+  cursor: pointer;
   /* padding-bottom: 35px;
   margin-bottom: 30px; */
   /* text-align: center; */
@@ -325,11 +328,13 @@ span.tl-menu-prefix {
 }
 
 span.tl-menu-prefix:hover {
-  border-color: tomato;
+  font-weight: bold;
+  /* border-color: tomato; */
 }
 
 #tl-menu-toggle a:hover {
-  color: tomato;
+  font-weight: bold;
+  /* color: tomato; */
 }
 
 

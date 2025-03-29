@@ -1,5 +1,4 @@
 const timelineMenu = [];
-const timelineLinkBtnHtml = '" class="tl-span-id"></span><a class="tl-link-btn" onclick="timelineLink(this)"></a><br/>';
 
 function prepChartTable(csvData, isForToolTip) {
     let rows = csvData.split(/\r?\n/);
@@ -79,14 +78,33 @@ function createTable(data, nbrChildren, level) {
     let nodeCell = document.createElement('td');
     nodeCell.classList.add('oc-node-cell')
     nodeCell.setAttribute('colspan', nbrChildren * 2);
+    
     let nodeDiv = document.createElement('div');
+
+    if (data.timelineId && data.timelineId.length > 0) {
+        let nodeLink = document.createElement('button');
+        let image = document.createElement('img');
+        image.src = '/img/open_story.png'; 
+        //image.alt = 'Open ' + data.content + ' timeline';
+        nodeLink.appendChild(image);
+        nodeLink.classList.add('tl-link-btn')
+        nodeDiv.appendChild(nodeLink);
+        // Add an event listener to the button (optional)
+        nodeLink.addEventListener('click', function(event) {
+            redirectiFrames(data.timelineId + data.panelHash, data.id); 
+            //event.preventDefault();
+        });
+    }
+
     nodeDiv.classList.add('oc-node')
     nodeDiv.classList.add('oc-node-level-' + level);
     nodeDiv.setAttribute('data-level', level);
     nodeDiv.addEventListener("click", function () {
-        nodeClick(this, false);
+        nodeClick(this);
     });
-    nodeDiv.innerHTML = data.content;
+    let nodeText = document.createElement('span');
+    nodeText.innerHTML = data.content;
+    nodeDiv.appendChild(nodeText);
     nodeDiv.id = data.id;
     if (data.parentId && data.parentId.length > 0) {
         nodeDiv.setAttribute('data-parentId', data.parentId);
@@ -94,15 +112,13 @@ function createTable(data, nbrChildren, level) {
     else {
         nodeDiv.setAttribute('data-parentId', 'root');
     }
-    if (data.timelineId && data.timelineId.length > 0) {
-        nodeDiv.setAttribute('data-timelineId', data.timelineId);
-    }
     if (data.panelHash && data.panelHash.length > 0) {
         nodeDiv.setAttribute('data-panelHash', data.panelHash);
     }
     if (data.tooltip && data.tooltip.length > 0) {
         nodeDiv.setAttribute('title', data.tooltip);
     }
+
 
     nodeCell.appendChild(nodeDiv);
     nodeRow.appendChild(nodeCell);
@@ -336,10 +352,10 @@ function showNode(nodeEl, isFullPage, wasFullPage) {
 
         let containerCenter = { x: (chartContainerBounds.left + (chartContainerBounds.width / 2)), y: (chartContainerBounds.top + (chartContainerBounds.height / 2)) };
         let elCenter = { x: (elBounds.left + (elBounds.width / 2)), y: (elBounds.top + (elBounds.height / 2)) };
-        console.log("showNode: cont " + boundsDisplay(chartContainerBounds));
-        console.log(`showNode: cont center ${xyDisplay(containerCenter.x, containerCenter.y)}`);
-        console.log("showNode: item " + boundsDisplay(elBounds));
-        console.log(`showNode: item center ${xyDisplay(elCenter.x, elCenter.y)}`);
+        //console.log("showNode: cont " + boundsDisplay(chartContainerBounds));
+        //console.log(`showNode: cont center ${xyDisplay(containerCenter.x, containerCenter.y)}`);
+        //console.log("showNode: item " + boundsDisplay(elBounds));
+        //console.log(`showNode: item center ${xyDisplay(elCenter.x, elCenter.y)}`);
 
         let xTranslation = -parseInt((elCenter.x - containerCenter.x));
         let yTranslation = -parseInt((elCenter.y - containerCenter.y));
@@ -357,10 +373,10 @@ function showNode(nodeEl, isFullPage, wasFullPage) {
             //let yOffset = popupContainerBounds.height / 2;
             //xTranslation = -(elCenter.x - popupCenter.x);
             //yTranslation -= yOffset;
-            console.log("showNode yOffset: " + yOffset);
+            //console.log("showNode yOffset: " + yOffset);
         //}
 
-        console.log(`showNode: (xTranslation, yTranslation, scale): ${xTranslation}, ${yTranslation}, ${scale}`);
+        //console.log(`showNode: (xTranslation, yTranslation, scale): ${xTranslation}, ${yTranslation}, ${scale}`);
 
         // let translate = `translate(${xTranslation}px, ${yTranslation}px)`;
         // console.log("showNode translate: " + translate);
@@ -391,12 +407,12 @@ function showNode(nodeEl, isFullPage, wasFullPage) {
             yTranslation *= scale;
             // xTranslation +=7;
             // yTranslation  +=7;
-            console.log(`showNode rescaled: (xTranslation, yTranslation, scale, fullScale, popupScale): ${xTranslation}, ${yTranslation}, ${scale}, ${cState.fullScale}, ${cState.popupScale}`);
+            //console.log(`showNode rescaled: (xTranslation, yTranslation, scale, fullScale, popupScale): ${xTranslation}, ${yTranslation}, ${scale}, ${cState.fullScale}, ${cState.popupScale}`);
         }
         //scale = 1;
 
         matrix = 'matrix(' + scale + ', 0, 0, ' + scale + ', ' + parseInt(xTranslation) + ', ' + parseInt(yTranslation) + ')';
-        console.log("showNode transform matrix: " + matrix);
+        //console.log("showNode transform matrix: " + matrix);
         document.getElementById("panzoom_container").style.transform = matrix;
 
         // log the "after"
@@ -404,26 +420,39 @@ function showNode(nodeEl, isFullPage, wasFullPage) {
         if (elBounds.right == 0) {
             elBounds = nodeEl.parentElement.getBoundingClientRect();
         }
-        console.log("showNode (after): item " + boundsDisplay(elBounds));
+        //console.log("showNode (after): item " + boundsDisplay(elBounds));
     }
 }
-function nodeClick(node, forceSelected) {
+function nodeClick(node) {
     let currentState = getChartViewState();
     currentState.currentId = node.id;
-    if (forceSelected || !(node.classList.contains('selected'))) {
-        const selectedList = document.querySelectorAll('.selected');
-        selectedList.forEach(element => {
-            element.classList.remove('selected');
-        });
-        node.classList.toggle("selected", true);
-        currentState.isSelected = true;
-    }
-    else {
-        node.classList.toggle("selected", false);
-        currentState.isSelected = false;
-    }
+    let wasSelected = node.classList.contains('selected');
+    const selectedList = document.querySelectorAll('.selected');
+    selectedList.forEach(element => {
+        element.classList.remove('selected');
+        element.firstElementChild.classList.remove('selected');
+    });
+    node.classList.toggle("selected", !wasSelected);
+    node.firstElementChild.classList.toggle("selected", !wasSelected);
+    currentState.isSelected = !wasSelected;
     setChartViewState(currentState);
 }
+
+function nodeIdSetSelected(nodeId) {
+    let currentState = getChartViewState();
+    currentState.currentId = nodeId;
+    const selectedList = document.querySelectorAll('.selected');
+    selectedList.forEach(element => {
+        element.classList.remove('selected');
+        element.firstElementChild.classList.remove('selected');
+    });
+    let element = document.getElementById(nodeId);
+    element.classList.toggle("selected", true);
+    element.firstElementChild.classList.toggle("selected", true);
+    currentState.isSelected = true;
+    setChartViewState(currentState);
+}
+
 
 function timelineLink(el) {
     var storedSelection = getChartViewState();
