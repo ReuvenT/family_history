@@ -29,9 +29,6 @@ window.onload = function () {
     PanZoom(".panzoom");
 }
 
-
-// popup test //document.getElementById("tree-popup").classList.add("hide-popup")
-
 document.addEventListener('DOMContentLoaded', function () {
     console.log("parent document ready");
     const iframe = document.getElementById('tl-timeline-iframe');
@@ -77,7 +74,7 @@ document.addEventListener('DOMContentLoaded', function () {
         redirectiFrames(baseiFrameSrc + storedSelection.timelineId, storedSelection.timelineId);
 
         // restore popup if needed
-        if (displayPopup){
+            if (displayPopup){
             setTimeout((id) => {
                 showNode(document.getElementById(id), false, true);
             }, 250, storedSelection.currentId);
@@ -95,26 +92,19 @@ async function drawChart() {
         document.getElementById("err_msg").innerHTML = data;
         //alert ("failed to load tree data from " + fName);
     }
-
-    var storedSelection = getChartViewState();
-    if (storedSelection.currentId >= 0 && storedSelection.isSelected) {
-        selectChartItem(storedSelection.currentId);
-        if (storedSelection.popUpShown) {
-            selectChartItem(storedSelection.currentId);
-            showNode(document.getElementById(storedSelection.currentId), false, true)
-        }
+    else{
+        console.log('chart drawn');
+        return prepChartTable(data)
     }
-
-    console.log('chart drawn');
-    return prepChartTable(data)
-
+    // var storedSelection = getChartViewState();
+    // if (storedSelection.currentId >= 0 && storedSelection.isSelected) {
+    //     selectChartItem(storedSelection.currentId);
+    //     if (storedSelection.popUpShown) {
+    //         selectChartItem(storedSelection.currentId);
+    //         showNode(document.getElementById(storedSelection.currentId), false)
+    //     }
+    // }
 }
-
-// function prepChartTable(csvData) {
-//     let rows = csvData.split(/\r?\n/);
-//     let result = buildTree(rows, "", 0, 0);
-//     return result;
-// }
 
 if (window.postMessage) {
     var tlMouseupFunc = function () {
@@ -132,6 +122,7 @@ if (window.postMessage) {
 }
 
 function redirectiFrames(timeframeUrl, orgChartElId) {
+    //captureAndSaveChartState(false);
     let timelineId = extractTimelineIdFromURL(timeframeUrl);
     redirectTimelineiFrame(timelineId);
     if (orgChartElId) {
@@ -236,13 +227,13 @@ function handleViewChoiceClick(viewChoice, setChecked) {
     }
     else if (viewChoice == "view-timeline") {
         //console.log('handleViewChoiceClick viewChoice: ' + viewChoice);
+        //captureAndSaveChartState(false);
         ocEle.classList.remove("fullScreen");
         tlFrame.classList.add("fullScreen");
         tlFrame.style.display = "block";
         pu.style.display = "inline";
         if (setChecked) {
             radiobtn = document.getElementById("view-timeline");
-
             radiobtn.checked = true;
         }
 

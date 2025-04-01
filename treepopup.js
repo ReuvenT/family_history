@@ -2,7 +2,7 @@ const popup = document.getElementById("tree-popup");
 var r = document.getElementById('resizer');
 r.addEventListener('mousedown', initDrag, false);
 
-function captureAndSaveChartPopupState(shownFlag) {
+function captureAndSaveChartState(shownFlag) {
   let mode = "popup";
   let pState = getChartViewState();
   pState.popUpShown = shownFlag;
@@ -19,12 +19,13 @@ function captureAndSaveChartPopupState(shownFlag) {
     pState.width = rect.width;
     if (currentEl) {
       pState.currentId = currentEl.id;
-      pState.isSelected = currentEl.classList.contains('.selected');
+      pState.isSelected = currentEl.classList.contains('selected');
       pState.timelineId = currentEl.getAttribute('data-timelineid');
     }
+    pState.popupScale = getTransformScale(true, pState.popupScale);
   }
   else{
-    //pState.fullScale = getTransformScale(elCount, false);
+    pState.fullScale = getTransformScale(false, pState.fullScale);
     mode = "full";
   }
 
@@ -42,7 +43,7 @@ function captureAndSaveChartPopupState(shownFlag) {
     pState.height = 750;
   }
 
-  console.log("captureChartPopupState (" + mode + ") popupState: " + JSON.stringify(pState));
+  console.log("captureAndSaveChartState (" + mode + ") state: " + JSON.stringify(pState));
   setChartViewState(pState);
   return pState.popupScale;
 }
@@ -59,7 +60,7 @@ function toggleOrgChartPopup() {
 function closeChartPopup() {
   popup.style.display = "none";
   console.log("closeChartPopup");
-  captureAndSaveChartPopupState(false);
+  captureAndSaveChartState(false);
 }
 
 function openOrgChartPopup() {
@@ -105,7 +106,7 @@ function doResizePopup(e) {
 function stopResizePopup(e) {
   popup.removeEventListener('mousemove', doResizePopup, false);
   popup.removeEventListener('mouseup', stopResizePopup, false);
-  captureAndSaveChartPopupState(true);
+  captureAndSaveChartState(true);
   console.log("stop drag state");
 }
 
@@ -146,7 +147,7 @@ function dragElement(elmnt) {
     /* stop moving when mouse button is released:*/
     document.onmouseup = null;
     document.onmousemove = null;
-    captureAndSaveChartPopupState(true);
+    captureAndSaveChartState(true);
     console.log("closeDragElement");
 
   }

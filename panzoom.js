@@ -129,7 +129,7 @@ function AttachPanZoom(ele, minScale, maxScale, increment, liner) {
   ele.addEventListener('mousewheel', this.getScrollDirection, false);
 }
 
-function getTransformScale(elCount, isPopup) {
+function getTransformScale(isPopup, currentScale) {
   let tScale = 1;
   try {
     transform = document.getElementById("panzoom_container").style.transform;
@@ -137,11 +137,17 @@ function getTransformScale(elCount, isPopup) {
     let start = transform.indexOf("(") + 1;
     let end = transform.indexOf(")");
     let matrix = transform.slice(start, end).split(",");
-    tScale = matrix[0];
+    if (matrix[4] == " 0"){
+      tScale = currentScale;
+    }
+    else{
+      tScale = matrix[0];
+    }
+
 
   } catch (error) {
     console.log("getTransformScale matrix error: " + error);
   }
-  //console.log("getTransformScale returns: " + tScale + " for elCount " + elCount + ", isPopup: " + isPopup);
+  console.log("getTransformScale returns: " + tScale + ", isPopup: " + isPopup);
   return tScale;
 }
