@@ -52,9 +52,9 @@ document.addEventListener('DOMContentLoaded', function () {
             if (storedSelection.isSelected) {
                 nodeIdSetSelected(storedSelection.currentId);
             }
-            if (storedSelection.popUpShown) {
+            if (storedSelection.showPopUp) {
                 displayPopup = true;
-                storedSelection.popUpShown = false;
+                storedSelection.showPopUp = false;
             }
         }
         if (!storedSelection.timelineId) {
@@ -65,9 +65,11 @@ document.addEventListener('DOMContentLoaded', function () {
 
         // restore popup if needed
         setTimeout((id) => {
+            console.log("initializing, " + boundsDisplay(document.getElementById("chart_container").getBoundingClientRect()));
+            showNode(document.getElementById(id), true)
             if (displayPopup) {
                 openOrgChartPopup();
-                showNode(document.getElementById(id), false);
+                //showNode(document.getElementById(id), false);
             }
             else {
                 setTimeout((id) => {
@@ -162,7 +164,7 @@ function getChartViewState() {
             "left": 130,
             "width": 350,
             "height": 380,
-            "popUpShown": false,
+            "showPopUp": false,
             "popupScale": 1,
             "fullScale": 1
         }
@@ -221,7 +223,7 @@ function handleViewChoiceClick(viewChoice, setChecked) {
             radiobtn.checked = true;
         }
 
-        if (getChartViewState().popUpShown) {
+        if (getChartViewState().showPopUp) {
             openOrgChartPopup();
         }
     }

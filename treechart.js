@@ -91,7 +91,11 @@ function createTable(data, nbrChildren, level) {
         nodeDiv.appendChild(nodeLink);
         // Add an event listener to the button (optional)
         nodeLink.addEventListener('click', function(event) {
-            redirectiFrames(data.timelineId + data.panelHash, data.id);
+            let path = data.timelineId;
+            if (data.panelHash){
+                path += data.panelHash;
+            }
+            redirectiFrames(path, data.id);
             //event.preventDefault();
         });
     }
@@ -111,6 +115,9 @@ function createTable(data, nbrChildren, level) {
     }
     else {
         nodeDiv.setAttribute('data-parentId', 'root');
+    }
+    if (data.timelineId && data.timelineId.length > 0) {
+        nodeDiv.setAttribute('data-timelineId', data.timelineId);
     }
     if (data.panelHash && data.panelHash.length > 0) {
         nodeDiv.setAttribute('data-panelHash', data.panelHash);
@@ -326,13 +333,13 @@ const elementIsVisibleInViewport = (el, partiallyVisible = false) => {
 };
 
 
-function showNode(nodeEl, isFullPage, isRecursive) {
+function showNode(nodeEl, isFullPage) {
     if (nodeEl) {
         let nodeText = nodeEl.textContent;
         if (nodeText == '') {
             nodeText = nodeEl.parentElement.textContent;
         }
-        //console.log(`showNode id: ${nodeEl.id}, isFullPage: ${isFullPage}`);
+        console.log(`showNode id: ${nodeEl.id} ${nodeEl.classList.contains('selected') ? "(selected)" : ""}, isFullPage: ${isFullPage}`);
         let elBounds = nodeEl.getBoundingClientRect();
         if (elBounds.right == 0) {
             elBounds = nodeEl.parentElement.getBoundingClientRect();
@@ -360,23 +367,10 @@ function showNode(nodeEl, isFullPage, isRecursive) {
             scale = 1;
         }
 
-        // //matrix = 'matrix(' + scale + ', 0, 0, ' + scale + ', ' + parseInt(xTranslation) + ', ' + parseInt(yTranslation) + ')';
-        // let tScale = 'scale(' + scale + ')';
-        // //console.log("showNode transform tScale: " + tScale);
-        // //document.getElementById("panzoom_container").style.transform = tScale;
-
-
-        // matrix = 'matrix(1, 0, 0, 1, -1095, -5)';
-        // //matrix = 'matrix(' + scale + ', 0, 0, ' + scale + ', ' + parseInt(xTranslation) + ', ' + parseInt(yTranslation) + ')';
-        // console.log("showNode transform matrix: " + matrix);
-        // document.getElementById("panzoom_container").style.transform = matrix;
-
-
-
         let containerCenter = { x: (chartContainerBounds.left + (chartContainerBounds.width / 2)), y: (chartContainerBounds.top + (chartContainerBounds.height / 2)) };
         let elCenter = { x: (elBounds.left + (elBounds.width / 2)), y: (elBounds.top + (elBounds.height / 2)) };
         //console.log("showNode: cont " + boundsDisplay(chartContainerBounds));
-        console.log(`showNode: cont center ${xyDisplay(containerCenter.x, containerCenter.y)}`);
+        //console.log(`showNode: cont center ${xyDisplay(containerCenter.x, containerCenter.y)}`);
         // console.log("showNode: item " + boundsDisplay(elBounds));
         // console.log(`showNode: item center ${xyDisplay(elCenter.x, elCenter.y)}`);
 
@@ -390,61 +384,10 @@ function showNode(nodeEl, isFullPage, isRecursive) {
         let yOffset = (elBounds.top - rootTop) / 5;
         yOffset *= level;
 
-        //if (!isFullPage) {
-        //let level = nodeEl.getAttribute('data-level');
-        //let popupContainerBounds = document.getElementById("tree-popup").getBoundingClientRect();
-        //let yOffset = popupContainerBounds.height / 2;
-        //xTranslation = -(elCenter.x - popupCenter.x);
-        //yTranslation -= yOffset;
-        //console.log("showNode yOffset: " + yOffset);
-        //}
-        // first call to full page doesn't center correctly - re-do 
-
-        console.log(`showNode: (xTranslation, xTranslation, scale): ${xTranslation}, ${yTranslation}, ${scale}`);
-
-        if (!isRecursive && isFullPage && (xTranslation + xTranslation == 0)){
-            matrix = 'matrix(1, 0, 0, 1, -2572, -274)';
-        // console.log("showNode transform matrix: " + matrix);
-            document.getElementById("panzoom_container").style.transform = matrix;
-            showNode(nodeEl, true, true);
-        }
-
-
-        // let translate = `translate(${xTranslation}px, ${yTranslation}px)`;
-        // console.log("showNode translate: " + translate);
-        // document.getElementById("panzoom_container").style.transform = `translate(${xTranslation}px, ${yTranslation}px)`;
-
-
-        // // restore scale
-        // // if (isFullPage != wasFullPage) {
-        // cState = getChartViewState();
-        // //     let prevScale = scale;
-        // //     xTranslation /= prevScale;
-        // //     yTranslation /= prevScale;
-        // if (isFullPage) {
-        //     scale = cState.fullScale;  // moving to full
-        //     //cState.popupScale = prevScale;
-        // }
-        // else {
-        //     scale = cState.popupScale;  // moving to popup
-        //     //cState.fullScale = prevScale;
-        // }
-        // if (scale == 0 || Math.abs(scale) > 1) {
-        //     scale = 1;
-        // }
-        // //setChartViewState(cState);
-        // // adjust x/y
-        // //scale = 1;
-        // xTranslation /= scale;
-        // yTranslation *= scale;
-        // xTranslation +=7;
-        // yTranslation  +=7;
-        //console.log(`showNode rescaled: (xTranslation, yTranslation, scale, fullScale, popupScale): ${xTranslation}, ${yTranslation}, ${scale}, ${cState.fullScale}, ${cState.popupScale}`);
-        //}
-        //scale = 1;
+        //console.log(`showNode: (xTranslation, xTranslation, scale): ${xTranslation}, ${yTranslation}, ${scale}`);
 
         matrix = 'matrix(' + scale + ', 0, 0, ' + scale + ', ' + parseInt(xTranslation) + ', ' + parseInt(yTranslation) + ')';
-        console.log("showNode transform matrix: " + matrix);
+        //console.log("showNode transform matrix: " + matrix);
         document.getElementById("panzoom_container").style.transform = matrix;
 
         // log the "after"

@@ -133,7 +133,7 @@ function getTransformScale(isPopup, currentScale) {
   let tScale = 1;
   try {
     transform = document.getElementById("panzoom_container").style.transform;
-    //console.log("getTransformScale transform: " + JSON.stringify(transform));
+    //console.log("getTransformScale for " + (isPopup ? "popup" : "full") + " current: " + currentScale + " transform: " + JSON.stringify(transform));
     let start = transform.indexOf("(") + 1;
     let end = transform.indexOf(")");
     let matrix = transform.slice(start, end).split(",");
@@ -141,13 +141,18 @@ function getTransformScale(isPopup, currentScale) {
       tScale = currentScale;
     }
     else{
-      tScale = matrix[0];
+      if (matrix[0] * 1 > 1){
+        tScale = 1;
+      }
+      else{
+        tScale = matrix[0];
+      }
     }
 
 
   } catch (error) {
     console.log("getTransformScale matrix error: " + error);
   }
-  console.log("getTransformScale returns: " + tScale + ", isPopup: " + isPopup);
+  //console.log("getTransformScale returns: " + tScale + ", isPopup: " + isPopup);
   return tScale;
 }

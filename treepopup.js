@@ -22,7 +22,6 @@ function captureAndSaveChartState() {
 
   let rect = popup.getBoundingClientRect();
   if (rect.width > 30 && rect.height > 50) {
-    pState.popUpShown = true;
     pState.left = rect.left; 
     pState.top = rect.top; 
     pState.height = rect.height; 
@@ -30,7 +29,6 @@ function captureAndSaveChartState() {
     pState.popupScale = getTransformScale(true, pState.popupScale);
   }
   else{
-    pState.popUpShown = false;
     pState.fullScale = getTransformScale(false, pState.fullScale);
     mode = "full";
   }
@@ -49,7 +47,7 @@ function captureAndSaveChartState() {
     pState.height = 750;
   }
 
-  console.log("captureAndSaveChartState (" + mode + ") state: " + JSON.stringify(pState));
+  //console.log("captureAndSaveChartState (" + mode + ") state: " + JSON.stringify(pState));
   setChartViewState(pState);
   return pState.popupScale;
 }
@@ -65,14 +63,17 @@ function toggleOrgChartPopup() {
 
 function closeChartPopup() {
   popup.style.display = "none";
+  let popupState = getChartViewState();
+  popupState.showPopUp = false;
+  setChartViewState(popupState);
   console.log("closeChartPopup");
   captureAndSaveChartState();
 }
 
 function openOrgChartPopup() {
   let popupState = getChartViewState();
-  console.log("openOrgChartPopup popupState: " + JSON.stringify(popupState));
-  popupState.popUpShown = true;
+  //console.log("openOrgChartPopup popupState: " + JSON.stringify(popupState));
+  popupState.showPopUp = true;
   setChartViewState(popupState);
   popup.style.top = (popupState.top) + "px";
   popup.style.left = (popupState.left) + "px";
