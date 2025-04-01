@@ -60,10 +60,6 @@ input {
   /* display: block; */
 }
 
-.tl-span-id {
-  display: none;
-}
-
 .tl-link-btn {
   height: 24px;
   background: #d0cfd0;

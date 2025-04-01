@@ -2,29 +2,35 @@ const popup = document.getElementById("tree-popup");
 var r = document.getElementById('resizer');
 r.addEventListener('mousedown', initDrag, false);
 
-function captureAndSaveChartState(shownFlag) {
+function captureAndSaveChartState() {
   let mode = "popup";
   let pState = getChartViewState();
-  pState.popUpShown = shownFlag;
-  let currentEl = getCenterElement().centerEl;
+  let currentEl = document.getElementById("LOU_TRA");
   let selectedList = document.querySelectorAll('.selected');
   if (selectedList && selectedList.length){
     currentEl = selectedList[0];
+    pState.isSelected = true;
   }
+  else{
+    currentEl = getCenterElement().centerEl;
+    pState.isSelected = false;
+  }
+  if (currentEl) {
+    pState.currentId = currentEl.id;
+    pState.timelineId = currentEl.getAttribute('data-timelineid');
+  }
+
   let rect = popup.getBoundingClientRect();
   if (rect.width > 30 && rect.height > 50) {
+    pState.popUpShown = true;
     pState.left = rect.left; 
     pState.top = rect.top; 
     pState.height = rect.height; 
     pState.width = rect.width;
-    if (currentEl) {
-      pState.currentId = currentEl.id;
-      pState.isSelected = currentEl.classList.contains('selected');
-      pState.timelineId = currentEl.getAttribute('data-timelineid');
-    }
     pState.popupScale = getTransformScale(true, pState.popupScale);
   }
   else{
+    pState.popUpShown = false;
     pState.fullScale = getTransformScale(false, pState.fullScale);
     mode = "full";
   }
@@ -60,7 +66,7 @@ function toggleOrgChartPopup() {
 function closeChartPopup() {
   popup.style.display = "none";
   console.log("closeChartPopup");
-  captureAndSaveChartState(false);
+  captureAndSaveChartState();
 }
 
 function openOrgChartPopup() {
@@ -106,7 +112,7 @@ function doResizePopup(e) {
 function stopResizePopup(e) {
   popup.removeEventListener('mousemove', doResizePopup, false);
   popup.removeEventListener('mouseup', stopResizePopup, false);
-  captureAndSaveChartState(true);
+  captureAndSaveChartState();
   console.log("stop drag state");
 }
 
@@ -147,7 +153,7 @@ function dragElement(elmnt) {
     /* stop moving when mouse button is released:*/
     document.onmouseup = null;
     document.onmousemove = null;
-    captureAndSaveChartState(true);
+    captureAndSaveChartState();
     console.log("closeDragElement");
 
   }
