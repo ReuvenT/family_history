@@ -1,6 +1,9 @@
 const timelineMenu = [];
+const nodeIds = []  // used to detect dulicates, orphans
+const duplicateNodes = []  
+const orphanedNodes = []  
 
-function prepChartTable(csvData, isForToolTip) {
+function prepChartTable(csvData, dataSource) {
     let rows = csvData.split(/\r?\n/);
     let result = buildTree(rows, "", 0, 0);
 
@@ -26,7 +29,30 @@ function prepChartTable(csvData, isForToolTip) {
         //console.log("ordered tree (menu): " + listItem.outerHTML);
 
     });
-
+    // check for orphaned items
+    let orphans = "";
+    orphanedNodes.forEach((element) => {
+        if (!nodeIds.includes(element)){
+            if (orphans.indexOf(element) < 0){
+                orphans += element + ", "
+            };
+        };
+    });
+    // check for dulicated items
+    let dupes = "";
+    duplicateNodes.forEach((element) => {
+        dupes += element + ", "
+    });
+    if (orphans || dupes){
+        let msg = "data processing error loading " + dataSource + ": "; 
+        if (orphans){
+            msg += `orphans ${orphans} `;
+        }
+        if (dupes){
+            msg += `duplicates ${dupes}`;
+        }
+        alert(msg);
+    }
     return result;
 }
 
@@ -37,6 +63,12 @@ function buildTree(data, parentId, i, level) {
             // Check if the item belongs to the current parent
             let parsedRow = processDataRow(item, i++, level);
             if (parsedRow.parentId === parentId) {
+                if (nodeIds.indexOf(parsedRow.id) < 0){
+                    nodeIds.push(parsedRow.id);
+                }
+                else{
+                    duplicateNodes.push(parsedRow.id);
+                }
                 // Recursively build the children of the current item
                 i++;
                 let children = buildTree(data, parsedRow.id, i, level);
@@ -55,6 +87,10 @@ function buildTree(data, parentId, i, level) {
                 //console.log("buildTree result: level: " + level + " " + parsedRow.id);
                 // Add the current item to the tree
                 tree.push(parsedRow);
+            }
+            else{
+                // potential orphan
+                orphanedNodes.push(parsedRow.id);
             }
 
         }
@@ -140,8 +176,7 @@ function createTable(data, nbrChildren, level) {
             const cell = document.createElement('td');
             cell.classList.add('oc-node-container')
             cell.setAttribute('colspan', 2);
-            //cell.textContent = item.content;
-            //cell.style.paddingLeft = `${level * 20}px`;
+            // recursively generate the sub-table
             const childTable = createTable(item, ((item.children) ? item.children.length : 0), level);
             cell.appendChild(childTable);
             childRow.appendChild(cell);

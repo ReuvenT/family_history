@@ -1,4 +1,6 @@
 const baseiFrameSrc = 'https://www.tiki-toki.com/timeline/embed/';
+const familyTreeSource = "/data/familytreedata.csv";
+
 let rootTimeline = "2138285/2648138406/";
 
 
@@ -83,17 +85,16 @@ document.addEventListener('DOMContentLoaded', function () {
 }, false);
 
 async function drawChart() {
-    let fName = "/data/familytreedata.csv";
-    const response = await fetch(fName);
+    const response = await fetch(familyTreeSource);
     const data = await response.text();
 
     if (response.status > 200) {
         document.getElementById("err_msg").innerHTML = data;
-        //alert ("failed to load tree data from " + fName);
+        //alert ("failed to load tree data from " + familyTreeSource);
     }
     else {
         console.log('chart drawn');
-        return prepChartTable(data)
+        return prepChartTable(data, familyTreeSource)
     }
 }
 
