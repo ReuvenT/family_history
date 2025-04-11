@@ -1,7 +1,13 @@
 const baseiFrameSrc = 'https://www.tiki-toki.com/timeline/embed/';
-let rootTimeline = "2138285/2648138406/";
+var rootTimeline = "2138285/2648138406/";   // can be overridden by value in root node in chart
+// The Auth0 client, initialized in configureClient()
+let auth0Client = null;
+let isAuthenticated = false;
 
-window.onload = function () {
+window.onload = async () => {
+    await configureClient();
+    await refreshLoginStatus();
+    
     let chartNodes = prepChartTable(familyTreeSource)
     let itemCount = (JSON.stringify(chartNodes).match(/\"id\":/g) || []).length;
     let leafCount = (JSON.stringify(chartNodes).match(/isLeaf\":true/g) || []).length; // (JSON.stringify(result).match(/isLeaf\":true /g) || []).length;;
@@ -60,6 +66,12 @@ document.addEventListener('DOMContentLoaded', function () {
 
         // restore popup if needed
         setTimeout((id) => {
+            if (!isAuthenticated && storedSelection.timelineId != rootTimeline) {
+                storedSelection.timelineId = rootTimeline;
+                setChartViewState(storedSelection);
+                redirectiFrames(baseiFrameSrc + storedSelection.timelineId, storedSelection.timelineId);
+            }
+
             console.log("initializing, " + boundsDisplay(document.getElementById("chart_container").getBoundingClientRect()));
             showNode(document.getElementById(id), true)
             if (displayPopup) {
@@ -77,6 +89,19 @@ document.addEventListener('DOMContentLoaded', function () {
 
 }, false);
 
+/**
+ * Initializes the Auth0 client
+ */
+const configureClient = async () => {
+    // const response = await fetchAuthConfig();
+    // const config = await response.json();
+  
+    auth0Client = await auth0.createAuth0Client({
+      domain: "dev-0wdjqy32gp3ia376.us.auth0.com", //config.domain,
+      clientId: "cBmTOThE35AZ8R5uEsmiVKDop9Jgax7p" //config.clientId
+    });
+    console.log("configureClient null?" + (auth0Client == null) );
+ };
 
 
 if (window.postMessage) {
@@ -216,3 +241,69 @@ function handleViewChoiceClick(viewChoice, setChecked) {
     }
 }
 
+async function refreshLoginStatus() {
+    const query = window.location.search;
+    const shouldParseResult = query.includes("code=") && query.includes("state=");
+
+    if (shouldParseResult) {
+      console.log("> Parsing redirect");
+      try {
+        const result = await auth0Client.handleRedirectCallback();
+  
+        if (result.appState && result.appState.targetUrl) {
+          showContentFromUrl(result.appState.targetUrl);
+        }
+  
+        console.log("Logged in!");
+      } catch (err) {
+        console.log("Error parsing redirect:", err);
+      }
+  
+      window.history.replaceState({}, document.title, "/");
+    }
+    isAuthenticated = await auth0Client.isAuthenticated();
+    document.getElementById("login_label").innerHTML = isAuthenticated ? "Logout" : "Login";
+    document.getElementById("timeline_menus").innerHTML = isAuthenticated ? "-----Timeline Links------------" : "- Timeline Links available after login -";
+    console.log("refreshLoginStatus isAuthenticated: ", isAuthenticated);
+    return (isAuthenticated);
+}
+
+
+
+async function log_in_out () {
+    await refreshLoginStatus();
+    console.log("log_in_out isAuthenticated: " + isAuthenticated);
+    if (isAuthenticated){
+        try {
+            console.log("Logging out");
+            await auth0Client.logout({
+              logoutParams: {
+                returnTo: window.location.origin
+              }
+            });
+            await refreshLoginStatus();
+        } catch (err) {
+            console.log("Log out failed", err);
+          }
+    }
+    else{
+        try {
+            let targetUrl = "";
+            console.log("Logging in", targetUrl);
+        
+            const options = {
+              authorizationParams: {
+                redirect_uri: window.location.origin
+              }
+            };
+        
+            if (targetUrl) {
+              options.appState = { targetUrl };
+            }
+            await auth0Client.loginWithRedirect(options);
+        } catch (err) {
+            console.log("Log in failed", err);
+          }
+
+    }
+}

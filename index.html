@@ -73,7 +73,10 @@
              <label for="tl-menu-cbx" onclick="this.parentNode.click();"><a href="#about">About</a></label>
           </li>
           <li><label for="tl-menu-cbx"><a>Info</a></label></li> -->
-          <li style="font: .75rem 'Fira Sans', sans-serif;">-----Timeline Links------------</li>
+          <li>
+            <label id="login_label" for="tl-menu-cbx" onclick="this.parentNode.click(); log_in_out();">Login</label>
+          </li>
+          <li id="timeline_menus" style="font: .75rem 'Fira Sans', sans-serif;">-----Timeline Links------------</li>
         </ul>
       </div>
     </nav>
@@ -82,6 +85,7 @@
   <script src="familytreedata.js"></script>
   <script src="panzoom.js"></script>
   <script src="treechart.js"></script>
+  <script src="https://cdn.auth0.com/js/auth0-spa-js/2.0/auth0-spa-js.production.js"></script>
   <script src="main.js"></script>
   <script src="treepopup.js"></script>
 </body>
