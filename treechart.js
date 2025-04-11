@@ -1,39 +1,46 @@
 const timelineMenu = [];
 const nodeIds = []  // used to detect dulicates, orphans
-const duplicateNodes = []  
-const orphanedNodes = []  
+const duplicateNodes = []
+const orphanedNodes = []
+var maxLoginStateNodeLevel = 99;
 
-function prepChartTable(csvData, dataSource) {
+function prepChartTable(csvData, isAuthenticated) {
+    if (!isAuthenticated) {
+        maxLoginStateNodeLevel = 3;
+    }
+
     let rows = csvData.split(/\r?\n/);
-    let result = buildTree(rows, "", 0, 0);
+    let result = buildTree(rows, "", 0, 0, isAuthenticated);
 
-    // add timeline links to menu
-    const menu = document.getElementById("tl-menu");
-    timelineMenu.sort((a, b) => a.seq - b.seq).forEach((menuItem) => {
-        const listItem = document.createElement("li");
-        const label = document.createElement("label");
-        const span = document.createElement("span");
-        const link = document.createElement("a");
-        label.className = "tl-menu-" + menuItem.level;
-        label.htmlFor = 'tl-menu-cbx';
-        link.textContent = menuItem.menu;
-        span.className = "tl-menu-prefix tl-menu-" + menuItem.level;
-        span.textContent = "&nbsp;"
-        label.onclick = (function (base, link) { return function (event) { redirectiFrames(baseiFrameSrc + menuItem.timelineId, menuItem.elId); event.preventDefault(); } })(baseiFrameSrc, menuItem.timelineId);
+    if (isAuthenticated) {
+        // add timeline links to menu
+        const menu = document.getElementById("tl-menu");
+        timelineMenu.sort((a, b) => a.seq - b.seq).forEach((menuItem) => {
+            const listItem = document.createElement("li");
+            const label = document.createElement("label");
+            const span = document.createElement("span");
+            const link = document.createElement("a");
+            label.className = "tl-menu-" + menuItem.level;
+            label.htmlFor = 'tl-menu-cbx';
+            link.textContent = menuItem.menu;
+            span.className = "tl-menu-prefix tl-menu-" + menuItem.level;
+            span.textContent = "&nbsp;"
+            label.onclick = (function (base, link) { return function (event) { redirectiFrames(baseiFrameSrc + menuItem.timelineId, menuItem.elId); event.preventDefault(); } })(baseiFrameSrc, menuItem.timelineId);
 
-        label.appendChild(span);
-        label.appendChild(link);
-        listItem.appendChild(label);
+            label.appendChild(span);
+            label.appendChild(link);
+            listItem.appendChild(label);
 
-        menu.appendChild(listItem);
-        //console.log("ordered tree (menu): " + listItem.outerHTML);
+            menu.appendChild(listItem);
+            //console.log("ordered tree (menu): " + listItem.outerHTML);
+        });
+    }
 
-    });
     // check for orphaned items
     let orphans = "";
     orphanedNodes.forEach((element) => {
-        if (!nodeIds.includes(element)){
-            if (orphans.indexOf(element) < 0){
+        if (!nodeIds.includes(element)) {
+            if (orphans.indexOf(element) < 0) {
                 orphans += element + ", "
             };
         };
@@ -43,12 +50,12 @@ function prepChartTable(csvData, dataSource) {
     duplicateNodes.forEach((element) => {
         dupes += element + ", "
     });
-    if (orphans || dupes){
-        let msg = "data processing error loading " + dataSource + ": "; 
-        if (orphans){
+    if (orphans || dupes) {
+        let msg = "data processing error loading dataSource: ";
+        if (orphans) {
             msg += `orphans ${orphans} `;
         }
-        if (dupes){
+        if (dupes) {
             msg += `duplicates ${dupes}`;
         }
         alert(msg);
@@ -56,39 +63,41 @@ function prepChartTable(csvData, dataSource) {
     return result;
 }
 
-function buildTree(data, parentId, i, level) {
+function buildTree(data, parentId, i, level, isAuthenticated) {
     let tree = [];
     data.forEach(item => {
         if (!item.startsWith("#") && item.length > 8) {
             // Check if the item belongs to the current parent
             let parsedRow = processDataRow(item, i++, level);
             if (parsedRow.parentId === parentId) {
-                if (nodeIds.indexOf(parsedRow.id) < 0){
+                if (nodeIds.indexOf(parsedRow.id) < 0) {
                     nodeIds.push(parsedRow.id);
                 }
-                else{
+                else {
                     duplicateNodes.push(parsedRow.id);
                 }
                 // Recursively build the children of the current item
                 i++;
-                let children = buildTree(data, parsedRow.id, i, level);
+                let children = buildTree(data, parsedRow.id, i, level + 1);
                 // If children exist, assign them to the current item
                 if (children.length) {
                     parsedRow.children = children;
-                    let itemCount = (JSON.stringify(children).match(/\"id\":/g) || []).length;
+                    //let itemCount = (JSON.stringify(children).match(/\"id\":/g) || []).length;
                     let leafCount = (JSON.stringify(children).match(/isLeaf\":true/g) || []).length; // (JSON.stringify(result).match(/isLeaf\":true /g) || []).length;;
                     //console.log("buildTree row count: " + itemCount + ", leaf count: " + leafCount);
                     parsedRow.leafCount = leafCount;
                 }
                 else {
-                    level++;
+                    //level++;
                     parsedRow.isLeaf = true;
                 }
                 //console.log("buildTree result: level: " + level + " " + parsedRow.id);
                 // Add the current item to the tree
-                tree.push(parsedRow);
+                if (level < maxLoginStateNodeLevel ){
+                    tree.push(parsedRow);
+                }
             }
-            else{
+            else {
                 // potential orphan
                 orphanedNodes.push(parsedRow.id);
             }
@@ -100,7 +109,7 @@ function buildTree(data, parentId, i, level) {
 }
 
 
-function createTable(data, nbrChildren, level) {
+function createTable(data, nbrChildren, level, isAuthenticated) {
     const table = document.createElement('table');
     table.setAttribute('cellpadding', 0);
     table.setAttribute('cellspacing', 0);
@@ -117,7 +126,7 @@ function createTable(data, nbrChildren, level) {
 
     let nodeDiv = document.createElement('div');
 
-    if (data.timelineId && data.timelineId.length > 0) {
+    if (data.timelineId && data.timelineId.length > 0 && isAuthenticated) {
         let nodeLink = document.createElement('button');
         let image = document.createElement('img');
         image.src = '/img/open_story.png';
@@ -126,9 +135,9 @@ function createTable(data, nbrChildren, level) {
         nodeLink.classList.add('tl-link-btn')
         nodeDiv.appendChild(nodeLink);
         // Add an event listener to the button (optional)
-        nodeLink.addEventListener('click', function(event) {
+        nodeLink.addEventListener('click', function (event) {
             let path = data.timelineId;
-            if (data.panelHash){
+            if (data.panelHash) {
                 path += data.panelHash;
             }
             redirectiFrames(path, data.id);
@@ -177,7 +186,7 @@ function createTable(data, nbrChildren, level) {
             cell.classList.add('oc-node-container')
             cell.setAttribute('colspan', 2);
             // recursively generate the sub-table
-            const childTable = createTable(item, ((item.children) ? item.children.length : 0), level);
+            const childTable = createTable(item, ((item.children) ? item.children.length : 0), level, isAuthenticated);
             cell.appendChild(childTable);
             childRow.appendChild(cell);
             tbody.appendChild(childRow);
@@ -442,7 +451,7 @@ function nodeClick(node) {
     const selectedList = document.querySelectorAll('.selected');
     selectedList.forEach(element => {
         element.classList.remove('selected');
-        if (element.firstElementChild){
+        if (element.firstElementChild) {
             element.firstElementChild.classList.remove('selected');
         }
     });
@@ -461,9 +470,15 @@ function nodeIdSetSelected(nodeId) {
         element.firstElementChild.classList.remove('selected');
     });
     let element = document.getElementById(nodeId);
-    element.classList.toggle("selected", true);
-    element.firstElementChild.classList.toggle("selected", true);
-    currentState.isSelected = true;
+    if (element){
+        element.classList.toggle("selected", true);
+        element.firstElementChild.classList.toggle("selected", true);
+        currentState.isSelected = true;
+    }
+    else{
+        currentState.currentId = null;
+        currentState.isSelected = false;
+    }
     setChartViewState(currentState);
 }
 

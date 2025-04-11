@@ -8,13 +8,13 @@ window.onload = async () => {
     await configureClient();
     await refreshLoginStatus();
     
-    let chartNodes = prepChartTable(familyTreeSource)
-    let itemCount = (JSON.stringify(chartNodes).match(/\"id\":/g) || []).length;
-    let leafCount = (JSON.stringify(chartNodes).match(/isLeaf\":true/g) || []).length; // (JSON.stringify(result).match(/isLeaf\":true /g) || []).length;;
+    let chartNodes = prepChartTable(familyTreeSource, isAuthenticated)
+    //let itemCount = (JSON.stringify(chartNodes).match(/\"id\":/g) || []).length;
+    //let leafCount = (JSON.stringify(chartNodes).match(/isLeaf\":true/g) || []).length; // (JSON.stringify(result).match(/isLeaf\":true /g) || []).length;;
     //console.log("chartTable row count: " + itemCount + ", leaf count: " + leafCount);
 
     if (chartNodes.length) {
-        let htmlTable = createTable(chartNodes[0], chartNodes[0].children.length, 0);
+        let htmlTable = createTable(chartNodes[0], chartNodes[0].children.length, 0, isAuthenticated);
         let container = document.getElementById("chart_container");
         container.appendChild(htmlTable);
 
