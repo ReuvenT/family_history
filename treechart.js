@@ -3,6 +3,9 @@ const nodeIds = []  // used to detect dulicates, orphans
 const duplicateNodes = []
 const orphanedNodes = []
 var maxLoginStateNodeLevel = 99;
+const openStoryPng = `iVBORw0KGgoAAAANSUhEUgAAABYAAAAbCAYAAAB4Kn/lAAAAAXNSR0IArs4c6QAAAARnQU1BAACxjwv8YQUAAAAJcEhZcwAADsEAAA7BAbiRa+0AAAGHaVRYdFhNTDpjb20uYWRvYmUueG1wAAAAAAA8P3hwYWNrZXQgYmVnaW49J++7vycgaWQ9J1c1TTBNcENlaGlIenJlU3pOVGN6a2M5ZCc/Pg0KPHg6eG1wbWV0YSB4bWxuczp4PSJhZG9iZTpuczptZXRhLyI+PHJkZjpSREYgeG1sbnM6cmRmPSJodHRwOi8vd3d3LnczLm9yZy8xOTk5LzAyLzIyLXJkZi1zeW50YXgtbnMjIj48cmRmOkRlc2NyaXB0aW9uIHJkZjphYm91dD0idXVpZDpmYWY1YmRkNS1iYTNkLTExZGEtYWQzMS1kMzNkNzUxODJmMWIiIHhtbG5zOnRpZmY9Imh0dHA6Ly9ucy5hZG9iZS5jb20vdGlmZi8xLjAvIj48dGlmZjpPcmllbnRhdGlvbj4xPC90aWZmOk9yaWVudGF0aW9uPjwvcmRmOkRlc2NyaXB0aW9uPjwvcmRmOlJERj48L3g6eG1wbWV0YT4NCjw/eHBhY2tldCBlbmQ9J3cnPz4slJgLAAAEV0lEQVRIS62VUUxTZxTHf70XZi2mFCuOrl0iKMYuLjNMN6BERWYCOBICDxpDlvRpAX0wS4hGkvls9MmMBFzwpXGoLNteJCRISNTEYJQSllGoqaCWNJOQKiuW9fb27AGo9FK2uez39p3/d/4595zvu5/Ku1MDfPqeqn60o6TEHI1GI8YNACZjYAPcdru91VH0vqei0lNWe6wBVRG+7+pOBCYnTzx9+vRnY8LfYSkqKvqqeMeOH+rr6qLfdXbKxOSkxHSRmIgkRWT014CU7dvnNyZmxWazfWI2mzs+3rt3pK2tVQYHB2Vu4Y0sybLhy3hKfl/UZT4h8nLhjRyrr39g9ADIARARy4EDB76IxWL1ZWVlJz4rL8//srGZ4g8/QAHigLaSsNlsAkyoADmbKSwsTGY4rmCqqKg4EQwG2+PxeJnNZuP48eNYCwqILS6haQl0XcdkWj8KRVHQkxq//NgXtW/b9sBqtQ7FYjHf2NjYHIDJ4/FIZWUlTqcTXdfRNA1N0wDJMFq1FiGtpQRyc3OxWq1Eo1H6+/ufvHjxojocDs9SVVUl4XBY/g+uX78uu3bt+hZAEREWFxfX1Jad4eFh5ubmjOEMqqqqcLlcLQCKUcxGMBiktraWzs5Oo5RBKpUiJyfnDf/W+OrVqxw5coS7d+8yOztrlDNYHbQiIsjyRLIyNTXFw4cPuXbtGm63m56eHuOWNGtPz4YVv3r1iqmpKc6fP8+hQ4dwOBx4vV5u377NnTt3iEQiJBIJY1qanLWLkZERent7WVhYYGZmhtevX1NcXMzp06cB2L9/P42NjbS3t7Np0yacTifbt2/H7XZz6tQpVFV9a+bxeCQQCIiISH9/v+Tm5sqZM2dkYmJCwuGw6LpuPFUyPz8voVBIhoeHxeFwSE1NjSSTSQmHw3L06NExAGVtX+rq6rhx4wbj4+MkEgmcTieKsr5bW7dupaSkhIGBAcrLy+nr60NVVZLJt7c7wxigqakJr9dLW1sbjx8/ztBW0TSNs2fP8ujRI7q7uykoKEhrq4WsLwdoaWmhubmZK1euGCUARkdHGRgYoKenh8LCQqMMGxkD2O12tmzZYgwDYLFYcLlc2Gw2o5RGUVU16zkOBoPs2bMHgOfPn3Pp0iUGBwcB2L17N3l5eYRCIUPW8u1jo4pTqRSxWAyLxUJXVxcnT55kfHycixcv0trait/vJy8vj5mZGWNqmqzG8Xgcv9/PhQsXuH//PpcvX8bn83Hz5k1cLhfnzp3j1q1bRCJZ31EAckwm07ofuYjQ0NDAzp07aWpqSsftdjsdHR14vV58Ph9Op3Ndnq7ry4vDhw9roVDIeAf+E9PT03Lw4MEnAEogEPhmaGgo6wDfhaWlJXp7e0kkEg9YeXFspaWlvurq6nq73a6w8klGVttl1EwmE6lUikgk8se9e/d+mp6e/hr4M93c0tLSz81m84fxeDwj8Z/QdZ38/Hyi0ehvz549C6zG/wJFXHaLlKjbHgAAAABJRU5ErkJggg==`
+const openPopupPng = `iVBORw0KGgoAAAANSUhEUgAAABwAAAAcCAYAAAByDd+UAAAAAXNSR0IArs4c6QAAAARnQU1BAACxjwv8YQUAAAAJcEhZcwAADsMAAA7DAcdvqGQAAAGHaVRYdFhNTDpjb20uYWRvYmUueG1wAAAAAAA8P3hwYWNrZXQgYmVnaW49J++7vycgaWQ9J1c1TTBNcENlaGlIenJlU3pOVGN6a2M5ZCc/Pg0KPHg6eG1wbWV0YSB4bWxuczp4PSJhZG9iZTpuczptZXRhLyI+PHJkZjpSREYgeG1sbnM6cmRmPSJodHRwOi8vd3d3LnczLm9yZy8xOTk5LzAyLzIyLXJkZi1zeW50YXgtbnMjIj48cmRmOkRlc2NyaXB0aW9uIHJkZjphYm91dD0idXVpZDpmYWY1YmRkNS1iYTNkLTExZGEtYWQzMS1kMzNkNzUxODJmMWIiIHhtbG5zOnRpZmY9Imh0dHA6Ly9ucy5hZG9iZS5jb20vdGlmZi8xLjAvIj48dGlmZjpPcmllbnRhdGlvbj4xPC90aWZmOk9yaWVudGF0aW9uPjwvcmRmOkRlc2NyaXB0aW9uPjwvcmRmOlJERj48L3g6eG1wbWV0YT4NCjw/eHBhY2tldCBlbmQ9J3cnPz4slJgLAAADtUlEQVRIS72WO0szXRCAn002MRJvG4OK4KUTFBRJJBErK2srtbC0tY2tIPhPFC3s30ZBwULFG4KIEDA28bKLMZrdTeLOW2j2M+stxfv5dDuXM+fMzJmzCiD8IgogIr8TU1EUfF7h/82PJ3Qch/39fa6urvjMTkTo6ekhmUyiKIpXXYWiKD8HLBaLDA8PMzAwQEtLi1eNbdtsbW1xcnKCpmledRWVDcl3FAoFSSQScnd351W5JJNJyWazXvEHAKmphoqioOs6FxcX7O7ucnt7y87ODqenp+i6/pqqH9JZoaaAFQKBAI7jYFkWqqpSLBYRkZqDVfCevIpCoSDxeFyur6+9KhERMU1TRkZGak7pj01TKpUYHR1F0zTC4TB+v59yuQyAqqpYlsXl5SX7+/s0Nzd73auoqUsdx+H8/JxsNouiKITDYZaWlggGgywsLJDL5ejo6KC/vx+f7/sK1RTwM1KpFKFQiMXFRa/qW2qaNMViEcuysG2bYrEIwPPzM5ZlAfDy8kK5XKZcLn86GLx8e8Ll5WX+/PlDMBh0O1FVVdLpNH6/n97eXreevG1uYmKCVCr1bpX/+DGlk5OTJBIJZmZm3N2LCKFQCBHBsix3I4qisLKywsHBARsbG56VXvlx0kxPT8vq6qpX/CUrKysyMzPjFbt8mDSlUol8Ps/9/T2WZZHP57m9vaVQKGAYBrZtvzd3fXK5HLZtc3d3x9PTE7Zt8/DwQKFQwHGcKvuqlJ6enjI7O0t7ezuqqpLJZAiHw0QiEUzTpK2tjfX1ddfZcRympqa4v7+nvr4ewzB4fn6mq6uLl5cXbm5uWFtbo6+v7zWYN6Wbm5sSj8fFMAwxDENM05R8Pi+6rsv29rYMDw9LuVx27W3blqGhIdne3hZd1+Xx8VFM0xRd18UwDInFYrKzs+Paf0ipz+ejsbERTdNoaWnB5/PR0NBAJBIhGo0SCoXemwNQX19PNBolEonQ2NhIIBAgEomgaRpNTU0f5uyX9zCdTrO7u0s2mwWoan8vlTqdn5+zt7eHruvw1tFevgwYDAbd16FWSqUSlmV9GqhCVUDHcfD7/QB0dXUxNjZGZ2cnAM3NzZ8uJCLu0B4cHGR8fJxoNApvQ8Lro77/qKur4/DwkLm5OXjrqoqDrutYllU1oH0+H6ZpMj8/T2trq/sQV7JydHT0oe5V1yKfz3N8fEwul6syAvD7/XR3dzMwMODKRISzszMymcynNdY0jVgsRjgchlpG27+mptfiX6Pwy7/6fwEeEgaMPjpu/AAAAABJRU5ErkJggg==`
+
 
 function prepChartTable(csvData, isAuthenticated) {
     if (!isAuthenticated) {
@@ -129,8 +132,14 @@ function createTable(data, nbrChildren, level, isAuthenticated) {
     if (data.timelineId && data.timelineId.length > 0 && isAuthenticated) {
         let nodeLink = document.createElement('button');
         let image = document.createElement('img');
-        image.src = '/img/open_story.png';
-        //image.alt = 'Open ' + data.content + ' timeline';
+        //        image.src = '/img/open_story.png';
+        image.src = "data:image/png;base64, " + openStoryPng;
+        if (data.timelineId.length > 20){
+            image.title = "open timeline to this story";
+         }
+         else{
+            image.title = "open this timeline";
+         }
         nodeLink.appendChild(image);
         nodeLink.classList.add('tl-link-btn')
         nodeDiv.appendChild(nodeLink);
