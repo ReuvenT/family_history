@@ -1,34 +1,27 @@
 const baseiFrameSrc = 'https://www.tiki-toki.com/timeline/embed/';
-const familyTreeSource = "/data/familytreedata.csv";
-
 let rootTimeline = "2138285/2648138406/";
 
-
 window.onload = function () {
-    drawChart().then(result => {
-        let itemCount = (JSON.stringify(result).match(/\"id\":/g) || []).length;
-        let leafCount = (JSON.stringify(result).match(/isLeaf\":true/g) || []).length; // (JSON.stringify(result).match(/isLeaf\":true /g) || []).length;;
-        console.log("chartTable row count: " + itemCount + ", leaf count: " + leafCount);
+    let chartNodes = prepChartTable(familyTreeSource)
+    let itemCount = (JSON.stringify(chartNodes).match(/\"id\":/g) || []).length;
+    let leafCount = (JSON.stringify(chartNodes).match(/isLeaf\":true/g) || []).length; // (JSON.stringify(result).match(/isLeaf\":true /g) || []).length;;
+    //console.log("chartTable row count: " + itemCount + ", leaf count: " + leafCount);
 
-        if (result.length) {
-            let htmlTable = createTable(result[0], result[0].children.length, 0);
-            let container = document.getElementById("chart_container");
-            container.appendChild(htmlTable);
+    if (chartNodes.length) {
+        let htmlTable = createTable(chartNodes[0], chartNodes[0].children.length, 0);
+        let container = document.getElementById("chart_container");
+        container.appendChild(htmlTable);
 
-            let rootDiv = document.querySelectorAll("[data-parentId='root']")[0];
-            rootTimeline = rootDiv.getAttribute('data-timelineid');
-            var style = rootDiv.currentStyle || window.getComputedStyle(rootDiv);
-            rootMarginDiff = 12; //style.marginTop;
+        let rootDiv = document.querySelectorAll("[data-parentId='root']")[0];
+        rootTimeline = rootDiv.getAttribute('data-timelineid');
+        var style = rootDiv.currentStyle || window.getComputedStyle(rootDiv);
+        rootMarginDiff = 12; //style.marginTop;
 
-            alignChildrenRows('root');
-        }
-    })
-        .catch(error => {
-            // Handle errors here
-            console.error(error);
-        });
+        alignChildrenRows('root');
+    }
 
     PanZoom(".panzoom");
+
 }
 
 document.addEventListener('DOMContentLoaded', function () {
@@ -84,19 +77,7 @@ document.addEventListener('DOMContentLoaded', function () {
 
 }, false);
 
-async function drawChart() {
-    const response = await fetch(familyTreeSource);
-    const data = await response.text();
 
-    if (response.status > 200) {
-        document.getElementById("err_msg").innerHTML = data;
-        //alert ("failed to load tree data from " + familyTreeSource);
-    }
-    else {
-        console.log('chart drawn');
-        return prepChartTable(data, familyTreeSource)
-    }
-}
 
 if (window.postMessage) {
     var tlMouseupFunc = function () {

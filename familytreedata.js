@@ -1,4 +1,4 @@
-# timelineId suffixes that link the timeline to the tree - important: when pasting the value in the timeline extra info, replace
+const familyTreeSource = `# timelineId suffixes that link the timeline to the tree - important: when pasting the value in the timeline extra info, replace
 # backslash with %2F to encode, for example root timeline is 2138285/2648138406/ needs to appear as 2138285%2F2648138406%2F in the 
 # link in the tiki-toki exotra info link, e.g. 
 # to return to root [click here](http://127.0.0.1:5500/redirect%20to%20story%20example.html?newtimeline=2138285%2F2648138406%2F)
@@ -30,16 +30,21 @@ AMA_OJA,KAR_SCH,Amanda Ojeda,,,
 NAT_KIL,IDA_TRA,Nathan Kilberg,,,
 ####### Harry and descendents
 HAR_TRA,LOU_TRA,Gershon "Harry" and Henrietta (Surman) Trabin ,,2141911/5281753800/,,{'menu': 'Harry Trabin Family'; 'access': 'gated'; 'seq': 30; 'level': 2}
+####### Bernie and descendents
 BER_TRA,HAR_TRA,Bernard and Frances (Latzer) Trabin,,,
 TOM_TRA,BER_TRA,Tom Trabin and Nancy Rakela,,,
 JER_TRA,BER_TRA,Jeri (Trabin) Baker,,,
 CEL_BAK,JER_TRA,Celia Baker,,,
 RBT_TRA,BER_TRA,Robert "Rob" Trabin,,,
+####### Millie and descendents
 MIL_TRA,HAR_TRA,Millie (Trabin) Henkin Swern ,,,
-BRU_HEN,MIL_TRA,Bruce and Cynthia (?) Henkin,,,
+BRU_HEN,MIL_TRA,Bruce Henkin and Cynthia Hollos,,,
 JOA_HEN,BRU_HEN,Joanna Henkin,,,
-RIC_HEN,MIL_TRA,Rick Henkin,,,
-JES_HEN,RIC_HEN,Jess Henkin,,,
+RIC_HEN,MIL_TRA,Rick Henkin and Marlena Mauser,,,
+JES_HEN,RIC_HEN,Jesse (Henkin) and  Jake Lippman,,,
+VIO_LIP,JES_HEN,Violet Lippman,,,
+ALI_LIP,JES_HEN,Alice Lippman,,,
+####### Ed and descendents
 EDW_TRA,HAR_TRA,Ed and Tovia (Friedman) Trabin,,,
 DAL_TRA,EDW_TRA,Dale (Trabin) and Marty Waschitz,,,
 FAT_TRA,EDW_TRA,Faith (Trabin) and Jeff Osheroff,,,
@@ -117,3 +122,4 @@ FAN_TRA,LOU_TRA,Feige "Fanny" (Trabin) and Harry Barnow,,2147312/5281753800/,,{'
 EST_BAR,FAN_TRA,Estelle (Barnow) Katz,,,
 BY1_KAT,EST_BAR,Boy 1,,,
 BY2_KAT,EST_BAR,Boy 2,,,
+`
