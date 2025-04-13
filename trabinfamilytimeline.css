@@ -21,30 +21,34 @@ a.tft-basic-tbla {
   font-weight: bolder;
 }
 
-.tft-basic-ft ul li, .tft-basic-ft ul li a { 
+.tft-basic-ft * {
   color: #aaa;
   font-size: 0.9em;
   font-style: italic;
- }
+}
 
-ul.tft-basic-ft {
-  color: #aaa;
-  font-size: 0.9em;
-  font-style: italic;
-  list-style-type: square;
-  margin-top: 0;
+ol.tft-basic-ft{
+  list-style-type: auto;
   padding-left: 20px !important;
 }
 
-u.tft-basic-ft {
-  color: #aaa;
-  /* font-size: 0.9em; */
-  font-weight: bolder;
-  font-style: italic;
+
+ul.tft-basic-ft li a{
+  list-style-type: square;
+  padding-left: 20px !important;
 }
 
-p.tft-basic-ft, a.tft-basic-ft, li.tft-basic-ft  {
+
+/* u.tft-basic-ft {
   color: #aaa;
-  /* font-size: 0.9em; */
-  /* margin: 5px; */
-}
+  font-size: 0.9em;
+  font-weight: bolder;
+  font-style: italic;
+} 
+*/
+
+/* p.tft-basic-ft, a.tft-basic-ft, li.tft-basic-ft  {
+  color: #aaa;
+  font-size: 0.9em;
+  margin: 5px;
+} */
