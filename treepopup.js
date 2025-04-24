@@ -66,7 +66,9 @@ function closeChartPopup() {
   let popupState = getChartViewState();
   popupState.showPopUp = false;
   setChartViewState(popupState);
-  console.log("closeChartPopup");
+  //console.log("closeChartPopup");
+  let ocEle = document.getElementById("orgchart-container");
+  ocEle.style.removeProperty('height');
   captureAndSaveChartState();
 }
 
@@ -83,6 +85,7 @@ function openOrgChartPopup() {
   document.getElementById("panzoom_container").style.transform = matrix;
   radiobtn = document.getElementById("view-timeline");
   let ocEle = document.getElementById("orgchart-container");
+  ocEle.style.height = popup.style.height;
   if (radiobtn.checked) {
     //console.log('openOrgChartPopup radiobtn.checked: ' + radiobtn.checked)
     ocEle.style.display = "block";
@@ -105,7 +108,7 @@ function initDrag(e) {
 }
 
 function doResizePopup(e) {
-  console.log("do drag");
+  //console.log("do drag");
   popup.style.width = (startWidth + e.clientX - startX) + 'px';
   popup.style.height = (startHeight + e.clientY - startY) + 'px';
 }
@@ -114,7 +117,9 @@ function stopResizePopup(e) {
   popup.removeEventListener('mousemove', doResizePopup, false);
   popup.removeEventListener('mouseup', stopResizePopup, false);
   captureAndSaveChartState();
-  console.log("stop drag state");
+  let ocEle = document.getElementById("orgchart-container");
+  ocEle.style.height = popup.style.height
+  //console.log("stop drag state");
 }
 
 dragElement(popup);

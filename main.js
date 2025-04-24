@@ -65,7 +65,7 @@ document.addEventListener('DOMContentLoaded', function () {
         redirectiFrames(baseiFrameSrc + storedSelection.timelineId, storedSelection.timelineId);
 
         // restore popup if needed
-        setTimeout((id) => {
+        setTimeout((id, isSelected) => {
             if (!isAuthenticated && storedSelection.timelineId != rootTimeline) {
                 storedSelection.timelineId = rootTimeline;
                 setChartViewState(storedSelection);
@@ -73,17 +73,25 @@ document.addEventListener('DOMContentLoaded', function () {
             }
 
             console.log("initializing, " + boundsDisplay(document.getElementById("chart_container").getBoundingClientRect()));
-            showNode(document.getElementById(id), true)
+            //showNode(document.getElementById(id), true)
             if (displayPopup) {
                 openOrgChartPopup();
+                if (isSelected) {
+                    nodeIdSetSelected(id);
+                    showNode(document.getElementById(id), false);
+                }
                 //showNode(document.getElementById(id), false);
             }
             else {
-                setTimeout((id) => {
+                setTimeout((id, isSelected) => {
                     document.getElementById("orgchart-container").style.display = "block";
-                }, 1500);
+                    if (isSelected) {
+                        nodeIdSetSelected(id);
+                        showNode(document.getElementById(id), true);
+                    }
+                }, 1500, id, isSelected);
             }
-        }, 500, storedSelection.currentId);
+        }, 500, storedSelection.currentId, storedSelection.isSelected);
 
     }, 250);
 
@@ -211,6 +219,7 @@ function handleViewChoiceClick(viewChoice, setChecked) {
         tlFrame.style.display = "none";
         moveOrgChart(true)
         ocEle.style.display = "block"; //orgchart-container
+        ocEle.style.removeProperty('height');
         ocEle.classList.add("fullScreen");
         pu.style.display = "none";
         tpEle.style.display = "none";
@@ -306,4 +315,25 @@ async function log_in_out () {
           }
 
     }
+}
+
+function print_tl() {
+    let timelineId = getChartViewState().timelineId;
+    // https://www.tiki-toki.com/timeline/entry/2141156/Helene-Trabin-Berne-Family/print/
+    console.log('pdf btn clicked for timeline \n' + timelineId + ", " + JSON.stringify(getMenuObj(timelineId)));
+    let printLink = baseiFrameSrc.replace('embed', 'entry') +  getMenuObj(timelineId).tikiPath + "/print/"
+
+    //alert("pdf btn clicked for timeline "  + printLink);
+
+
+    prompt(`This manual step allows you to open a browser page with the 
+content of this timeline in a printable format. It will only show the 
+default media image, and may be limited in other ways. 
+
+To use this, copy the link below and paste it into the address bar of 
+a new browser window. If the print dialog box doesn't display in 
+the new tab, use the browser print command, e.g. Ctrl+P. 
+ (The Ok button below doesn't do anything). ` , printLink);
+
+    return;
 }

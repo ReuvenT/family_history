@@ -294,6 +294,8 @@ function processDataRow(csvDataRow, i) {
                     let menuItem = JSON.parse(cells[6].replaceAll("'", "\"").replaceAll(";", ","));
                     menuItem.elId = cells[0];
                     menuItem.timelineId = cells[4];
+                    let pathRoot = menuItem.timelineId.split('/')[0] + "/" + menuItem.menu.replaceAll(' ', '-');
+                    menuItem.tikiPath = pathRoot.replaceAll('(', '-').replaceAll(')', '-').replaceAll('--', '-');
                     //console.log("tree (menu) in source file row " + i + " : " + JSON.stringify(menuItem));
                     timelineMenu.push(menuItem);
                 } catch (error) {
@@ -332,6 +334,11 @@ function moveOrgChart(isFullPage) {
 function isFullChartPageDisplayed() {
     return document.getElementById("tree_container").innerHTML.length > 100;
 }
+
+function getMenuObj(timelineId) {
+    return timelineMenu.find(element => element.timelineId === timelineId);
+}
+
 
 function getCenterElement() {
     // calculate the central point of the container
@@ -434,7 +441,7 @@ function showNode(nodeEl, isFullPage) {
         let rootDiv = document.querySelectorAll("[data-parentId='root']")[0];
         let rootTop = rootDiv.getBoundingClientRect().top;
         let level = nodeEl.getAttribute('data-level');
-        let yOffset = (elBounds.top - rootTop) / 5;
+        let yOffset = (elBounds.top - rootTop); // / 5;
         yOffset *= level;
 
         //console.log(`showNode: (xTranslation, xTranslation, scale): ${xTranslation}, ${yTranslation}, ${scale}`);
