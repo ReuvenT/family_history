@@ -77,7 +77,7 @@ AYL_DUV,MAY_TRA,Ayla Duval,,,
 DON_TRA,REU_TRA,Donna (Trabin) Avidan<b/><div style='font-style:italic; font-size:small; font-weight: 400;'> m/div: Idan Avidan,,,
 YAN_AVI,DON_TRA,Yanai Avidan,,,
 ELI_AVI,DON_TRA,Eliya Avidan,,,
-SYD_TRA,JAC_TRA,Sydney and Ruth (Zaresky) Trabin,,,
+SYD_TRA,JAC_TRA,Sydney and Ruth (Zaresky) Trabin,,2165939/0328610175/,,{'menu': 'Sydney Trabin Family'; 'access': 'gated'; 'seq': 41; 'level': 3}
 JAY_TRA,SYD_TRA,Jay and Sherri (Steinberg) Trabin,,,
 DAN_TRA,JAY_TRA,Danielle Trabin,,,
 JOS_TRA,JAY_TRA,Josh Trabin,,,
