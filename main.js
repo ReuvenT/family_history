@@ -7,7 +7,7 @@ let isAuthenticated = false;
 window.onload = async () => {
     await configureClient();
     await refreshLoginStatus();
-    
+
     let chartNodes = prepChartTable(familyTreeSource, isAuthenticated)
     //let itemCount = (JSON.stringify(chartNodes).match(/\"id\":/g) || []).length;
     //let leafCount = (JSON.stringify(chartNodes).match(/isLeaf\":true/g) || []).length; // (JSON.stringify(result).match(/isLeaf\":true /g) || []).length;;
@@ -72,6 +72,8 @@ document.addEventListener('DOMContentLoaded', function () {
                 redirectiFrames(baseiFrameSrc + storedSelection.timelineId, storedSelection.timelineId);
             }
 
+            document.getElementById("tl-menu-bar").style.visibility = 'visible';
+            document.getElementById("tl-select-view").style.visibility = 'visible';
             console.log("initializing, " + boundsDisplay(document.getElementById("chart_container").getBoundingClientRect()));
             //showNode(document.getElementById(id), true)
             if (displayPopup) {
@@ -91,6 +93,7 @@ document.addEventListener('DOMContentLoaded', function () {
                     }
                 }, 1500, id, isSelected);
             }
+
         }, 500, storedSelection.currentId, storedSelection.isSelected);
 
     }, 250);
@@ -103,13 +106,13 @@ document.addEventListener('DOMContentLoaded', function () {
 const configureClient = async () => {
     // const response = await fetchAuthConfig();
     // const config = await response.json();
-  
+
     auth0Client = await auth0.createAuth0Client({
-      domain: "dev-0wdjqy32gp3ia376.us.auth0.com", //config.domain,
-      clientId: "cBmTOThE35AZ8R5uEsmiVKDop9Jgax7p" //config.clientId
+        domain: "dev-0wdjqy32gp3ia376.us.auth0.com", //config.domain,
+        clientId: "cBmTOThE35AZ8R5uEsmiVKDop9Jgax7p" //config.clientId
     });
-    console.log("configureClient null?" + (auth0Client == null) );
- };
+    console.log("configureClient null?" + (auth0Client == null));
+};
 
 
 if (window.postMessage) {
@@ -255,23 +258,23 @@ async function refreshLoginStatus() {
     const shouldParseResult = query.includes("code=") && query.includes("state=");
 
     if (shouldParseResult) {
-      console.log("> Parsing redirect");
-      try {
-        const result = await auth0Client.handleRedirectCallback();
-  
-        if (result.appState && result.appState.targetUrl) {
-          showContentFromUrl(result.appState.targetUrl);
+        console.log("> Parsing redirect");
+        try {
+            const result = await auth0Client.handleRedirectCallback();
+
+            if (result.appState && result.appState.targetUrl) {
+                showContentFromUrl(result.appState.targetUrl);
+            }
+
+            console.log("Logged in!");
+        } catch (err) {
+            console.log("Error parsing redirect:", err);
         }
-  
-        console.log("Logged in!");
-      } catch (err) {
-        console.log("Error parsing redirect:", err);
-      }
-  
-      window.history.replaceState({}, document.title, "/");
+
+        window.history.replaceState({}, document.title, "/");
     }
     isAuthenticated = await auth0Client.isAuthenticated();
-    document.getElementById("login_label").innerHTML = isAuthenticated ? "Logout" : "Login";
+    document.getElementById("login_label").innerHTML = isAuthenticated ? "LOGOUT" : "LOGIN";
     document.getElementById("timeline_menus").innerHTML = isAuthenticated ? "-----Timeline Links------------" : "- Timeline Links available after login -";
     console.log("refreshLoginStatus isAuthenticated: ", isAuthenticated);
     return (isAuthenticated);
@@ -279,40 +282,40 @@ async function refreshLoginStatus() {
 
 
 
-async function log_in_out () {
+async function log_in_out() {
     await refreshLoginStatus();
     console.log("log_in_out isAuthenticated: " + isAuthenticated);
-    if (isAuthenticated){
+    if (isAuthenticated) {
         try {
             console.log("Logging out");
             await auth0Client.logout({
-              logoutParams: {
-                returnTo: window.location.origin
-              }
+                logoutParams: {
+                    returnTo: window.location.origin
+                }
             });
             await refreshLoginStatus();
         } catch (err) {
             console.log("Log out failed", err);
-          }
+        }
     }
-    else{
+    else {
         try {
             let targetUrl = "";
             console.log("Logging in", targetUrl);
-        
+
             const options = {
-              authorizationParams: {
-                redirect_uri: window.location.origin
-              }
+                authorizationParams: {
+                    redirect_uri: window.location.origin
+                }
             };
-        
+
             if (targetUrl) {
-              options.appState = { targetUrl };
+                options.appState = { targetUrl };
             }
             await auth0Client.loginWithRedirect(options);
         } catch (err) {
             console.log("Log in failed", err);
-          }
+        }
 
     }
 }
@@ -321,7 +324,7 @@ function print_tl() {
     let timelineId = getChartViewState().timelineId;
     // https://www.tiki-toki.com/timeline/entry/2141156/Helene-Trabin-Berne-Family/print/
     console.log('pdf btn clicked for timeline \n' + timelineId + ", " + JSON.stringify(getMenuObj(timelineId)));
-    let printLink = baseiFrameSrc.replace('embed', 'entry') +  getMenuObj(timelineId).tikiPath + "/print/"
+    let printLink = baseiFrameSrc.replace('embed', 'entry') + getMenuObj(timelineId).tikiPath + "/print/"
 
     //alert("pdf btn clicked for timeline "  + printLink);
 

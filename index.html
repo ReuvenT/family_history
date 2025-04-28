@@ -43,7 +43,11 @@
     </div>
   </div>
 
-  <div id="radioViews" style="position: absolute; left: 8px; top: 8px; z-index: 100; width: 150px; background-color: #bfbfbf; border-radius: 4px;">
+  <div id="tl-menu-bar" style="visibility: hidden; position: absolute; left: 5px; top: 4px; z-index: 100; width: 250px; height: 28px;">
+    <a class="tl-menu-item" style="position: absolute; left: 10px; top: 12px; z-index: 100;" href="#">HOME</a>
+    <label id="login_label" class="tl-menu-item" style="position: absolute; left: 100px; top: 12px; z-index: 100;" onclick="log_in_out();">LOGIN</label>
+  </div>
+  <div id="tl-select-view" style="visibility: hidden; position: absolute; left: 8px; top: 42px; z-index: 100; width: 150px; background-color: #bfbfbf; border-radius: 4px;">
     <fieldset style="width: 130px; border: none;">
       <legend style = "margin-left: 20px; padding-top: 4px;">Select a view:</legend>
       <div>
@@ -66,12 +70,12 @@
         <span class="burger-slice"></span>
         <span class="burger-slice"></span>
         <ul id="tl-menu">
-          <li>
+          <!-- <li>
             <label for="tl-menu-cbx" onclick="this.parentNode.click();"><a href="#">Home</a></label>
-          </li>
-          <li>
+          </li> -->
+          <!-- <li>
             <label id="login_label" for="tl-menu-cbx" onclick="this.parentNode.click(); log_in_out();">Login</label>
-          </li>
+          </li> -->
           <li>
             <label id="print_label" for="tl-menu-cbx" onclick="this.parentNode.click(); print_tl();">Print Current Timeline</label>
           </li>

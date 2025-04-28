@@ -268,7 +268,7 @@ input {
   display: block;
   /* You can also use relative/absolute here if you want to stay on the top */
   position: fixed;
-  top: 13px;
+  top: 47px;
   left: 14px;
   z-index: 1;
   color: black;
@@ -335,11 +335,21 @@ span.tl-menu-prefix:hover {
   /* border-color: tomato; */
 }
 
-#tl-menu-toggle a:hover {
+.tl-menu-toggle a:hover {
   font-weight: bold;
   /* color: tomato; */
 }
 
+#tl-menu-bar *{
+  color: rgb(128, 128, 128);
+  font: .9rem 'Fira Sans', sans-serif;
+  text-decoration: none; 
+  background-color: #000000;
+}
+
+.tl-menu-item:hover {
+  font-weight: bold !important;
+}
 
 span.tl-menu-1 {
   width: 15px;
