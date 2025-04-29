@@ -441,10 +441,14 @@ function showNode(nodeEl, isFullPage) {
         let rootDiv = document.querySelectorAll("[data-parentId='root']")[0];
         let rootTop = rootDiv.getBoundingClientRect().top;
         let level = nodeEl.getAttribute('data-level');
-        let yOffset = (elBounds.top - rootTop); // / 5;
-        yOffset *= level;
+        let yOffset = (elBounds.top - rootTop) / 5;
+        //yOffset *= level;
+        yTranslation += yOffset; // * level;
+        if (yTranslation < 150 && isFullPage){
+            yTranslation += 150;
+        }
 
-        //console.log(`showNode: (xTranslation, xTranslation, scale): ${xTranslation}, ${yTranslation}, ${scale}`);
+        //console.log(`showNode: (xTranslation, yTranslation, scale): ${xTranslation}, ${yTranslation}, ${scale}`);
 
         matrix = 'matrix(' + scale + ', 0, 0, ' + scale + ', ' + parseInt(xTranslation) + ', ' + parseInt(yTranslation) + ')';
         //console.log("showNode transform matrix: " + matrix);
@@ -483,7 +487,9 @@ function nodeIdSetSelected(nodeId) {
     const selectedList = document.querySelectorAll('.selected');
     selectedList.forEach(element => {
         element.classList.remove('selected');
-        element.firstElementChild.classList.remove('selected');
+        if (element.firstElementChild){
+            element.firstElementChild.classList.remove('selected');
+        }
     });
     let element = document.getElementById(nodeId);
     if (element){

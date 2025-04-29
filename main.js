@@ -82,13 +82,24 @@ document.addEventListener('DOMContentLoaded', function () {
                     nodeIdSetSelected(id);
                     showNode(document.getElementById(id), false);
                 }
-                //showNode(document.getElementById(id), false);
-            }
+                else{
+                    if (!id){
+                        id = "LOU_TRA";
+                    }
+                    showNode(document.getElementById(id), true);
+                }
+        }
             else {
                 setTimeout((id, isSelected) => {
                     document.getElementById("orgchart-container").style.display = "block";
                     if (isSelected) {
                         nodeIdSetSelected(id);
+                        showNode(document.getElementById(id), true);
+                    }
+                    else{
+                        if (!id){
+                            id = "LOU_TRA";
+                        }
                         showNode(document.getElementById(id), true);
                     }
                 }, 1500, id, isSelected);
