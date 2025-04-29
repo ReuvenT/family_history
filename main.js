@@ -115,6 +115,7 @@ document.addEventListener('DOMContentLoaded', function () {
  * Initializes the Auth0 client
  */
 const configureClient = async () => {
+    console.log("configureClient (auth0) start");
     // const response = await fetchAuthConfig();
     // const config = await response.json();
 
