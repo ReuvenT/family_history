@@ -399,7 +399,7 @@ function showNode(nodeEl, isFullPage) {
         if (nodeText == '') {
             nodeText = nodeEl.parentElement.textContent;
         }
-        console.log(`showNode id: ${nodeEl.id} ${nodeEl.classList.contains('selected') ? "(selected)" : ""}, isFullPage: ${isFullPage}`);
+        //console.log(`showNode id: ${nodeEl.id} ${nodeEl.classList.contains('selected') ? "(selected)" : ""}, isFullPage: ${isFullPage}`);
         let elBounds = nodeEl.getBoundingClientRect();
         if (elBounds.right == 0) {
             elBounds = nodeEl.parentElement.getBoundingClientRect();
@@ -456,7 +456,7 @@ function showNode(nodeEl, isFullPage) {
         //     yTranslation += 150;
         // }
 
-        console.log(`showNode: (xTranslation, yTranslation, scale): ${xTranslation}, ${yTranslation}, ${scale}`);
+        //console.log(`showNode: (xTranslation, yTranslation, scale): ${xTranslation}, ${yTranslation}, ${scale}`);
 
         matrix = 'matrix(' + scale + ', 0, 0, ' + scale + ', ' + parseInt(xTranslation) + ', ' + parseInt(yTranslation) + ')';
         //console.log("showNode transform matrix: " + matrix);
