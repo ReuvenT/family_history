@@ -116,7 +116,7 @@ document.addEventListener('DOMContentLoaded', function () {
  */
 const configureClient = async () => {
     let auth0State = localStorage.getItem('auth0flag');
-    if (typeof auth0State === 'string' || auth0State instanceof String) {
+    if (auth0State == null) {
         console.log("configureClient (auth0) bypassed");
         document.getElementById("login_label").style.visibility = 'hidden';
         isAuthenticated = true;
@@ -293,7 +293,7 @@ async function refreshLoginStatus() {
         window.history.replaceState({}, document.title, "/");
     }
     let auth0State = localStorage.getItem('auth0flag');
-    if (typeof auth0State === 'string' || auth0State instanceof String) {
+    if (auth0State == null) {
         isAuthenticated = true;
     }
     else{
@@ -305,11 +305,9 @@ async function refreshLoginStatus() {
     return (isAuthenticated);
 }
 
-
-
 async function log_in_out() {
     let auth0State = localStorage.getItem('auth0flag');
-    if (typeof auth0State === 'string' || auth0State instanceof String) {
+    if (auth0State == null) {
         return;
     }
     await refreshLoginStatus();
