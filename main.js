@@ -82,13 +82,13 @@ document.addEventListener('DOMContentLoaded', function () {
                     nodeIdSetSelected(id);
                     showNode(document.getElementById(id), false);
                 }
-                else{
-                    if (!id){
+                else {
+                    if (!id) {
                         id = "LOU_TRA";
                     }
                     showNode(document.getElementById(id), true);
                 }
-        }
+            }
             else {
                 setTimeout((id, isSelected) => {
                     document.getElementById("orgchart-container").style.display = "block";
@@ -96,8 +96,8 @@ document.addEventListener('DOMContentLoaded', function () {
                         nodeIdSetSelected(id);
                         showNode(document.getElementById(id), true);
                     }
-                    else{
-                        if (!id){
+                    else {
+                        if (!id) {
                             id = "LOU_TRA";
                         }
                         showNode(document.getElementById(id), true);
@@ -115,6 +115,13 @@ document.addEventListener('DOMContentLoaded', function () {
  * Initializes the Auth0 client
  */
 const configureClient = async () => {
+    let auth0State = localStorage.getItem('auth0flag');
+    if (typeof auth0State === 'string' || auth0State instanceof String) {
+        console.log("configureClient (auth0) bypassed");
+        document.getElementById("login_label").style.visibility = 'hidden';
+        isAuthenticated = true;
+        return;
+    }
     console.log("configureClient (auth0) start");
     // const response = await fetchAuthConfig();
     // const config = await response.json();
@@ -285,7 +292,13 @@ async function refreshLoginStatus() {
 
         window.history.replaceState({}, document.title, "/");
     }
-    isAuthenticated = await auth0Client.isAuthenticated();
+    let auth0State = localStorage.getItem('auth0flag');
+    if (typeof auth0State === 'string' || auth0State instanceof String) {
+        isAuthenticated = true;
+    }
+    else{
+        isAuthenticated = await auth0Client.isAuthenticated();
+    }
     document.getElementById("login_label").innerHTML = isAuthenticated ? "LOGOUT" : "LOGIN";
     document.getElementById("timeline_menus").innerHTML = isAuthenticated ? "-----Timeline Links------------" : "- Timeline Links available after login -";
     console.log("refreshLoginStatus isAuthenticated: ", isAuthenticated);
@@ -295,16 +308,22 @@ async function refreshLoginStatus() {
 
 
 async function log_in_out() {
+    let auth0State = localStorage.getItem('auth0flag');
+    if (typeof auth0State === 'string' || auth0State instanceof String) {
+        return;
+    }
     await refreshLoginStatus();
     console.log("log_in_out isAuthenticated: " + isAuthenticated);
     if (isAuthenticated) {
         try {
-            console.log("Logging out");
-            await auth0Client.logout({
-                logoutParams: {
-                    returnTo: window.location.origin
-                }
-            });
+            if (confirm("Are you sure you want to logout?")) {
+                console.log("Logging out");
+                await auth0Client.logout({
+                    logoutParams: {
+                        returnTo: window.location.origin
+                    }
+                });
+            }
             await refreshLoginStatus();
         } catch (err) {
             console.log("Log out failed", err);

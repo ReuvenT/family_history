@@ -399,7 +399,7 @@ function showNode(nodeEl, isFullPage) {
         if (nodeText == '') {
             nodeText = nodeEl.parentElement.textContent;
         }
-        //console.log(`showNode id: ${nodeEl.id} ${nodeEl.classList.contains('selected') ? "(selected)" : ""}, isFullPage: ${isFullPage}`);
+        console.log(`showNode id: ${nodeEl.id} ${nodeEl.classList.contains('selected') ? "(selected)" : ""}, isFullPage: ${isFullPage}`);
         let elBounds = nodeEl.getBoundingClientRect();
         if (elBounds.right == 0) {
             elBounds = nodeEl.parentElement.getBoundingClientRect();
@@ -442,13 +442,21 @@ function showNode(nodeEl, isFullPage) {
         let rootTop = rootDiv.getBoundingClientRect().top;
         let level = nodeEl.getAttribute('data-level');
         let yOffset = (elBounds.top - rootTop) / 5;
-        //yOffset *= level;
-        yTranslation += yOffset; // * level;
-        if (yTranslation < 150 && isFullPage){
-            yTranslation += 150;
+        if (isFullPage){
+            let offsets = [-150, -90, -50, 0, 0, 0, 0];
+            yOffset = offsets[level];
+        }
+        else{
+            yOffset = 0;
         }
 
-        //console.log(`showNode: (xTranslation, yTranslation, scale): ${xTranslation}, ${yTranslation}, ${scale}`);
+        //yOffset *= level;
+        yTranslation += yOffset; // * level;
+        // if (yTranslation < 150 && isFullPage){
+        //     yTranslation += 150;
+        // }
+
+        console.log(`showNode: (xTranslation, yTranslation, scale): ${xTranslation}, ${yTranslation}, ${scale}`);
 
         matrix = 'matrix(' + scale + ', 0, 0, ' + scale + ', ' + parseInt(xTranslation) + ', ' + parseInt(yTranslation) + ')';
         //console.log("showNode transform matrix: " + matrix);
