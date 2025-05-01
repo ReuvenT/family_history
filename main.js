@@ -106,7 +106,11 @@ document.addEventListener('DOMContentLoaded', function () {
             }
 
         }, 500, storedSelection.currentId, storedSelection.isSelected);
-
+        let contHeight = document.getElementById("tl-timeline-iframe").getBoundingClientRect().height- 160; 
+        let menuHeight = document.getElementById("tl-menu").getBoundingClientRect().height; 
+        if (menuHeight > contHeight){
+            document.getElementById("tl-menu").style.height = contHeight +  "px";
+        }
     }, 250);
 
 }, false);
@@ -241,6 +245,7 @@ function handleViewChoiceClick(viewChoice, setChecked) {
         tlFrame.style.display = "none";
         moveOrgChart(true)
         ocEle.style.display = "block"; //orgchart-container
+        ocEle.style.visibility = "visible";
         ocEle.style.removeProperty('height');
         ocEle.classList.add("fullScreen");
         pu.style.display = "none";
@@ -250,7 +255,8 @@ function handleViewChoiceClick(viewChoice, setChecked) {
             radiobtn.checked = true;
         }
     }
-    else if (viewChoice == "view-timeline") {
+    else {
+        ocEle.style.visibility = "hidden";
         captureAndSaveChartState();
         ocEle.classList.remove("fullScreen");
         tlFrame.classList.add("fullScreen");
@@ -262,6 +268,7 @@ function handleViewChoiceClick(viewChoice, setChecked) {
         }
 
         if (getChartViewState().showPopUp) {
+            ocEle.style.visibility = "visible";
             openOrgChartPopup();
         }
     }

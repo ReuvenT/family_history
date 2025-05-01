@@ -73,8 +73,13 @@ function closeChartPopup() {
 }
 
 function openOrgChartPopup() {
+  let ocEle = document.getElementById("orgchart-container");
   let popupState = getChartViewState();
   //console.log("openOrgChartPopup popupState: " + JSON.stringify(popupState));
+  let contHeight = document.getElementById("tl-timeline-iframe").getBoundingClientRect().height;
+  if (popupState.height > contHeight - 50){
+    popupState.height = contHeight - 50;
+  }
   popupState.showPopUp = true;
   setChartViewState(popupState);
   popup.style.top = (popupState.top) + "px";
@@ -84,11 +89,11 @@ function openOrgChartPopup() {
   let matrix = 'matrix(' + popup.style.popupScale + ', 0, 0, ' + popup.style.popupScale + ', 0, 0)';
   document.getElementById("panzoom_container").style.transform = matrix;
   radiobtn = document.getElementById("view-timeline");
-  let ocEle = document.getElementById("orgchart-container");
   ocEle.style.height = popup.style.height;
   if (radiobtn.checked) {
     //console.log('openOrgChartPopup radiobtn.checked: ' + radiobtn.checked)
     ocEle.style.display = "block";
+    ocEle.style.visibility = "visible";
     popup.style.display = "block";
     moveOrgChart(false) ;
   }
