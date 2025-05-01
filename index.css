@@ -341,8 +341,8 @@ span.tl-menu-prefix:hover {
 
 span.tl-menu-1 {
   width: 15px;
-  background: #04610A;
-  color: #04610A;
+  background: #008B8B;
+  color: #008B8B;
   opacity: 50%;
   border-width: 2px;
 }
@@ -350,8 +350,8 @@ span.tl-menu-1 {
 span.tl-menu-2 {
   width: 15px;
   margin-left: 15px;
-  background: #FF9933;
-  color: #FF9933;
+  background: #3EA27D;
+  color: #3EA27D;
   opacity: 80%;
 }
 
@@ -359,13 +359,30 @@ span.tl-menu-3 {
   width: 15px;
   margin-left: 30px;
   display: inline-block;
-  background: #F2D392;
-  color: #F2D392;
-  ;
+  background: #7CBA6F;
+  color: #7CBA6F;
+  border-style: solid;
+  border-color: black;
+}
+span.tl-menu-4 {
+  width: 15px;
+  margin-left: 45px;
+  display: inline-block;
+  background: #BBD15F;
+  color: #BBD15F;
   border-style: solid;
   border-color: black;
 }
 
+span.tl-menu-5 {
+  width: 15px;
+  margin-left: 60px;
+  display: inline-block;
+  background: #FFA500;
+  color: #FFA500;
+  border-style: solid;
+  border-color: black;
+}
 
 #tl-menu-toggle .burger-slice:first-child {
   transform-origin: 0% 0%;
