@@ -399,7 +399,7 @@ function showNode(nodeEl, isFullPage) {
         if (nodeText == '') {
             nodeText = nodeEl.parentElement.textContent;
         }
-        //console.log(`showNode id: ${nodeEl.id} ${nodeEl.classList.contains('selected') ? "(selected)" : ""}, isFullPage: ${isFullPage}`);
+        console.log(`showNode id: ${nodeEl.id} ${nodeEl.classList.contains('selected') ? "(selected)" : ""}, isFullPage: ${isFullPage}`);
         let elBounds = nodeEl.getBoundingClientRect();
         if (elBounds.right == 0) {
             elBounds = nodeEl.parentElement.getBoundingClientRect();
@@ -431,8 +431,8 @@ function showNode(nodeEl, isFullPage) {
         let elCenter = { x: (elBounds.left + (elBounds.width / 2)), y: (elBounds.top + (elBounds.height / 2)) };
         //console.log("showNode: cont " + boundsDisplay(chartContainerBounds));
         //console.log(`showNode: cont center ${xyDisplay(containerCenter.x, containerCenter.y)}`);
-        // console.log("showNode: item " + boundsDisplay(elBounds));
-        // console.log(`showNode: item center ${xyDisplay(elCenter.x, elCenter.y)}`);
+        //console.log("showNode: item " + boundsDisplay(elBounds));
+        //console.log(`showNode: item center ${xyDisplay(elCenter.x, elCenter.y)}`);
 
         let xTranslation = -parseInt((elCenter.x - containerCenter.x));
         let yTranslation = -parseInt((elCenter.y - containerCenter.y));
@@ -442,21 +442,11 @@ function showNode(nodeEl, isFullPage) {
         let rootTop = rootDiv.getBoundingClientRect().top;
         let level = nodeEl.getAttribute('data-level');
         let yOffset = (elBounds.top - rootTop) / 5;
-        if (isFullPage){
-            let offsets = [-150, -90, -50, 0, 0, 0, 0];
-            yOffset = offsets[level];
-        }
-        else{
-            yOffset = 0;
-        }
-
-        //yOffset *= level;
+        let offsets = (isFullPage) ? [-150, -90, -50, 0, 0, 0, 0] : [-250, -210, -180, -120, -80, 0] ;
+        yOffset = offsets[level];
         yTranslation += yOffset; // * level;
-        // if (yTranslation < 150 && isFullPage){
-        //     yTranslation += 150;
-        // }
 
-        //console.log(`showNode: (xTranslation, yTranslation, scale): ${xTranslation}, ${yTranslation}, ${scale}`);
+        console.log(`showNode: (xTranslation, yTranslation, scale): ${xTranslation}, ${yTranslation}, ${scale}`);
 
         matrix = 'matrix(' + scale + ', 0, 0, ' + scale + ', ' + parseInt(xTranslation) + ', ' + parseInt(yTranslation) + ')';
         //console.log("showNode transform matrix: " + matrix);

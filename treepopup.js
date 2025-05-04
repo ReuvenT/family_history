@@ -17,7 +17,10 @@ function captureAndSaveChartState() {
   }
   if (currentEl) {
     pState.currentId = currentEl.id;
-    pState.timelineId = currentEl.getAttribute('data-timelineid');
+    let tlId = currentEl.getAttribute('data-timelineid');
+    if (tlId){
+      pState.timelineId = currentEl.getAttribute('data-timelineid');
+    }
   }
 
   let rect = popup.getBoundingClientRect();
@@ -86,7 +89,7 @@ function openOrgChartPopup() {
   popup.style.left = (popupState.left) + "px";
   popup.style.width = (popupState.width) + "px";
   popup.style.height = (popupState.height) + "px";
-  let matrix = 'matrix(' + popup.style.popupScale + ', 0, 0, ' + popup.style.popupScale + ', 0, 0)';
+  let matrix = 'matrix(' + popupState.popupScale + ', 0, 0, ' + popupState.popupScale + ', 0, 0)';
   document.getElementById("panzoom_container").style.transform = matrix;
   radiobtn = document.getElementById("view-timeline");
   ocEle.style.height = popup.style.height;

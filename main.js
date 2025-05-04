@@ -35,7 +35,6 @@ document.addEventListener('DOMContentLoaded', function () {
     setTimeout(() => {
         const urlParams = new URLSearchParams(window.location.search);
         const redirectedTimeline = decodeURI(urlParams.get('newtimeline'));
-        var displayPopup = false;
         var storedSelection = getChartViewState();
         if (redirectedTimeline && redirectedTimeline != "null") {
             urlParams.delete("redirectedTimeline");
@@ -44,28 +43,13 @@ document.addEventListener('DOMContentLoaded', function () {
         }
         else {
             console.log("default launch " + storedSelection.currentId + " with timelineId " + storedSelection.timelineId);
-            if (storedSelection.timelineId == null) {
-                storedSelection.timelineId = "2138285/2648138406/";
-            }
         }
 
-        if (storedSelection.currentId) {
-            if (storedSelection.isSelected) {
-                nodeIdSetSelected(storedSelection.currentId);
-            }
-            if (storedSelection.showPopUp) {
-                displayPopup = true;
-                storedSelection.showPopUp = false;
-            }
-        }
-        if (!storedSelection.timelineId) {
-            storedSelection.timelineId = rootTimeline;
-        }
         setChartViewState(storedSelection);
         redirectiFrames(baseiFrameSrc + storedSelection.timelineId, storedSelection.timelineId);
 
         // restore popup if needed
-        setTimeout((id, isSelected) => {
+        setTimeout((id, isSelected, showPopUp) => {
             if (!isAuthenticated && storedSelection.timelineId != rootTimeline) {
                 storedSelection.timelineId = rootTimeline;
                 setChartViewState(storedSelection);
@@ -76,36 +60,24 @@ document.addEventListener('DOMContentLoaded', function () {
             document.getElementById("tl-select-view").style.visibility = 'visible';
             console.log("initializing, " + boundsDisplay(document.getElementById("chart_container").getBoundingClientRect()));
             //showNode(document.getElementById(id), true)
-            if (displayPopup) {
+            if (showPopUp) {
                 openOrgChartPopup();
                 if (isSelected) {
                     nodeIdSetSelected(id);
-                    showNode(document.getElementById(id), false);
                 }
-                else {
-                    if (!id) {
-                        id = "LOU_TRA";
-                    }
-                    showNode(document.getElementById(id), true);
-                }
+                showNode(document.getElementById(id), !showPopUp);
             }
             else {
-                setTimeout((id, isSelected) => {
+                setTimeout((id, isSelected, showPopUp) => {
                     document.getElementById("orgchart-container").style.display = "block";
                     if (isSelected) {
                         nodeIdSetSelected(id);
-                        showNode(document.getElementById(id), true);
                     }
-                    else {
-                        if (!id) {
-                            id = "LOU_TRA";
-                        }
-                        showNode(document.getElementById(id), true);
-                    }
-                }, 1500, id, isSelected);
+                    showNode(document.getElementById(id), !showPopUp);
+                }, 1500, id, isSelected, showPopUp);
             }
 
-        }, 500, storedSelection.currentId, storedSelection.isSelected);
+        }, 500, storedSelection.currentId, storedSelection.isSelected, storedSelection.showPopUp);
         let contHeight = document.getElementById("tl-timeline-iframe").getBoundingClientRect().height- 160; 
         let menuHeight = document.getElementById("tl-menu").getBoundingClientRect().height; 
         if (menuHeight > contHeight){
@@ -194,19 +166,25 @@ function redirectTimelineiFrame(newtimelineId) {
 function getChartViewState() {
     let cState = localStorage.getItem('chartViewState');
     if (cState != '[object Object]' && (typeof cState === 'string' || cState instanceof String)) {
-        return JSON.parse(cState);
+        let val = JSON.parse(cState);
+        if (val.timelineId/length < 10){
+            val.isSelected = false;
+            val.currentId = "LOU_TRA";
+            val.timelineId = rootTimeline;
+        }
+        return val;
     }
     else {
         return {
-            "currentId": null,
+            "currentId": "LOU_TRA",
             "isSelected": false,
-            "timelineId": null,
+            "timelineId": rootTimeline,
             "top": 80,
             "left": 130,
             "width": 350,
             "height": 380,
             "showPopUp": false,
-            "popupScale": 1,
+            "popupScale": 0.75,
             "fullScale": 1
         }
     }
