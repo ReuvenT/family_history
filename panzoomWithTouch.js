@@ -121,8 +121,8 @@ function AttachPanZoom(ele, minScale, maxScale, increment, liner) {
         }
     });
     ele.addEventListener("touchmove", function (e) {
-        console.log("touchmove (e.touches.length): "  +  e.touches.length + ", initialDistance " + initialDistance + ", panning " + panning);
-        if (initialDistance && e.touches.length >= 2) {
+        console.log("touchmove (e.touches.length): "  +  e.touches.length + ", touchDistance " + this.touchDistance + ", panning " + panning);
+        if (this.touchDistance && e.touches.length >= 2) {
             const newDistance = getDistance(e.touches);
             const scaleFactor = newDistance / this.touchDistance;
             console.log("touchmove (scaleFactor): "  +  scaleFactor);
