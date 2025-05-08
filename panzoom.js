@@ -98,11 +98,29 @@ function AttachPanZoom(ele, minScale, maxScale, increment, liner) {
     this.oldX = e.clientX;
     this.oldY = e.clientY;
   });
+  ele.addEventListener("touchstart", function (e) {
+    e.preventDefault();
+    this.panning = true;
+    this.oldX = e.clientX;
+    this.oldY = e.clientY;
+  });
 
   ele.addEventListener("mouseup", function (e) { this.panning = false; });
   ele.addEventListener("mouseleave", function (e) { this.panning = false; });
+  ele.addEventListener("touchend", function (e) { this.panning = false; });
+  ele.addEventListener("touchcancel", function (e) { this.panning = false; });
   
   ele.addEventListener("mousemove", function (e) {
+    if (this.panning) {
+      let deltaX = e.clientX - this.oldX;
+      let deltaY = e.clientY - this.oldY;
+
+      self.applyTranslate(deltaX, deltaY);
+      this.oldX = e.clientX;
+      this.oldY = e.clientY;
+    }
+  });
+  ele.addEventListener("touchmove", function (e) {
     if (this.panning) {
       let deltaX = e.clientX - this.oldX;
       let deltaY = e.clientY - this.oldY;
