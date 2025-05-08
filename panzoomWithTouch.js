@@ -94,6 +94,7 @@ function AttachPanZoom(ele, minScale, maxScale, increment, liner) {
     // Capture when the screen is touched(single is pan, 2 is zoom)
     ele.addEventListener("touchstart", function (e) {
         e.preventDefault();
+        console.log("touchstart (e.touches.length): "  +  e.touches.length );
         if (e.touches.length >= 2) {
             this.touchDistance = getDistance(e.touches);
         }
@@ -120,9 +121,11 @@ function AttachPanZoom(ele, minScale, maxScale, increment, liner) {
         }
     });
     ele.addEventListener("touchmove", function (e) {
+        console.log("touchmove (e.touches.length): "  +  e.touches.length + ", initialDistance " + initialDistance + ", panning " + panning);
         if (initialDistance && e.touches.length >= 2) {
             const newDistance = getDistance(e.touches);
             const scaleFactor = newDistance / this.touchDistance;
+            console.log("touchmove (scaleFactor): "  +  scaleFactor);
             self.style.transform = `scale(${scaleFactor})`;
         }
         else {
