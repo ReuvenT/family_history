@@ -101,7 +101,7 @@ function AttachPanZoom(ele, minScale, maxScale, increment, liner) {
 
   ele.addEventListener("mouseup", function (e) { this.panning = false; });
   ele.addEventListener("mouseleave", function (e) { this.panning = false; });
-
+  
   ele.addEventListener("mousemove", function (e) {
     if (this.panning) {
       let deltaX = e.clientX - this.oldX;

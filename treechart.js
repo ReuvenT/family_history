@@ -400,7 +400,7 @@ function showNode(nodeEl, isFullPage) {
         if (nodeText == '') {
             nodeText = nodeEl.parentElement.textContent;
         }
-        console.log(`showNode id: ${nodeEl.id} ${nodeEl.classList.contains('selected') ? "(selected)" : ""}, isFullPage: ${isFullPage}`);
+        //console.log(`showNode id: ${nodeEl.id} ${nodeEl.classList.contains('selected') ? "(selected)" : ""}, isFullPage: ${isFullPage}`);
         let elBounds = nodeEl.getBoundingClientRect();
         if (elBounds.right == 0) {
             elBounds = nodeEl.parentElement.getBoundingClientRect();
@@ -445,9 +445,11 @@ function showNode(nodeEl, isFullPage) {
         let yOffset = (elBounds.top - rootTop) / 5;
         let offsets = (isFullPage) ? [-150, -90, -50, 0, 0, 0, 0] : [-250, -210, -180, -120, -80, 0] ;
         yOffset = offsets[level];
-        yTranslation += yOffset; // * level;
-
-        console.log(`showNode: (xTranslation, yTranslation, scale): ${xTranslation}, ${yTranslation}, ${scale}`);
+        if (isAuthenticated){
+            yTranslation += yOffset; // * level;
+        }
+ 
+        //console.log(`showNode: (xTranslation, yTranslation, scale): ${xTranslation}, ${yTranslation}, ${scale}`);
 
         matrix = 'matrix(' + scale + ', 0, 0, ' + scale + ', ' + parseInt(xTranslation) + ', ' + parseInt(yTranslation) + ')';
         //console.log("showNode transform matrix: " + matrix);
