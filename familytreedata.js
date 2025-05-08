@@ -48,7 +48,7 @@ ALI_LIP,JES_HEN,Alice Lippman,,,
 EDW_TRA,HAR_TRA,Ed and Tovia (Friedman) Trabin,,,
 DAL_TRA,EDW_TRA,Dale (Trabin) and Marty Waschitz,,,
 FAT_TRA,EDW_TRA,Faith (Trabin) and Jeff Osheroff,,,
-EVE_OSH,FAT_TRA,Evan Osheroff<b/><div style='font-style:italic; font-size:small; font-weight: 400;'> m: Niharika Bandi,,
+EVE_OSH,FAT_TRA,Evan Osheroff and Niharika Bandi,,
 VIH_OSH,EVE_OSH,Vihaan Osheroff,,,
 SCO_OSH,FAT_TRA,Scott Osheroff,,,
 AND_TRA,EDW_TRA,Andrew "Andy" Jay Trabin,,,
@@ -56,12 +56,12 @@ AND_TRA,EDW_TRA,Andrew "Andy" Jay Trabin,,,
 JAC_TRA,LOU_TRA,Jankel "Jacob" and Sadie (Weiss) Trabin,,2139216/5281753800/,,{'menu': 'Jacob Trabin Family'; 'access': 'open'; 'seq': 40000; 'level': 2}
 CAR_TRA,JAC_TRA,Carl and Laura (Schacter) Trabin,,2139607/5812857090/,,{'menu': 'Carl Trabin Family'; 'access': 'open'; 'seq': 41000; 'level': 3}
 SAN_TRA,CAR_TRA,Sandi (Trabin) Advocat<b/><div style='font-style:italic; font-size:small; font-weight: 400;'> m/div: Steve Advocat,,2139607/5812857090/#vars!panel=19750573!
-ROB_ADV,SAN_TRA,Robin (Advocat) Mancol<b/><div style='font-style:italic; font-size:small; font-weight: 400;'> m: Matt Mancol,,,
-HAN_ADV,ROB_ADV,Hannah Advocat,,,
-MOL_ADV,ROB_ADV,Molly Advocat,,,
+ROB_ADV,SAN_TRA,Robin (Advocat) and Matt Mancoll,,,
+HAN_ADV,ROB_ADV,Hannah Mancoll,,,
+MOL_ADV,ROB_ADV,Molly Mancoll,,,
 BEN_ADV,SAN_TRA,Benn Advocat,,,
-JAK_TRA,CAR_TRA,Jack and Nancy Trabin<div style='font-style:italic; font-size:small; font-weight: 400;'> div: Nancy Bechtel<div style='font-style:italic; font-size:small; font-weight: 400;'> m: Cindi Venier,,2139607/5812857090/#vars!panel=19750572!
-JEN_TRA,JAK_TRA,Jennifer (Trabin) Black<div style='font-style:italic; font-size:small; font-weight: 400;'> m: Jeremy Black,,,
+JAK_TRA,CAR_TRA,Jack and Nancy (Bechtel) Trabin<div style='font-style:italic; font-size:small; font-weight: 400;'> div: Nancy Bechtel<div style='font-style:italic; font-size:small; font-weight: 400;'> m: Cindi Venier,,2139607/5812857090/#vars!panel=19750572!
+JEN_TRA,JAK_TRA,Jennifer (Trabin) and Jeremy Black,,,
 SHI_BLA,JEN_TRA,Shira Black,,,
 MIL_BLA,JEN_TRA,Talia Black,,,
 ELA_BLA,JEN_TRA,Eliana Black,,,

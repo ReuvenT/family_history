@@ -145,6 +145,7 @@ function createTable(data, nbrChildren, level, isAuthenticated) {
         nodeDiv.appendChild(nodeLink);
         // Add an event listener to the button (optional)
         nodeLink.addEventListener('click', function (event) {
+            nodeIdSetSelected(data.id)
             let path = data.timelineId;
             if (data.panelHash) {
                 path += data.panelHash;

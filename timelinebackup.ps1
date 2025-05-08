@@ -25,19 +25,19 @@ Compress-Archive -Path ".\timelinebackup.ps1" -DestinationPath $destinationZipPa
 $invalidChars = [regex]::escape([string][char[]][System.IO.Path]::GetInvalidFileNameChars())
 
 $arrTimelines = @(
-    "2138285/Trabin-Family"
+    "2139607/Carl-Trabin-Family"
     "2147312/Fanny-Trabin-Barnow-Family"
     "2141911/Harry-Trabin-Family"
-    "2139216/Jacob-Trabin-Family"
-    "2139607/Carl-Trabin-Family"
-    "2167412/Reuven-Trabin-Family"
-    "2165939/Sydney-Trabin-Family"
     "2141156/Helene-Trabin-Berne-Family"
     "2141914/Ida-Trabin-Kilberg-Family"
+    "2139216/Jacob-Trabin-Family"
     "2141915/Jenny-Trabin-Herlich-Family"
     "2141910/Phillip-Trabin-Family"
+    "2167412/Reuven-Trabin-Family"
     "2141912/Samuel-Trabin-Family"
     "2147311/Simon-Trabin-Family"
+    "2165939/Sydney-Trabin-Family"
+    "2138285/Trabin-Family"
 )
 
 # extract all the json

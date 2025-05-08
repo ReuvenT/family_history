@@ -91,13 +91,6 @@ document.addEventListener('DOMContentLoaded', function () {
  * Initializes the Auth0 client
  */
 const configureClient = async () => {
-    let auth0State = localStorage.getItem('auth0flag');
-    if (auth0State == null) {
-        console.log("configureClient (auth0) bypassed");
-        document.getElementById("login_label").style.visibility = 'hidden';
-        isAuthenticated = true;
-        return;
-    }
     console.log("configureClient (auth0) start");
     // const response = await fetchAuthConfig();
     // const config = await response.json();
@@ -110,20 +103,20 @@ const configureClient = async () => {
 };
 
 
-if (window.postMessage) {
-    var tlMouseupFunc = function () {
-        var tlFrame = document.getElementById("tl-timeline-iframe");
-        if (tlFrame.contentWindow && tlFrame.contentWindow.postMessage) {
-            tlFrame.contentWindow.postMessage("mouseup", "*");
-        }
-    }
-    if (typeof window.addEventListener != "undefined") {
-        window.addEventListener("mouseup", tlMouseupFunc, false);
-    }
-    else if (typeof window.attachEvent != "undefined") {
-        window.attachEvent("onmouseup", tlMouseupFunc);
-    }
-}
+// if (window.postMessage) {
+//     var tlMouseupFunc = function () {
+//         var tlFrame = document.getElementById("tl-timeline-iframe");
+//         if (tlFrame.contentWindow && tlFrame.contentWindow.postMessage) {
+//             tlFrame.contentWindow.postMessage("mouseup", "*");
+//         }
+//     }
+//     if (typeof window.addEventListener != "undefined") {
+//         window.addEventListener("mouseup", tlMouseupFunc, false);
+//     }
+//     else if (typeof window.attachEvent != "undefined") {
+//         window.attachEvent("onmouseup", tlMouseupFunc);
+//     }
+// }
 
 function redirectiFrames(timeframeUrl, orgChartElId) {
     //captureAndSaveChartState();
@@ -277,13 +270,7 @@ async function refreshLoginStatus() {
 
         window.history.replaceState({}, document.title, "/");
     }
-    let auth0State = localStorage.getItem('auth0flag');
-    if (auth0State == null) {
-        isAuthenticated = true;
-    }
-    else{
-        isAuthenticated = await auth0Client.isAuthenticated();
-    }
+    isAuthenticated = await auth0Client.isAuthenticated();
     document.getElementById("login_label").innerHTML = isAuthenticated ? "LOGOUT" : "LOGIN";
     document.getElementById("timeline_menus").innerHTML = isAuthenticated ? "-----Timeline Links------------" : "- Timeline Links available after login -";
     console.log("refreshLoginStatus isAuthenticated: ", isAuthenticated);
@@ -291,10 +278,6 @@ async function refreshLoginStatus() {
 }
 
 async function log_in_out() {
-    let auth0State = localStorage.getItem('auth0flag');
-    if (auth0State == null) {
-        return;
-    }
     await refreshLoginStatus();
     console.log("log_in_out isAuthenticated: " + isAuthenticated);
     if (isAuthenticated) {
