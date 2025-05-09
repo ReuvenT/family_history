@@ -125,7 +125,7 @@ function AttachPanZoom(ele, minScale, maxScale, increment, liner) {
         if (this.touchDistance && e.touches.length >= 2) {
             const newDistance = getDistance(e.touches);
             const scaleFactor = newDistance / this.touchDistance;
-            console.log("touchmove (scaleFactor): "  +   "scale(" + scaleFactor + ")" + ", newDistance"  + newDistance + ", e.touches[0].clientX " + e.touches[0].clientX + ", e.touches[0].clientY " + e.touches[0].clientY;
+            console.log("touchmove (scaleFactor): "  +   "scale(" + scaleFactor + ")" + ", newDistance"  + newDistance + ", e.touches[0].clientX " + e.touches[0].clientX + ", e.touches[0].clientY " + e.touches[0].clientY);
             self.applyScale(scaleFactor, 0, 0); //e.touches[0].clientX, e.touches[0].clientY);
             //self.style.transform = "scale(" + scaleFactor + ")"; //`scale(${scaleFactor})`;
         }
