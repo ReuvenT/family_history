@@ -1,6 +1,7 @@
 const popup = document.getElementById("tree-popup");
 var r = document.getElementById('resizer');
 r.addEventListener('mousedown', initDrag, false);
+r.addEventListener('touchstart', initDrag, false);
 
 function captureAndSaveChartState() {
   let mode = "popup";
@@ -106,24 +107,37 @@ function openOrgChartPopup() {
 var startX, startY, startWidth, startHeight;
 
 function initDrag(e) {
-  console.log("init drag");
+  //console.log("init drag");
   startX = e.clientX;
   startY = e.clientY;
   startWidth = parseInt(document.defaultView.getComputedStyle(popup).width, 10);
   startHeight = parseInt(document.defaultView.getComputedStyle(popup).height, 10);
   popup.addEventListener('mousemove', doResizePopup, false);
+  popup.addEventListener('touchmove', doResizePopup, false);
+
   popup.addEventListener('mouseup', stopResizePopup, false);
+  popup.addEventListener("touchend", stopResizePopup, false);
+  popup.addEventListener("touchcancel", stopResizePopup, false);
 }
 
 function doResizePopup(e) {
   //console.log("do drag");
-  popup.style.width = (startWidth + e.clientX - startX) + 'px';
-  popup.style.height = (startHeight + e.clientY - startY) + 'px';
+  if (e.changedTouche && e.changedTouches.length){
+    const touchLast = e.changedTouches[e.changedTouches.length - 1];
+    popup.style.width = (startWidth + touchLast.clientX - startX) + 'px';
+    popup.style.height = (startHeight + touchLast.clientY - startY) + 'px';
+  }
+  else{
+    popup.style.width = (startWidth + e.clientX - startX) + 'px';
+    popup.style.height = (startHeight + e.clientY - startY) + 'px';
+  }
 }
 
 function stopResizePopup(e) {
   popup.removeEventListener('mousemove', doResizePopup, false);
   popup.removeEventListener('mouseup', stopResizePopup, false);
+  popup.removeEventListener('touchend', doResizePopup, false);
+  popup.removeEventListener('touchcancel', stopResizePopup, false);
   captureAndSaveChartState();
   let ocEle = document.getElementById("orgchart-container");
   ocEle.style.height = popup.style.height
@@ -137,27 +151,48 @@ function dragElement(elmnt) {
   if (document.getElementById(elmnt.id + "-header")) {
     /* if present, the header is where you move the DIV from:*/
     document.getElementById(elmnt.id + "-header").onmousedown = dragMouseDown;
+    document.getElementById(elmnt.id + "-header").ontouchstart = dragTouchStart;
     }
 
   function dragMouseDown(e) {
-    e = e || window.event;
     e.preventDefault();
     // get the mouse cursor position at startup:
     pos3 = e.clientX;
     pos4 = e.clientY;
     document.onmouseup = closeDragElement;
-    // call a function whenever the cursor moves:
+    document.ontouchend = closeDragElement;
+    // call a function whenever the cursor or touch moves:
     document.onmousemove = elementDrag;
+    document.ontouchmove = elementDrag;
+  }
+
+  function dragTouchStart(e) {
+    e.preventDefault();
+    // get the touch position at startup:
+    const touches = e.changedTouches;
+    if (touches.length > 0){
+      pos3 = touches[0].clientX;
+      pos4 = touches[0].clientY;
+    }
   }
 
   function elementDrag(e) {
-    e = e || window.event;
     e.preventDefault();
     // calculate the new cursor position:
-    pos1 = pos3 - e.clientX;
-    pos2 = pos4 - e.clientY;
-    pos3 = e.clientX;
-    pos4 = e.clientY;
+    if (e.changedTouche && e.changedTouches.length){
+      const touchLast = e.changedTouches[e.changedTouches.length - 1];
+      pos1 = pos3 - touchLast.clientX;
+      pos2 = pos4 - touchLast.clientY;
+      pos3 = touchLast.clientX;
+      pos4 = touchLast.clientY;
+    }
+    else{
+      pos1 = pos3 - e.clientX;
+      pos2 = pos4 - e.clientY;
+      pos3 = e.clientX;
+      pos4 = e.clientY;
+    }
+    
     // set the element's new position:
     elmnt.style.top = (elmnt.offsetTop - pos2) + "px";
     elmnt.style.left = (elmnt.offsetLeft - pos1) + "px";
@@ -167,6 +202,8 @@ function dragElement(elmnt) {
     /* stop moving when mouse button is released:*/
     document.onmouseup = null;
     document.onmousemove = null;
+    document.ontouchend = null;
+    document.ontouchmove = null;
     captureAndSaveChartState();
     console.log("closeDragElement");
 
