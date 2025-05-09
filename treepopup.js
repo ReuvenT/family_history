@@ -121,8 +121,8 @@ function initDrag(e) {
 }
 
 function doResizePopup(e) {
-  console.log("doResizePopup e.changedTouche.length " + e.changedTouches.length);
   if (e.changedTouche && e.changedTouches.length){
+    console.log("doResizePopup e.changedTouche.length " + e.changedTouches.length);
     const touchLast = e.changedTouches[e.changedTouches.length - 1];
     popup.style.width = (startWidth + touchLast.clientX - startX) + 'px';
     popup.style.height = (startHeight + touchLast.clientY - startY) + 'px';
@@ -177,17 +177,18 @@ function dragElement(elmnt) {
   }
 
   function elementDrag(e) {
-    console.log("elementDrag e.changedTouche.length " + e.changedTouches.length);
     e.preventDefault();
     // calculate the new cursor position:
     if (e.changedTouche && e.changedTouches.length){
       const touchLast = e.changedTouches[e.changedTouches.length - 1];
+      console.log("elementDrag e.changedTouche.length " + e.changedTouches.length);
       pos1 = pos3 - touchLast.clientX;
       pos2 = pos4 - touchLast.clientY;
       pos3 = touchLast.clientX;
       pos4 = touchLast.clientY;
     }
     else{
+      console.log("elementDrag not touch ");
       pos1 = pos3 - e.clientX;
       pos2 = pos4 - e.clientY;
       pos3 = e.clientX;
