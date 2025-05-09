@@ -6,11 +6,11 @@ function PanZoom() {
 }
 
 // Appy PanZoom functionality to a given element, allow user defined zoom min and inc per scroll
-function AttachPanZoom(ele, minScale, maxScale, increment, liner) {
+function AttachPanZoom(ele, minScale, maxScale, increment, linear) {
     this.increment = increment;
     this.minScale = minScale;
     this.maxScale = maxScale;
-    this.liner = liner;
+    this.linear = linear;
     this.panning = false;
     this.oldX = this.oldY = 0;
     this.touchDistance = 0;
@@ -49,15 +49,15 @@ function AttachPanZoom(ele, minScale, maxScale, increment, liner) {
 
     // Applying Deltas to Scale and Translate transformations
     this.applyScale = function (dscale, x, y) {
-        //console.log("applyScale (x,y): "  +  dscale + ', ' + x + ', ' + y );
+        console.log("applyScale (dscale, x,y): "  +  dscale + ', ' + x + ', ' + y );
         let newTrans = this.getTransformMatrix();
         let width = ele.width ? ele.width : ele.offsetWidth;
         let height = ele.height ? ele.height : ele.offsetHeight;
         //console.log("applyScale scale, (x,y): "  +  dscale + ', ' + x + ', ' + y + " offset (x,y): "  +  xOffset + ', ' + yOffset );
         let tranX = x - (width / 2);
         let tranY = y - (height / 2);
-        dscale = (this.liner ? dscale : dscale * (newTrans.scale)) // scale either liner or non-liner 
-        //console.log("applyScale (x,y): "  +  dscale + ', ' + tranX + ', ' + tranY );
+        dscale = (this.linear ? dscale : dscale * (newTrans.scale)) // scale either linear or non-linear 
+        console.log("applyScale (x,y): "  +  dscale + ', ' + tranX + ', ' + tranY );
         newTrans.scale += dscale;
         let maxOrMinScale = (newTrans.scale <= this.minScale || newTrans.scale >= this.maxScale);
         if (newTrans.scale < this.minScale) newTrans.scale = this.minScale;
@@ -121,13 +121,15 @@ function AttachPanZoom(ele, minScale, maxScale, increment, liner) {
         }
     });
     ele.addEventListener("touchmove", function (e) {
+        e.preventDefault();
         console.log("touchmove (e.touches.length): "  +  e.touches.length + ", touchDistance " + this.touchDistance + ", panning " + this.panning);
         if (this.touchDistance && e.touches.length >= 2) {
             const newDistance = getDistance(e.touches);
-            const scaleFactor = newDistance / this.touchDistance;
+            const scaleFactor = (newDistance < this.touchDistance) ? -this.increment : this.increment ; //newDistance / this.touchDistance;
+            //const xOffset = (e.touches[0].clientX + e.touches[1].clientX) / 2;
+            //const yOffset = (e.touches[0].clientY + e.touches[1].clientY) / 2;
             console.log("touchmove (scaleFactor): "  +   "scale(" + scaleFactor + ")" + ", newDistance"  + newDistance + ", e.touches[0].clientX " + e.touches[0].clientX + ", e.touches[0].clientY " + e.touches[0].clientY);
-            self.applyScale(scaleFactor, 0, 0); //e.touches[0].clientX, e.touches[0].clientY);
-            //self.style.transform = "scale(" + scaleFactor + ")"; //`scale(${scaleFactor})`;
+            self.applyScale(scaleFactor, 0, 0);// xOffset, yOffset);
         }
         else {
             if (this.panning && e.touches.length) {
