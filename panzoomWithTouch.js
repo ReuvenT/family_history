@@ -82,6 +82,10 @@ function AttachPanZoom(ele, minScale, maxScale, increment, linear) {
                 this.applyTranslate(diffX, diffY);
                 //this.applyTranslate(-(tranX * dscale * 2), -(tranY * dscale * 2));
             }
+            else{
+                this.applyTranslate(tranX, tranY);
+                this.setTransformMatrix(newTrans);
+            }
         }
     }
 
