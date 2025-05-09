@@ -130,7 +130,7 @@ function AttachPanZoom(ele, minScale, maxScale, increment, linear) {
         e.preventDefault();
         console.log("touchmove (e.touches.length): " + e.touches.length + ", touchDistance " + this.touchDistance + ", panning " + this.panning);
         if (this.touchDistance && e.touches.length >= 2) {
-            const newDistance = getDistance(e.touches);
+            let newDistance = getDistance(e.touches);
             if (newDistance != this.touchDistance) {
                 const scaleFactor = (newDistance < this.touchDistance) ? -self.increment : self.increment; //newDistance / this.touchDistance;
                 newDistance = this.touchDistance;
