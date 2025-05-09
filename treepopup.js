@@ -107,7 +107,7 @@ function openOrgChartPopup() {
 var startX, startY, startWidth, startHeight;
 
 function initDrag(e) {
-  //console.log("init drag");
+  console.log("init drag");
   startX = e.clientX;
   startY = e.clientY;
   startWidth = parseInt(document.defaultView.getComputedStyle(popup).width, 10);
@@ -121,7 +121,7 @@ function initDrag(e) {
 }
 
 function doResizePopup(e) {
-  //console.log("do drag");
+  console.log("doResizePopup e.changedTouche.length " + e.changedTouches.length);
   if (e.changedTouche && e.changedTouches.length){
     const touchLast = e.changedTouches[e.changedTouches.length - 1];
     popup.style.width = (startWidth + touchLast.clientX - startX) + 'px';
@@ -177,6 +177,7 @@ function dragElement(elmnt) {
   }
 
   function elementDrag(e) {
+    console.log("elementDrag e.changedTouche.length " + e.changedTouches.length);
     e.preventDefault();
     // calculate the new cursor position:
     if (e.changedTouche && e.changedTouches.length){
