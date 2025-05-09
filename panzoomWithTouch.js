@@ -65,21 +65,23 @@ function AttachPanZoom(ele, minScale, maxScale, increment, linear) {
         if (!maxOrMinScale) {
             //  get element in center before move
             centEl = getCenterElement().centerEl;
-            cendElRect = centEl.getBoundingClientRect();
-            if (cendElRect.right == 0) {
-                centEl = centEl.parentElement;
+            if (centEl){
                 cendElRect = centEl.getBoundingClientRect();
+                if (cendElRect.right == 0) {
+                    centEl = centEl.parentElement;
+                    cendElRect = centEl.getBoundingClientRect();
+                }
+                cendPos = { x: cendElRect.left, y: cendElRect.top };
+                this.applyTranslate(tranX, tranY);
+                this.setTransformMatrix(newTrans);
+                //centEl = document.getElementById(centEl.id);
+                cendElRect = centEl.getBoundingClientRect();
+                let diffX = cendPos.x - cendElRect.left;
+                let diffY = cendPos.y - cendElRect.top;
+                //console.log("applyScale diff (x,y): "  +  diffX + ', ' + diffY );
+                this.applyTranslate(diffX, diffY);
+                //this.applyTranslate(-(tranX * dscale * 2), -(tranY * dscale * 2));
             }
-            cendPos = { x: cendElRect.left, y: cendElRect.top };
-            this.applyTranslate(tranX, tranY);
-            this.setTransformMatrix(newTrans);
-            //centEl = document.getElementById(centEl.id);
-            cendElRect = centEl.getBoundingClientRect();
-            let diffX = cendPos.x - cendElRect.left;
-            let diffY = cendPos.y - cendElRect.top;
-            //console.log("applyScale diff (x,y): "  +  diffX + ', ' + diffY );
-            this.applyTranslate(diffX, diffY);
-            //this.applyTranslate(-(tranX * dscale * 2), -(tranY * dscale * 2));
         }
     }
 
