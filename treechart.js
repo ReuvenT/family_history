@@ -144,7 +144,7 @@ function createTable(data, nbrChildren, level, isAuthenticated) {
         nodeLink.classList.add('tl-link-btn')
         nodeDiv.appendChild(nodeLink);
         // Add an event listener to the button (optional)
-        nodeLink.addEventListener('click', function (event) {
+        nodeLink.addEventListener('pointerdown', function (event) {
             nodeIdSetSelected(data.id)
             let path = data.timelineId;
             if (data.panelHash) {
@@ -158,7 +158,7 @@ function createTable(data, nbrChildren, level, isAuthenticated) {
     nodeDiv.classList.add('oc-node')
     nodeDiv.classList.add('oc-node-level-' + level);
     nodeDiv.setAttribute('data-level', level);
-    nodeDiv.addEventListener("click", function () {
+    nodeDiv.addEventListener("pointerdown", function () {
         nodeClick(this);
     });
     let nodeText = document.createElement('span');

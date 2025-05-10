@@ -99,7 +99,7 @@ const configureClient = async () => {
         domain: "dev-0wdjqy32gp3ia376.us.auth0.com", //config.domain,
         clientId: "cBmTOThE35AZ8R5uEsmiVKDop9Jgax7p" //config.clientId
     });
-    console.log("configureClient null?" + (auth0Client == null));
+    console.log("configureClient null? " + (auth0Client == null));
 };
 
 

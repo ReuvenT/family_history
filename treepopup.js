@@ -3,13 +3,13 @@ var r = document.getElementById('resizer');
 r.addEventListener('mousedown', initDrag, false);
 r.addEventListener('touchstart', initDrag, false);
 
-document.getElementById('popup-full-tree').addEventListener('pointerdown', function(event) {
-  console.log('popup-full-tree Pointer down');
+document.getElementById('popup-full-tree').addEventListener('pointerdown', function (event) {
+  //console.log('popup-full-tree Pointer down');
   handleViewChoiceClick('view-tree', true);
 }, true);
 
-document.getElementById('popup-x').addEventListener('pointerdown', function(event) {
-  console.log('popup-x Pointer down');
+document.getElementById('popup-x').addEventListener('pointerdown', function (event) {
+  //console.log('popup-x Pointer down');
   closeChartPopup();
 }, true);
 
@@ -18,31 +18,31 @@ function captureAndSaveChartState() {
   let pState = getChartViewState();
   let currentEl = document.getElementById("LOU_TRA");
   let selectedList = document.querySelectorAll('.selected');
-  if (selectedList && selectedList.length){
+  if (selectedList && selectedList.length) {
     currentEl = selectedList[0];
     pState.isSelected = true;
   }
-  else{
+  else {
     currentEl = getCenterElement().centerEl;
     pState.isSelected = false;
   }
   if (currentEl) {
     pState.currentId = currentEl.id;
     let tlId = currentEl.getAttribute('data-timelineid');
-    if (tlId){
+    if (tlId) {
       pState.timelineId = currentEl.getAttribute('data-timelineid');
     }
   }
 
   let rect = popup.getBoundingClientRect();
   if (rect.width > 30 && rect.height > 50) {
-    pState.left = rect.left; 
-    pState.top = rect.top; 
-    pState.height = rect.height; 
+    pState.left = rect.left;
+    pState.top = rect.top;
+    pState.height = rect.height;
     pState.width = rect.width;
     pState.popupScale = getTransformScale(true, pState.popupScale);
   }
-  else{
+  else {
     pState.fullScale = getTransformScale(false, pState.fullScale);
     mode = "full";
   }
@@ -91,7 +91,7 @@ function openOrgChartPopup() {
   let popupState = getChartViewState();
   //console.log("openOrgChartPopup popupState: " + JSON.stringify(popupState));
   let contHeight = document.getElementById("tl-timeline-iframe").getBoundingClientRect().height;
-  if (popupState.height > contHeight - 50){
+  if (popupState.height > contHeight - 50) {
     popupState.height = contHeight - 50;
   }
   popupState.showPopUp = true;
@@ -109,7 +109,7 @@ function openOrgChartPopup() {
     ocEle.style.display = "block";
     ocEle.style.visibility = "visible";
     popup.style.display = "block";
-    moveOrgChart(false) ;
+    moveOrgChart(false);
   }
 }
 
@@ -117,9 +117,16 @@ function openOrgChartPopup() {
 var startX, startY, startWidth, startHeight;
 
 function initDrag(e) {
-  console.log("init drag");
-  startX = e.clientX;
-  startY = e.clientY;
+  //console.log("init drag");
+  if (typeof e.changedTouches != "undefined" && e.changedTouches.length) {
+    let touchLast = e.changedTouches[e.changedTouches.length - 1];
+    startX = touchLast.clientX;
+    startY = touchLast.clientY;
+  }
+  else {
+    startX = e.clientX;
+    startY = e.clientY;
+  }
   startWidth = parseInt(document.defaultView.getComputedStyle(popup).width, 10);
   startHeight = parseInt(document.defaultView.getComputedStyle(popup).height, 10);
   popup.addEventListener('mousemove', doResizePopup, false);
@@ -131,24 +138,24 @@ function initDrag(e) {
 }
 
 function doResizePopup(e) {
-  if (typeof e.changedTouches != "undefined" && e.changedTouches.length){
+  if (typeof e.changedTouches != "undefined" && e.changedTouches.length) {
     //console.log("doResizePopup e.changedTouche.length " + e.changedTouches.length);
     const touchLast = e.changedTouches[e.changedTouches.length - 1];
-    console.log(`doResizePopup touchLast x, y  ${touchLast.clientX}, ${touchLast.clientY}`);
+    //console.log(`doResizePopup touchLast x, y  ${touchLast.clientX}, ${touchLast.clientY}`);
 
     popup.style.width = (startWidth + touchLast.clientX - startX) + 'px';
     popup.style.height = (startHeight + touchLast.clientY - startY) + 'px';
     //console.log(`doResizePopup touchLast w, h ${popup.style.width}, ${tpopup.style.height}`);
   }
-  else{
+  else {
     popup.style.width = (startWidth + e.clientX - startX) + 'px';
     popup.style.height = (startHeight + e.clientY - startY) + 'px';
   }
-  console.log(`doResizePopup popup.style.width, popup.style.height  ${popup.style.width}, ${popup.style.height}`);
+  //console.log(`doResizePopup popup.style.width, popup.style.height  ${popup.style.width}, ${popup.style.height}`);
 }
 
 function stopResizePopup(e) {
-  console.log("stopResizePopup");
+  //console.log("stopResizePopup");
   popup.removeEventListener('mousemove', doResizePopup, false);
   popup.removeEventListener('mouseup', stopResizePopup, false);
   popup.removeEventListener('touchmove', doResizePopup, false);
@@ -157,7 +164,7 @@ function stopResizePopup(e) {
   captureAndSaveChartState();
   let ocEle = document.getElementById("orgchart-container");
   ocEle.style.height = popup.style.height
-  console.log("stop drag state");
+  //console.log("stop drag state");
 }
 
 dragElement(popup);
@@ -168,9 +175,10 @@ function dragElement(elmnt) {
     /* if present, the header is where you move the DIV from:*/
     document.getElementById(elmnt.id + "-header").onmousedown = dragMouseDown;
     document.getElementById(elmnt.id + "-header").ontouchstart = dragTouchStart;
-    }
+  }
 
   function dragMouseDown(e) {
+    //console.log("dragMouseDown ");
     e.preventDefault();
     // get the mouse cursor position at startup:
     pos3 = e.clientX;
@@ -183,10 +191,11 @@ function dragElement(elmnt) {
   }
 
   function dragTouchStart(e) {
+    //console.log("dragTouchStart ");
     e.preventDefault();
     // get the touch position at startup:
     const touches = e.changedTouches;
-    if (touches.length > 0){
+    if (touches.length > 0) {
       pos3 = touches[0].clientX;
       pos4 = touches[0].clientY;
     }
@@ -195,9 +204,9 @@ function dragElement(elmnt) {
   }
 
   function elementDrag(e) {
-    e.preventDefault();
+    //e.preventDefault();
     // calculate the new cursor position:
-    if (typeof e.changedTouches != "undefined" && e.changedTouches.length){
+    if (typeof e.changedTouches != "undefined" && e.changedTouches.length) {
       const touchLast = e.changedTouches[e.changedTouches.length - 1];
       //console.log("elementDrag e.changedTouche.length " + e.changedTouches.length);
       pos1 = pos3 - touchLast.clientX;
@@ -205,15 +214,15 @@ function dragElement(elmnt) {
       pos3 = touchLast.clientX;
       pos4 = touchLast.clientY;
     }
-    else{
-      console.log("elementDrag not touch ");
+    else {
+      //console.log("elementDrag not touch ");
       pos1 = pos3 - e.clientX;
       pos2 = pos4 - e.clientY;
       pos3 = e.clientX;
       pos4 = e.clientY;
     }
     //console.log(`elementDrag x1, y1; x2, Y2  ${pos1}, ${pos2}: ${pos3}, ${pos4}`);
-   
+
     // set the element's new position:
     elmnt.style.top = (elmnt.offsetTop - pos2) + "px";
     elmnt.style.left = (elmnt.offsetLeft - pos1) + "px";
@@ -221,12 +230,12 @@ function dragElement(elmnt) {
 
   function closeDragElement() {
     /* stop moving when mouse button is released:*/
+    //console.log("closeDragElement ");
     document.onmouseup = null;
     document.onmousemove = null;
     document.ontouchend = null;
     document.ontouchmove = null;
     captureAndSaveChartState();
-    console.log("closeDragElement");
 
   }
 }
