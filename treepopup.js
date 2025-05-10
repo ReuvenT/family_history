@@ -3,6 +3,16 @@ var r = document.getElementById('resizer');
 r.addEventListener('mousedown', initDrag, false);
 r.addEventListener('touchstart', initDrag, false);
 
+document.getElementById('popup-full-tree').addEventListener('pointerdown', function(event) {
+  console.log('popup-full-tree Pointer down');
+  handleViewChoiceClick('view-tree', true);
+}, true);
+
+document.getElementById('popup-x').addEventListener('pointerdown', function(event) {
+  console.log('popup-x Pointer down');
+  closeChartPopup();
+}, true);
+
 function captureAndSaveChartState() {
   let mode = "popup";
   let pState = getChartViewState();
@@ -189,7 +199,7 @@ function dragElement(elmnt) {
     // calculate the new cursor position:
     if (typeof e.changedTouches != "undefined" && e.changedTouches.length){
       const touchLast = e.changedTouches[e.changedTouches.length - 1];
-      console.log("elementDrag e.changedTouche.length " + e.changedTouches.length);
+      //console.log("elementDrag e.changedTouche.length " + e.changedTouches.length);
       pos1 = pos3 - touchLast.clientX;
       pos2 = pos4 - touchLast.clientY;
       pos3 = touchLast.clientX;
@@ -202,7 +212,7 @@ function dragElement(elmnt) {
       pos3 = e.clientX;
       pos4 = e.clientY;
     }
-    console.log(`elementDrag x1, y1; x2, Y2  ${pos1}, ${pos2}: ${pos3}, ${pos4}`);
+    //console.log(`elementDrag x1, y1; x2, Y2  ${pos1}, ${pos2}: ${pos3}, ${pos4}`);
    
     // set the element's new position:
     elmnt.style.top = (elmnt.offsetTop - pos2) + "px";
