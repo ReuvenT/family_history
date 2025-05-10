@@ -121,27 +121,33 @@ function initDrag(e) {
 }
 
 function doResizePopup(e) {
-  if (e.changedTouche && e.changedTouches.length){
-    console.log("doResizePopup e.changedTouche.length " + e.changedTouches.length);
+  if (typeof e.changedTouches != "undefined" && e.changedTouches.length){
+    //console.log("doResizePopup e.changedTouche.length " + e.changedTouches.length);
     const touchLast = e.changedTouches[e.changedTouches.length - 1];
+    console.log(`doResizePopup touchLast x, y  ${touchLast.clientX}, ${touchLast.clientY}`);
+
     popup.style.width = (startWidth + touchLast.clientX - startX) + 'px';
     popup.style.height = (startHeight + touchLast.clientY - startY) + 'px';
+    //console.log(`doResizePopup touchLast w, h ${popup.style.width}, ${tpopup.style.height}`);
   }
   else{
     popup.style.width = (startWidth + e.clientX - startX) + 'px';
     popup.style.height = (startHeight + e.clientY - startY) + 'px';
   }
+  console.log(`doResizePopup popup.style.width, popup.style.height  ${popup.style.width}, ${popup.style.height}`);
 }
 
 function stopResizePopup(e) {
+  console.log("stopResizePopup");
   popup.removeEventListener('mousemove', doResizePopup, false);
   popup.removeEventListener('mouseup', stopResizePopup, false);
+  popup.removeEventListener('touchmove', doResizePopup, false);
   popup.removeEventListener('touchend', doResizePopup, false);
   popup.removeEventListener('touchcancel', stopResizePopup, false);
   captureAndSaveChartState();
   let ocEle = document.getElementById("orgchart-container");
   ocEle.style.height = popup.style.height
-  //console.log("stop drag state");
+  console.log("stop drag state");
 }
 
 dragElement(popup);
@@ -160,10 +166,10 @@ function dragElement(elmnt) {
     pos3 = e.clientX;
     pos4 = e.clientY;
     document.onmouseup = closeDragElement;
-    document.ontouchend = closeDragElement;
+    //document.ontouchend = closeDragElement;
     // call a function whenever the cursor or touch moves:
     document.onmousemove = elementDrag;
-    document.ontouchmove = elementDrag;
+    //document.ontouchmove = elementDrag;
   }
 
   function dragTouchStart(e) {
@@ -174,12 +180,14 @@ function dragElement(elmnt) {
       pos3 = touches[0].clientX;
       pos4 = touches[0].clientY;
     }
+    document.ontouchend = closeDragElement;
+    document.ontouchmove = elementDrag;
   }
 
   function elementDrag(e) {
     e.preventDefault();
     // calculate the new cursor position:
-    if (e.changedTouche && e.changedTouches.length){
+    if (typeof e.changedTouches != "undefined" && e.changedTouches.length){
       const touchLast = e.changedTouches[e.changedTouches.length - 1];
       console.log("elementDrag e.changedTouche.length " + e.changedTouches.length);
       pos1 = pos3 - touchLast.clientX;
@@ -194,7 +202,8 @@ function dragElement(elmnt) {
       pos3 = e.clientX;
       pos4 = e.clientY;
     }
-    
+    console.log(`elementDrag x1, y1; x2, Y2  ${pos1}, ${pos2}: ${pos3}, ${pos4}`);
+   
     // set the element's new position:
     elmnt.style.top = (elmnt.offsetTop - pos2) + "px";
     elmnt.style.left = (elmnt.offsetLeft - pos1) + "px";

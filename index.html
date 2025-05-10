@@ -18,7 +18,7 @@
             <button class="open-popup-btn" onclick="handleViewChoiceClick('view-tree', true)" title="click here for full tree" ></button>
           </td>
           <td style="width:30px;">
-            <button class="close-popup-btn" title="click to close popup" style="" onclick="closeChartPopup()">X</button>
+            <button class="close-popup-btn" title="click to close popup" style="touch-action: manipulation;" onclick="closeChartPopup()" touchstart="closeChartPopup()">X</button>
           </td>
         </tr>
       </table>
@@ -37,9 +37,9 @@
 
   <div style = "margin-top: 0px;" id="tree_container">
     <div id="tl-menu-background" style="width: 100%; height: 38px; background-color: black; border-bottom: 1px solid #777747;"></div>
-    <div id="orgchart-container">
-      <div class="panzoom" id="panzoom_container">
-        <div class="orgChart" id="chart_container" style="height: 100%; touch-action: none;"></div>
+    <div id="orgchart-container" style=" touch-action: manipulation;">
+      <div class="panzoom" id="panzoom_container" style="touch-action: manipulation;">
+        <div class="orgChart" id="chart_container" style="height: 100%; touch-action: manipulation;"></div>
       </div>
     </div>
   </div>
