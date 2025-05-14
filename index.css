@@ -441,6 +441,47 @@ span.tl-menu-5 {
   cursor: pointer;
 }
 
+
+/*adition for drop down*/ 
+#tl-menu {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: flex;
+  flex-direction: column;       /* Stack items vertically */
+  align-items: flex-start;        /* Align items to the right */
+}
+
+#tl-menu li {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  font-family: 'Fira Sans', sans-serif;
+  font-size: 1rem;
+  text-transform: none;         /* Preserve camelCase */
+  padding: 4px 8px;             /* Minimal padding */
+  margin: 0;
+  border: none;                 /* No bottom border */
+}
+
+#tl-menu li label {
+  display: flex;
+  align-items: center;
+  cursor: pointer;
+  padding: 0;
+  margin: 0;
+  text-transform: none;
+}
+
+#tl-menu li a {
+  text-decoration: none;
+  color: black;
+  padding: 0;
+  margin: 0;
+  text-transform: none;
+}
+
+
 /*
   * And let's slide it in from the left
   */
