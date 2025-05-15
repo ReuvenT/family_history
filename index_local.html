@@ -2,8 +2,9 @@
 <html lang="en">
 <head>
   <title>Trabin Family History</title>
-  <link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/gh/T3s0/familytree@main/Index3.css">
+  <link rel="stylesheet" type="text/css" href="index.css">
 </head>
+
 <body>
 
   <div id="tree-popup" class="resizable"  style="display: none; background-color: #4a4a4a;">
@@ -23,9 +24,9 @@
           </td>
         </tr>
       </table>
-     
-     
-     
+      
+      
+      
     </div>
     <div id="popup-content-target" style="overflow: hidden;"></div>
     <div id="resizer" class="resizer"></div>
@@ -46,26 +47,23 @@
   </div>
 
   <div id="tl-menu-bar" style="visibility: hidden; position: absolute; left: 5px; top: 4px; z-index: 110; width: 250px; height: 28px;">
-    <a class="tl-menu-item" style="position: absolute; left: 10px; top: 13px; z-index: 110; width: 100px;" href="https://www.trabinextendedfamilyhistory.org/">HOME</a> <!--changed the link for the home page-->
+    <a class="tl-menu-item" style="position: absolute; left: 10px; top: 13px; z-index: 110; width: 100px;" href="#">HOME</a>
     <label id="login_label" class="tl-menu-item" style="position: absolute; left: 100px; top: 13px; z-index: 110; width: 100px;" onclick="log_in_out();">LOGIN</label>
   </div>
   <div id="tl-select-view" style="visibility: hidden; position: absolute; left: 8px; top: 42px; z-index: 100; width: 150px; background-color: #bfbfbf; border-radius: 4px;">
     <fieldset style="width: 130px; border: none;">
-      <legend style = "margin-left: 30px; padding-top: 4px;margin-bottom: 10px; /*added bottom margin*/ ">Select a view:</legend>
-     
-      <!--changed the code to allow for in-line flex of the radio button and the label-->
-      <div style="display: flex; align-items: center; margin-bottom: 6px;">
-      <input type="radio" id="view-timeline" onclick="handleViewChoiceClick(this.value, true);" name="viewOption"
-        value="view-timeline" checked style="align-self: center;" />
-<label for="view-timeline" style="margin: 0; padding: 0; display: inline-block; text-transform: none;">Timeline</label><img src="data:image/png;base64, iVBORw0KGgoAAAANSUhEUgAAABwAAAAcCAYAAAByDd+UAAAAAXNSR0IArs4c6QAAAARnQU1BAACxjwv8YQUAAAAJcEhZcwAADsMAAA7DAcdvqGQAAAGHaVRYdFhNTDpjb20uYWRvYmUueG1wAAAAAAA8P3hwYWNrZXQgYmVnaW49J++7vycgaWQ9J1c1TTBNcENlaGlIenJlU3pOVGN6a2M5ZCc/Pg0KPHg6eG1wbWV0YSB4bWxuczp4PSJhZG9iZTpuczptZXRhLyI+PHJkZjpSREYgeG1sbnM6cmRmPSJodHRwOi8vd3d3LnczLm9yZy8xOTk5LzAyLzIyLXJkZi1zeW50YXgtbnMjIj48cmRmOkRlc2NyaXB0aW9uIHJkZjphYm91dD0idXVpZDpmYWY1YmRkNS1iYTNkLTExZGEtYWQzMS1kMzNkNzUxODJmMWIiIHhtbG5zOnRpZmY9Imh0dHA6Ly9ucy5hZG9iZS5jb20vdGlmZi8xLjAvIj48dGlmZjpPcmllbnRhdGlvbj4xPC90aWZmOk9yaWVudGF0aW9uPjwvcmRmOkRlc2NyaXB0aW9uPjwvcmRmOlJERj48L3g6eG1wbWV0YT4NCjw/eHBhY2tldCBlbmQ9J3cnPz4slJgLAAADtUlEQVRIS72WO0szXRCAn002MRJvG4OK4KUTFBRJJBErK2srtbC0tY2tIPhPFC3s30ZBwULFG4KIEDA28bKLMZrdTeLOW2j2M+stxfv5dDuXM+fMzJmzCiD8IgogIr8TU1EUfF7h/82PJ3Qch/39fa6urvjMTkTo6ekhmUyiKIpXXYWiKD8HLBaLDA8PMzAwQEtLi1eNbdtsbW1xcnKCpmledRWVDcl3FAoFSSQScnd351W5JJNJyWazXvEHAKmphoqioOs6FxcX7O7ucnt7y87ODqenp+i6/pqqH9JZoaaAFQKBAI7jYFkWqqpSLBYRkZqDVfCevIpCoSDxeFyur6+9KhERMU1TRkZGak7pj01TKpUYHR1F0zTC4TB+v59yuQyAqqpYlsXl5SX7+/s0Nzd73auoqUsdx+H8/JxsNouiKITDYZaWlggGgywsLJDL5ejo6KC/vx+f7/sK1RTwM1KpFKFQiMXFRa/qW2qaNMViEcuysG2bYrEIwPPzM5ZlAfDy8kK5XKZcLn86GLx8e8Ll5WX+/PlDMBh0O1FVVdLpNH6/n97eXreevG1uYmKCVCr1bpX/+DGlk5OTJBIJZmZm3N2LCKFQCBHBsix3I4qisLKywsHBARsbG56VXvlx0kxPT8vq6qpX/CUrKysyMzPjFbt8mDSlUol8Ps/9/T2WZZHP57m9vaVQKGAYBrZtvzd3fXK5HLZtc3d3x9PTE7Zt8/DwQKFQwHGcKvuqlJ6enjI7O0t7ezuqqpLJZAiHw0QiEUzTpK2tjfX1ddfZcRympqa4v7+nvr4ewzB4fn6mq6uLl5cXbm5uWFtbo6+v7zWYN6Wbm5sSj8fFMAwxDENM05R8Pi+6rsv29rYMDw9LuVx27W3blqGhIdne3hZd1+Xx8VFM0xRd18UwDInFYrKzs+Paf0ipz+ejsbERTdNoaWnB5/PR0NBAJBIhGo0SCoXemwNQX19PNBolEonQ2NhIIBAgEomgaRpNTU0f5uyX9zCdTrO7u0s2mwWoan8vlTqdn5+zt7eHruvw1tFevgwYDAbd16FWSqUSlmV9GqhCVUDHcfD7/QB0dXUxNjZGZ2cnAM3NzZ8uJCLu0B4cHGR8fJxoNApvQ8Lro77/qKur4/DwkLm5OXjrqoqDrutYllU1oH0+H6ZpMj8/T2trq/sQV7JydHT0oe5V1yKfz3N8fEwul6syAvD7/XR3dzMwMODKRISzszMymcynNdY0jVgsRjgchlpG27+mptfiX6Pwy7/6fwEeEgaMPjpu/AAAAABJRU5ErkJggg=="
+      <legend style = "margin-left: 20px; padding-top: 4px;">Select a view:</legend>
+      <div>
+        <input type="radio" id="view-timeline" onclick="handleViewChoiceClick(this.value, true);" name="viewOption"
+          value="view-timeline" checked />
+        <label for="view-timeline">Timeline&nbsp;&nbsp;&nbsp;<img src="data:image/png;base64, iVBORw0KGgoAAAANSUhEUgAAABwAAAAcCAYAAAByDd+UAAAAAXNSR0IArs4c6QAAAARnQU1BAACxjwv8YQUAAAAJcEhZcwAADsMAAA7DAcdvqGQAAAGHaVRYdFhNTDpjb20uYWRvYmUueG1wAAAAAAA8P3hwYWNrZXQgYmVnaW49J++7vycgaWQ9J1c1TTBNcENlaGlIenJlU3pOVGN6a2M5ZCc/Pg0KPHg6eG1wbWV0YSB4bWxuczp4PSJhZG9iZTpuczptZXRhLyI+PHJkZjpSREYgeG1sbnM6cmRmPSJodHRwOi8vd3d3LnczLm9yZy8xOTk5LzAyLzIyLXJkZi1zeW50YXgtbnMjIj48cmRmOkRlc2NyaXB0aW9uIHJkZjphYm91dD0idXVpZDpmYWY1YmRkNS1iYTNkLTExZGEtYWQzMS1kMzNkNzUxODJmMWIiIHhtbG5zOnRpZmY9Imh0dHA6Ly9ucy5hZG9iZS5jb20vdGlmZi8xLjAvIj48dGlmZjpPcmllbnRhdGlvbj4xPC90aWZmOk9yaWVudGF0aW9uPjwvcmRmOkRlc2NyaXB0aW9uPjwvcmRmOlJERj48L3g6eG1wbWV0YT4NCjw/eHBhY2tldCBlbmQ9J3cnPz4slJgLAAADtUlEQVRIS72WO0szXRCAn002MRJvG4OK4KUTFBRJJBErK2srtbC0tY2tIPhPFC3s30ZBwULFG4KIEDA28bKLMZrdTeLOW2j2M+stxfv5dDuXM+fMzJmzCiD8IgogIr8TU1EUfF7h/82PJ3Qch/39fa6urvjMTkTo6ekhmUyiKIpXXYWiKD8HLBaLDA8PMzAwQEtLi1eNbdtsbW1xcnKCpmledRWVDcl3FAoFSSQScnd351W5JJNJyWazXvEHAKmphoqioOs6FxcX7O7ucnt7y87ODqenp+i6/pqqH9JZoaaAFQKBAI7jYFkWqqpSLBYRkZqDVfCevIpCoSDxeFyur6+9KhERMU1TRkZGak7pj01TKpUYHR1F0zTC4TB+v59yuQyAqqpYlsXl5SX7+/s0Nzd73auoqUsdx+H8/JxsNouiKITDYZaWlggGgywsLJDL5ejo6KC/vx+f7/sK1RTwM1KpFKFQiMXFRa/qW2qaNMViEcuysG2bYrEIwPPzM5ZlAfDy8kK5XKZcLn86GLx8e8Ll5WX+/PlDMBh0O1FVVdLpNH6/n97eXreevG1uYmKCVCr1bpX/+DGlk5OTJBIJZmZm3N2LCKFQCBHBsix3I4qisLKywsHBARsbG56VXvlx0kxPT8vq6qpX/CUrKysyMzPjFbt8mDSlUol8Ps/9/T2WZZHP57m9vaVQKGAYBrZtvzd3fXK5HLZtc3d3x9PTE7Zt8/DwQKFQwHGcKvuqlJ6enjI7O0t7ezuqqpLJZAiHw0QiEUzTpK2tjfX1ddfZcRympqa4v7+nvr4ewzB4fn6mq6uLl5cXbm5uWFtbo6+v7zWYN6Wbm5sSj8fFMAwxDENM05R8Pi+6rsv29rYMDw9LuVx27W3blqGhIdne3hZd1+Xx8VFM0xRd18UwDInFYrKzs+Paf0ipz+ejsbERTdNoaWnB5/PR0NBAJBIhGo0SCoXemwNQX19PNBolEonQ2NhIIBAgEomgaRpNTU0f5uyX9zCdTrO7u0s2mwWoan8vlTqdn5+zt7eHruvw1tFevgwYDAbd16FWSqUSlmV9GqhCVUDHcfD7/QB0dXUxNjZGZ2cnAM3NzZ8uJCLu0B4cHGR8fJxoNApvQ8Lro77/qKur4/DwkLm5OXjrqoqDrutYllU1oH0+H6ZpMj8/T2trq/sQV7JydHT0oe5V1yKfz3N8fEwul6syAvD7/XR3dzMwMODKRISzszMymcynNdY0jVgsRjgchlpG27+mptfiX6Pwy7/6fwEeEgaMPjpu/AAAAABJRU5ErkJggg=="
             onclick="toggleOrgChartPopup()" id="tree-popup-btn" title="click here for tree popup" />
       </div>
-  <!--Changed the code to allow for in-line flex of the radio button and the label-->
-   <div style="display: flex; align-items: center;">
-      <input type="radio" id="view-tree" onclick="handleViewChoiceClick(this.value, true);" name="viewOption"
-        value="view-tree" />
-<label for="view-tree" style="margin: 0 0 0 6px; padding: 0; display: inline-block;  text-transform: none;">Family Tree</label>
-    </div>
+      <div>
+        <input type="radio" id="view-tree" onclick="handleViewChoiceClick(this.value, true);" name="viewOption"
+          value="view-tree" />
+        <label for="view-tree">Family Tree</label>
+      </div>
     </fieldset>
     <!-- https://codepen.io/erikterwan/pen/EVzeRP-->
     <nav role="navigation">
@@ -89,23 +87,13 @@
       </div>
     </nav>
   </div>
-<!-- Scripts from GitHub via jsDelivr -->
-<script src="https://cdn.jsdelivr.net/gh/ReuvenT/family_history@09847fdc24c38da5aa6e72df876fc27cf5e576d1/treechart.js?cache=clear"></script>
-<script src="https://cdn.jsdelivr.net/gh/ReuvenT/family_history@09847fdc24c38da5aa6e72df876fc27cf5e576d1/treepopup.js?cache=clear"></script>
-<script src="https://raw.githubusercontent.com/ReuvenT/family_history/main/timelinebackup.ps1
-"></script>
-<script src="https://cdn.jsdelivr.net/gh/ReuvenT/family_history/familytreedata.js?cache=clear"></script>
-<script src="https://cdn.jsdelivr.net/gh/ReuvenT/family_history@main/panzoom.js"></script>
-<script src="https://raw.githubusercontent.com/ReuvenT/family_history/main/timelinebackup.ps1
-"></script>
 
-
-<script src="https://cdn.jsdelivr.net/gh/T3s0/familytree@fd892232f78e1aeb42eae3dc7aed442246ae3ee7/Mainv3.js"></script>
-
-
-
- <script src="https://cdn.auth0.com/js/auth0-spa-js/2.0/auth0-spa-js.production.js"></script>
-<script src="https://www.gstatic.com/charts/loader.js"></script>
+  <script src="familytreedata.js"></script>
+  <script src="panzoom.js"></script>
+  <script src="treechart.js"></script>
+  <script src="https://cdn.auth0.com/js/auth0-spa-js/2.0/auth0-spa-js.production.js"></script>
+  <script src="main.js"></script>
+  <script src="treepopup.js"></script>
 </body>
 
 </html>

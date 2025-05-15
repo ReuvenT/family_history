@@ -23,14 +23,14 @@ body {
   border: 0 none transparent;
   background: none;
   color: rgb(20, 17, 17);
-  min-width: 30px; 
+  min-width: 30px;
   float: right;
 }
 
 .open-popup-btn {
   background-image: url("data:image/png;base64, iVBORw0KGgoAAAANSUhEUgAAABwAAAAcCAYAAAByDd+UAAAAAXNSR0IArs4c6QAAAARnQU1BAACxjwv8YQUAAAAJcEhZcwAADsMAAA7DAcdvqGQAAAGHaVRYdFhNTDpjb20uYWRvYmUueG1wAAAAAAA8P3hwYWNrZXQgYmVnaW49J++7vycgaWQ9J1c1TTBNcENlaGlIenJlU3pOVGN6a2M5ZCc/Pg0KPHg6eG1wbWV0YSB4bWxuczp4PSJhZG9iZTpuczptZXRhLyI+PHJkZjpSREYgeG1sbnM6cmRmPSJodHRwOi8vd3d3LnczLm9yZy8xOTk5LzAyLzIyLXJkZi1zeW50YXgtbnMjIj48cmRmOkRlc2NyaXB0aW9uIHJkZjphYm91dD0idXVpZDpmYWY1YmRkNS1iYTNkLTExZGEtYWQzMS1kMzNkNzUxODJmMWIiIHhtbG5zOnRpZmY9Imh0dHA6Ly9ucy5hZG9iZS5jb20vdGlmZi8xLjAvIj48dGlmZjpPcmllbnRhdGlvbj4xPC90aWZmOk9yaWVudGF0aW9uPjwvcmRmOkRlc2NyaXB0aW9uPjwvcmRmOlJERj48L3g6eG1wbWV0YT4NCjw/eHBhY2tldCBlbmQ9J3cnPz4slJgLAAADtUlEQVRIS72WO0szXRCAn002MRJvG4OK4KUTFBRJJBErK2srtbC0tY2tIPhPFC3s30ZBwULFG4KIEDA28bKLMZrdTeLOW2j2M+stxfv5dDuXM+fMzJmzCiD8IgogIr8TU1EUfF7h/82PJ3Qch/39fa6urvjMTkTo6ekhmUyiKIpXXYWiKD8HLBaLDA8PMzAwQEtLi1eNbdtsbW1xcnKCpmledRWVDcl3FAoFSSQScnd351W5JJNJyWazXvEHAKmphoqioOs6FxcX7O7ucnt7y87ODqenp+i6/pqqH9JZoaaAFQKBAI7jYFkWqqpSLBYRkZqDVfCevIpCoSDxeFyur6+9KhERMU1TRkZGak7pj01TKpUYHR1F0zTC4TB+v59yuQyAqqpYlsXl5SX7+/s0Nzd73auoqUsdx+H8/JxsNouiKITDYZaWlggGgywsLJDL5ejo6KC/vx+f7/sK1RTwM1KpFKFQiMXFRa/qW2qaNMViEcuysG2bYrEIwPPzM5ZlAfDy8kK5XKZcLn86GLx8e8Ll5WX+/PlDMBh0O1FVVdLpNH6/n97eXreevG1uYmKCVCr1bpX/+DGlk5OTJBIJZmZm3N2LCKFQCBHBsix3I4qisLKywsHBARsbG56VXvlx0kxPT8vq6qpX/CUrKysyMzPjFbt8mDSlUol8Ps/9/T2WZZHP57m9vaVQKGAYBrZtvzd3fXK5HLZtc3d3x9PTE7Zt8/DwQKFQwHGcKvuqlJ6enjI7O0t7ezuqqpLJZAiHw0QiEUzTpK2tjfX1ddfZcRympqa4v7+nvr4ewzB4fn6mq6uLl5cXbm5uWFtbo6+v7zWYN6Wbm5sSj8fFMAwxDENM05R8Pi+6rsv29rYMDw9LuVx27W3blqGhIdne3hZd1+Xx8VFM0xRd18UwDInFYrKzs+Paf0ipz+ejsbERTdNoaWnB5/PR0NBAJBIhGo0SCoXemwNQX19PNBolEonQ2NhIIBAgEomgaRpNTU0f5uyX9zCdTrO7u0s2mwWoan8vlTqdn5+zt7eHruvw1tFevgwYDAbd16FWSqUSlmV9GqhCVUDHcfD7/QB0dXUxNjZGZ2cnAM3NzZ8uJCLu0B4cHGR8fJxoNApvQ8Lro77/qKur4/DwkLm5OXjrqoqDrutYllU1oH0+H6ZpMj8/T2trq/sQV7JydHT0oe5V1yKfz3N8fEwul6syAvD7/XR3dzMwMODKRISzszMymcynNdY0jVgsRjgchlpG27+mptfiX6Pwy7/6fwEeEgaMPjpu/AAAAABJRU5ErkJggg==");
   height: 27px;  
-  width: 29px; 
+  width: 29px;
   margin-top: 0px;
 }
 
@@ -84,11 +84,11 @@ input {
 }
 
 .orgChart .selected {
-  background-color: 	#faf2a9 !important;
+  background-color:     #faf2a9 !important;
 }
 
 .orgChart .down {
-  background-color: 	#d0cfd0;
+  background-color:     #d0cfd0;
   margin: 0px auto;
   width: 4px;
   height: 20px;
@@ -195,7 +195,7 @@ input {
   top: 400px;
   min-width: 150px;
   /* width: 480px;
-  height: 550px; 
+  height: 550px;
   box-sizing: border-box;*/
   z-index: 100;
   background-color: #f1f1f1;
@@ -331,7 +331,7 @@ span.tl-menu-prefix:hover {
 #tl-menu-bar *{
   color: rgb(128, 128, 128);
   font: .9rem 'Fira Sans', sans-serif;
-  text-decoration: none; 
+  text-decoration: none;
   background-color: #000000;
 }
 
@@ -412,9 +412,9 @@ span.tl-menu-5 {
   max-width: 300px;
   width: 100vw;
   max-height: 100vh;
-  margin: 60px 0 0 -6px;
+  /* margin: 60px 0 0 -6px; */
   /* padding-left: 50px; */
-  padding-top: 5px;
+  /* padding-top:  5px; */
   box-sizing: border-box;
   overflow-y: auto;
   background: rgb(212, 210, 210);
@@ -423,6 +423,11 @@ span.tl-menu-5 {
   -webkit-font-smoothing: antialiased;
   padding-left: 20px;
   background-color: #bfbfbf;
+  padding: 0;
+  margin: 0;
+  display: flex;
+  flex-direction: column;       /* Stack items vertically */
+  align-items: flex-start;  
 
   /* to stop flickering of text in safari */
 
@@ -433,13 +438,49 @@ span.tl-menu-5 {
 }
 
 #tl-menu li {
-  padding: 5px 0;
-  font-size: 12px;
+  /* padding: 5px 0; */
+  /* font-size: 12px; */
+  list-style: none;
+  /* padding: 0; */
+  margin: 0;
+  /* display: flex; */
+  flex-direction: column;       /* Stack items vertically */
+  align-items: flex-start;        /* Align items to the right */
+    display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  font-family: 'Fira Sans', sans-serif;
+  font-size: 1rem;
+  text-transform: none;         /* Preserve camelCase */
+  padding: 4px 8px;             /* Minimal padding */
+  margin: 0;
+  border: none;                 /* No bottom border */
 }
 
 #tl-menu li label {
+  /* cursor: pointer; */
+  display: flex;
+  align-items: center;
   cursor: pointer;
+  padding: 0;
+  margin: 0;
+  text-transform: none;
 }
+
+
+
+#tl-menu li {
+
+}
+
+#tl-menu li a {
+  text-decoration: none;
+  color: black;
+  padding: 0;
+  margin: 0;
+  text-transform: none;
+}
+
 
 /*
   * And let's slide it in from the left

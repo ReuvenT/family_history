@@ -78,8 +78,8 @@ document.addEventListener('DOMContentLoaded', function () {
             }
 
         }, 500, storedSelection.currentId, storedSelection.isSelected, storedSelection.timelineId, storedSelection.showPopUp);
-        let contHeight = document.getElementById("tl-timeline-iframe").getBoundingClientRect().height- 160; 
-        let menuHeight = document.getElementById("tl-menu").getBoundingClientRect().height; 
+        let contHeight = document.getElementById("tl-timeline-iframe").getBoundingClientRect().height- 160;
+        let menuHeight = document.getElementById("tl-menu").getBoundingClientRect().height;
         if (menuHeight > contHeight){
             document.getElementById("tl-menu").style.height = contHeight +  "px";
         }
@@ -297,19 +297,19 @@ async function log_in_out() {
     }
     else {
         try {
-            let targetUrl = "";
+            let targetUrl = window.location.origin + "/view-histories"; // <--testing for redirect to app
             console.log("Logging in", targetUrl);
 
             const options = {
                 authorizationParams: {
-                    redirect_uri: window.location.origin
-                }
+                    redirect_uri: window.location.origin + "/view-histories"
+                    // This should match what's registered in your Auth0 app settings
+                },
+                appState: { targetUrl }  // Always send targetUrl in appState
             };
 
-            if (targetUrl) {
-                options.appState = { targetUrl };
-            }
             await auth0Client.loginWithRedirect(options);
+
         } catch (err) {
             console.log("Log in failed", err);
         }
@@ -326,13 +326,13 @@ function print_tl() {
     //alert("pdf btn clicked for timeline "  + printLink);
 
 
-    prompt(`This manual step allows you to open a browser page with the 
-content of this timeline in a printable format. It will only show the 
-default media image, and may be limited in other ways. 
+    prompt(`This manual step allows you to open a browser page with the
+content of this timeline in a printable format. It will only show the
+default media image, and may be limited in other ways.
 
-To use this, copy the link below and paste it into the address bar of 
-a new browser window. If the print dialog box doesn't display in 
-the new tab, use the browser print command, e.g. Ctrl+P. 
+To use this, copy the link below and paste it into the address bar of
+a new browser window. If the print dialog box doesn't display in
+the new tab, use the browser print command, e.g. Ctrl+P.
  (The Ok button below doesn't do anything). ` , printLink);
 
     return;
