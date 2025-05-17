@@ -15,9 +15,9 @@ function prepChartTable(csvData, isAuthenticated) {
     let rows = csvData.split(/\r?\n/);
     let result = buildTree(rows, "", 0, 0, isAuthenticated);
 
+    const menu = document.getElementById("tl-menu");
     if (isAuthenticated) {
         // add timeline links to menu
-        const menu = document.getElementById("tl-menu");
         timelineMenu.sort((a, b) => a.seq - b.seq).forEach((menuItem) => {
             const listItem = document.createElement("li");
             const label = document.createElement("label");
@@ -38,6 +38,7 @@ function prepChartTable(csvData, isAuthenticated) {
             //console.log("ordered tree (menu): " + listItem.outerHTML);
         });
     }
+    menu.appendChild(document.getElementById("version"));
 
     // check for orphaned items
     let orphans = "";

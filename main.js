@@ -91,6 +91,12 @@ document.addEventListener('DOMContentLoaded', function () {
  * Initializes the Auth0 client
  */
 const configureClient = async () => {
+    if (window.location.href == 'http://127.0.0.1:5500/index_local.html') {
+        console.log("configureClient (auth0) bypassed");
+        document.getElementById("login_label").style.visibility = 'hidden';
+        isAuthenticated = true;
+        return;
+    }    
     console.log("configureClient (auth0) start");
     // const response = await fetchAuthConfig();
     // const config = await response.json();
@@ -270,7 +276,14 @@ async function refreshLoginStatus() {
 
         window.history.replaceState({}, document.title, "/");
     }
-    isAuthenticated = await auth0Client.isAuthenticated();
+    if (window.location.href == 'http://127.0.0.1:5500/index_local.html') {
+        console.log("configureClient (auth0) bypassed");
+        document.getElementById("login_label").style.visibility = 'hidden';
+        isAuthenticated = true;
+    }    
+    else{
+        isAuthenticated = await auth0Client.isAuthenticated();
+    }
     document.getElementById("login_label").innerHTML = isAuthenticated ? "LOGOUT" : "LOGIN";
     document.getElementById("timeline_menus").innerHTML = isAuthenticated ? "-----Timeline Links------------" : "- Timeline Links available after login -";
     document.getElementById("version").innerHTML = "-- view histories ver 1.0 --";
