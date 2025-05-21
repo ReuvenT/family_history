@@ -26,7 +26,7 @@ $invalidChars = [regex]::escape([string][char[]][System.IO.Path]::GetInvalidFile
 
 $arrTimelines = @(
     "2139607/Carl-Trabin-Family"
-    "2147312/Fanny-Trabin-Barnow-Family"
+    "2172652/Fannie-Trabin-Barnow-Family"
     "2141911/Harry-Trabin-Family"
     "2141156/Helene-Trabin-Berne-Family"
     "2141914/Ida-Trabin-Kilberg-Family"

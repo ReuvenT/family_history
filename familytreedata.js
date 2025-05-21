@@ -104,8 +104,13 @@ DEL_PIL,SHI_TRA,Delores (Trabin) and Ronald Pillet,,,
 AND_MAD,DEL_PIL,Andrea (Pillet) and Michael Madden,,,
 STA_PIL,DEL_PIL,Stacey Pillet,,,
 JRM_PIL,SHI_TRA,Jerome "Jack" and Theodora (Rosenblatt) Trabin,,,
+####### Fannie and descendents
+FAN_TRA,LOU_TRA,Feige "Fannie" (Trabin) and Harry Barnow,,2172652/5812857090/,,{'menu': 'Fannie (Trabin) Barnow Family'; 'access': 'gated'; 'seq': 80000; 'level': 2}
+EST_KAT,FAN_TRA,Estelle (Barnow) Katz,,,
+FRE_KAT,EST_KAT,Fred Katz,,,
+DON_KAT,EST_KAT,Don Katz,,,
 ####### Phillip and descendents
-PHI_TRA,LOU_TRA,Phillip and Mary (Chef?) Trabin,,2141910/5281753800/,,{'menu': 'Philip Trabin Family'; 'access': 'gated'; 'seq': 70000; 'level': 2}
+PHI_TRA,LOU_TRA,Phillip and Mary (Scheff) Trabin,,2141910/5281753800/,,{'menu': 'Philip Trabin Family'; 'access': 'gated'; 'seq': 70000; 'level': 2}
 COR_BAC,PHI_TRA,Corinne and Francis Baca,,,
 MIC_BAC,COR_BAC,Michael and Joyce (?) Baca,,,
 CH1_BAC,MIC_BAC,Baca grandchild 1,,,
@@ -117,9 +122,4 @@ JOS_SUC,BET_SUC,Joshua Suckiel,,,
 LIS_SUC,SEY_TRA,Lisa (Suckiel) and Peter Ockerman,,,
 IAN_OCK,LIS_SUC,Ian Ockerman,,,
 RAC_OCK,LIS_SUC,Rachel Ockerman,,,
-####### Fanny and descendents
-FAN_TRA,LOU_TRA,Feige "Fanny" (Trabin) and Harry Barnow,,2147312/5281753800/,,{'menu': 'Fanny (Trabin) Barnow Family'; 'access': 'gated'; 'seq': 80000; 'level': 2}
-EST_BAR,FAN_TRA,Estelle (Barnow) Katz,,,
-BY1_KAT,EST_BAR,Boy 1,,,
-BY2_KAT,EST_BAR,Boy 2,,,
 `

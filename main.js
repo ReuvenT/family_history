@@ -286,7 +286,7 @@ async function refreshLoginStatus() {
     }
     document.getElementById("login_label").innerHTML = isAuthenticated ? "LOGOUT" : "LOGIN";
     document.getElementById("timeline_menus").innerHTML = isAuthenticated ? "-----Timeline Links------------" : "- Timeline Links available after login -";
-    document.getElementById("version").innerHTML = "-- view histories ver 1.0 --";
+    document.getElementById("version").innerHTML = "-- view histories ver 1.01 --";
     
     //console.log("refreshLoginStatus isAuthenticated: ", isAuthenticated);
     return (isAuthenticated);
