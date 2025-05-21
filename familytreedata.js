@@ -110,7 +110,7 @@ EST_KAT,FAN_TRA,Estelle (Barnow) Katz,,,
 FRE_KAT,EST_KAT,Fred Katz,,,
 DON_KAT,EST_KAT,Don Katz,,,
 ####### Phillip and descendents
-PHI_TRA,LOU_TRA,Phillip and Mary (Scheff) Trabin,,2141910/5281753800/,,{'menu': 'Philip Trabin Family'; 'access': 'gated'; 'seq': 70000; 'level': 2}
+PHI_TRA,LOU_TRA,Philip and Mary (Scheff) Trabin,,2141910/5281753800/,,{'menu': 'Philip Trabin Family'; 'access': 'gated'; 'seq': 70000; 'level': 2}
 COR_BAC,PHI_TRA,Corinne and Francis Baca,,,
 MIC_BAC,COR_BAC,Michael and Joyce (?) Baca,,,
 CH1_BAC,MIC_BAC,Baca grandchild 1,,,
