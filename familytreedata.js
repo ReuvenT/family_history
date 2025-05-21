@@ -119,7 +119,7 @@ CH2_BAC,GAR_BAC,Baca grandchild 2,,,
 SEY_TRA,PHI_TRA,Seymore and Joy (Doline) Trabin,,,
 BET_SUC,SEY_TRA,Beth (Trabin) and Robert Suckiel,,,
 JOS_SUC,BET_SUC,Joshua Suckiel,,,
-LIS_SUC,SEY_TRA,Lisa (Suckiel) and Peter Ockerman,,,
+LIS_SUC,SEY_TRA,Lisa (Trabin) and Peter Ockerman,,,
 IAN_OCK,LIS_SUC,Ian Ockerman,,,
 RAC_OCK,LIS_SUC,Rachel Ockerman,,,
 `
