@@ -32,7 +32,7 @@ $arrTimelines = @(
     "2141914/Ida-Trabin-Kilberg-Family"
     "2139216/Jacob-Trabin-Family"
     "2141915/Jenny-Trabin-Herlich-Family"
-    "2141910/Phillip-Trabin-Family"
+    "2141910/Philip-Trabin-Family"
     "2167412/Reuven-Trabin-Family"
     "2141912/Samuel-Trabin-Family"
     "2147311/Simon-Trabin-Family"
