@@ -58,8 +58,8 @@ document.addEventListener('DOMContentLoaded', function () {
 
             document.getElementById("tl-menu-bar").style.visibility = 'visible';
             document.getElementById("tl-select-view").style.visibility = 'visible';
-            console.log("initializing, " + boundsDisplay(document.getElementById("chart_container").getBoundingClientRect()));
-            //showNode(document.getElementById(id), true)
+            //console.log("initializing, " + boundsDisplay(document.getElementById("chart_container").getBoundingClientRect()));
+
             if (showPopUp) {
                 openOrgChartPopup();
                 if (isSelected) {
@@ -78,14 +78,33 @@ document.addEventListener('DOMContentLoaded', function () {
             }
 
         }, 500, storedSelection.currentId, storedSelection.isSelected, storedSelection.timelineId, storedSelection.showPopUp);
-        let contHeight = document.getElementById("tl-timeline-iframe").getBoundingClientRect().height- 160;
+        let contHeight = document.getElementById("tl-timeline-iframe").getBoundingClientRect().height - 160;
         let menuHeight = document.getElementById("tl-menu").getBoundingClientRect().height;
-        if (menuHeight > contHeight){
-            document.getElementById("tl-menu").style.height = contHeight +  "px";
+        if (menuHeight > contHeight) {
+            document.getElementById("tl-menu").style.height = contHeight + "px";
         }
+
     }, 250);
 
 }, false);
+
+// capture timeline load event and select the tree node 
+window.addEventListener('message', function (event) {
+    if (event.origin == 'https://www.tiki-toki.com') {
+        let postMessageData = event.data;
+        if (typeof postMessageData === 'object' && postMessageData.action == 'timelineLoaded') {
+            let tlUrl = postMessageData.url;
+            let tlId = tlUrl.substring(tlUrl.indexOf('embed/') + 6);
+            let nodeDiv = document.querySelectorAll("[data-timelineid='" + tlId + "']")[0];
+            let nodeId = nodeDiv.getAttribute('id');
+            if (nodeId) {
+                console.log('Received timelineLoaded message for timeline id:', nodeId);
+                nodeIdSetSelected(nodeId);
+            }
+        }
+    }
+}, false); // The 'false' indicates event bubbling (default)
+
 
 /**
  * Initializes the Auth0 client
@@ -96,7 +115,7 @@ const configureClient = async () => {
         document.getElementById("login_label").style.visibility = 'hidden';
         isAuthenticated = true;
         return;
-    }    
+    }
     console.log("configureClient (auth0) start");
     // const response = await fetchAuthConfig();
     // const config = await response.json();
@@ -166,7 +185,7 @@ function getChartViewState() {
     let cState = localStorage.getItem('chartViewState');
     if (cState != '[object Object]' && (typeof cState === 'string' || cState instanceof String)) {
         let val = JSON.parse(cState);
-        if (val.timelineId/length < 10){
+        if (val.timelineId / length < 10) {
             val.isSelected = false;
             val.currentId = "LOU_TRA";
             val.timelineId = rootTimeline;
@@ -280,14 +299,14 @@ async function refreshLoginStatus() {
         console.log("configureClient (auth0) bypassed");
         document.getElementById("login_label").style.visibility = 'hidden';
         isAuthenticated = true;
-    }    
-    else{
+    }
+    else {
         isAuthenticated = await auth0Client.isAuthenticated();
     }
     document.getElementById("login_label").innerHTML = isAuthenticated ? "LOGOUT" : "LOGIN";
     document.getElementById("timeline_menus").innerHTML = isAuthenticated ? "-----Timeline Links------------" : "- Timeline Links available after login -";
-    document.getElementById("version").innerHTML = "-- view histories ver 1.01 --";
-    
+    document.getElementById("version").innerHTML = "-- view histories ver 1.10 --";
+
     //console.log("refreshLoginStatus isAuthenticated: ", isAuthenticated);
     return (isAuthenticated);
 }
