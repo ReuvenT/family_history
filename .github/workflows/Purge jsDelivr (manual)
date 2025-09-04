@@ -1,0 +1,19 @@
+name: Purge jsDelivr (manual)
+
+on:
+  workflow_dispatch:   # enables the "Run workflow" button in Actions
+
+jobs:
+  purge:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Purge jsDelivr cache
+        uses: gacts/purge-jsdelivr-cache@v1
+        with:
+          url: |
+	    https://cdn.jsdelivr.net/gh/ReuvenT/family_history@main/treechart.js
+	    https://cdn.jsdelivr.net/gh/ReuvenT/family_history@main/treepopup.js
+	    https://cdn.jsdelivr.net/gh/ReuvenT/family_history@main/familytreedata.js
+	    https://cdn.jsdelivr.net/gh/ReuvenT/family_history@main/panzoom.js
+	    https://cdn.jsdelivr.net/gh/ReuvenT/family_history@main/main.js
+	    https://cdn.jsdelivr.net/gh/ReuvenT/family_history@main/index.css
