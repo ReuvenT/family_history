@@ -88,10 +88,11 @@ input {
 }
 
 .orgChart .down {
-  background-color: #d0cfd0;
+  color: #d0cfd0;
   margin: 0px auto;
   width: 3px;
-  height: 24px;
+  height: 18px;
+  font-weight: bold;
 }
 
 .orgChart .top {

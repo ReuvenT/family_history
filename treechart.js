@@ -215,6 +215,7 @@ function createUpperBelowLine(nbrChildren) {
     let lineDiv = document.createElement('div');
     lineDiv.classList.add('line');
     lineDiv.classList.add('down');
+    lineDiv.textContent = "|";
     lineCell.appendChild(lineDiv);
     childRowHeader.appendChild(lineCell);
     return childRowHeader;
